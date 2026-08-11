@@ -1,0 +1,908 @@
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { storyAudio } from "./lib/audio";
+import { loadEpisode, loadManifest } from "./lib/story";
+import {
+  clearProgress,
+  loadProgress,
+  loadSettings,
+  saveProgress,
+  saveSettings,
+} from "./lib/storage";
+import type {
+  ChoiceInteraction,
+  ChoiceOption,
+  Episode,
+  EpisodeManifestItem,
+  SelectionRecord,
+  StoryProgress,
+  StorySettings,
+} from "./types/story";
+
+type AppView = "library" | "intro" | "player" | "complete";
+type PlayerPhase =
+  | "playing"
+  | "paused"
+  | "choice"
+  | "feedback"
+  | "activity"
+  | "activityFeedback";
+
+const makeProgress = (
+  episode: Episode,
+  sceneId = episode.startSceneId,
+  selections: SelectionRecord[] = [],
+  completed = false,
+): StoryProgress => ({
+  schemaVersion: 1,
+  episodeId: episode.id,
+  contentVersion: episode.contentVersion,
+  sceneId,
+  selections,
+  completed,
+  updatedAt: new Date().toISOString(),
+});
+
+function IconButton({
+  label,
+  icon,
+  pressed,
+  onClick,
+}: {
+  label: string;
+  icon: string;
+  pressed?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      className="icon-button"
+      type="button"
+      aria-label={label}
+      aria-pressed={pressed}
+      title={label}
+      onClick={onClick}
+    >
+      <span aria-hidden="true">{icon}</span>
+      <span className="icon-button__label">{label}</span>
+    </button>
+  );
+}
+
+function Brand() {
+  return (
+    <div className="brand" aria-label="마음씨앗 동화책">
+      <span className="brand__mark" aria-hidden="true">
+        <span>●</span>
+        <span>⌁</span>
+      </span>
+      <span>
+        <strong>마음씨앗</strong>
+        <small>함께 고르는 우리 옛이야기</small>
+      </span>
+    </div>
+  );
+}
+
+function ParentGuide({ episode, onClose }: { episode: Episode; onClose: () => void }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    closeRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onClose]);
+
+  return (
+    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
+      <section
+        className="modal-card parent-guide"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="parent-guide-title"
+        onMouseDown={(event) => event.stopPropagation()}
+      >
+        <button ref={closeRef} className="modal-close" type="button" onClick={onClose}>
+          <span aria-hidden="true">×</span>
+          <span className="sr-only">부모 가이드 닫기</span>
+        </button>
+        <p className="eyebrow">부모님과 선생님께</p>
+        <h2 id="parent-guide-title">함께 읽을 때 이렇게 해 보세요</h2>
+        <p className="guide-lead">
+          정답을 맞히게 하기보다 “왜 그렇게 골랐어?”라고 물어보며 아이의 마음을 먼저 들어 주세요.
+        </p>
+        <div className="guide-grid">
+          <article>
+            <span aria-hidden="true">🌿</span>
+            <h3>안전한 각색</h3>
+            <p>{episode.contentSafety.adaptationNote}</p>
+          </article>
+          <article>
+            <span aria-hidden="true">🐦</span>
+            <h3>실제 동물 돕기</h3>
+            <p>{episode.contentSafety.animalSafetyNote}</p>
+          </article>
+        </div>
+        <h3 className="guide-question-title">이야기 뒤에 나눌 질문</h3>
+        <ol className="guide-questions">
+          {episode.meta.discussionPrompts.map((prompt) => (
+            <li key={prompt}>{prompt}</li>
+          ))}
+        </ol>
+        <button className="button button--primary button--wide" type="button" onClick={onClose}>
+          함께 읽으러 가기
+        </button>
+      </section>
+    </div>
+  );
+}
+
+function StoryPlayer({
+  episode,
+  initialProgress,
+  settings,
+  onSettingsChange,
+  onExit,
+  onComplete,
+}: {
+  episode: Episode;
+  initialProgress: StoryProgress;
+  settings: StorySettings;
+  onSettingsChange: (settings: StorySettings) => void;
+  onExit: () => void;
+  onComplete: (progress: StoryProgress) => void;
+}) {
+  const [sceneId, setSceneId] = useState(initialProgress.sceneId);
+  const [captionIndex, setCaptionIndex] = useState(0);
+  const [phase, setPhase] = useState<PlayerPhase>("playing");
+  const [phaseBeforePause, setPhaseBeforePause] = useState<PlayerPhase>("playing");
+  const [selectedOption, setSelectedOption] = useState<ChoiceOption | null>(null);
+  const [selections, setSelections] = useState<SelectionRecord[]>(initialProgress.selections);
+  const [activityTaps, setActivityTaps] = useState(0);
+  const interactionHeadingRef = useRef<HTMLHeadingElement>(null);
+  const scene = useMemo(
+    () => episode.scenes.find((candidate) => candidate.id === sceneId) ?? episode.scenes[0],
+    [episode.scenes, sceneId],
+  );
+  const sceneIndex = episode.scenes.findIndex((candidate) => candidate.id === scene.id);
+  const sceneProgress = ((sceneIndex + 1) / episode.scenes.length) * 100;
+  const caption = scene.captions[captionIndex] ?? scene.captions[scene.captions.length - 1];
+
+  const persist = useCallback(
+    (nextSceneId: string, nextSelections = selections, completed = false) => {
+      const progress = makeProgress(episode, nextSceneId, nextSelections, completed);
+      saveProgress(progress);
+      return progress;
+    },
+    [episode, selections],
+  );
+
+  const moveToScene = useCallback(
+    (nextSceneId: string) => {
+      storyAudio.playChime("page");
+      storyAudio.stopSpeech();
+      setSceneId(nextSceneId);
+      setCaptionIndex(0);
+      setSelectedOption(null);
+      setActivityTaps(0);
+      setPhase("playing");
+      persist(nextSceneId);
+    },
+    [persist],
+  );
+
+  const finishStory = useCallback(
+    (nextSelections = selections) => {
+      storyAudio.playChime("complete");
+      storyAudio.stopSpeech();
+      const completed = makeProgress(episode, scene.id, nextSelections, true);
+      saveProgress(completed);
+      onComplete(completed);
+    },
+    [episode, onComplete, scene.id, selections],
+  );
+
+  const revealInteractionOrAdvance = useCallback(() => {
+    if (scene.interaction?.kind === "tap") {
+      setPhase("activity");
+      return;
+    }
+    if (scene.interaction && "options" in scene.interaction) {
+      setPhase("choice");
+      return;
+    }
+    if (scene.nextSceneId) moveToScene(scene.nextSceneId);
+    else finishStory();
+  }, [finishStory, moveToScene, scene]);
+
+  useEffect(() => {
+    persist(scene.id);
+    storyAudio.playTheme(scene.music);
+    const nextScene = scene.nextSceneId
+      ? episode.scenes.find((candidate) => candidate.id === scene.nextSceneId)
+      : undefined;
+    if (nextScene) {
+      const image = new Image();
+      image.src = nextScene.image;
+    }
+  }, [episode.scenes, persist, scene.id, scene.image, scene.music, scene.nextSceneId]);
+
+  useEffect(() => {
+    storyAudio.setMuted(settings.muted);
+    if (!settings.muted && phase === "playing") storyAudio.speak(caption);
+  }, [caption, phase, settings.muted]);
+
+  useEffect(() => {
+    if (["choice", "feedback", "activity", "activityFeedback"].includes(phase)) {
+      window.setTimeout(() => interactionHeadingRef.current?.focus({ preventScroll: true }), 80);
+    }
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "playing") return;
+    const perCaption = Math.min(
+      12000,
+      Math.max(6500, scene.estimatedDurationMs / scene.captions.length),
+    );
+    const timer = window.setTimeout(() => {
+      if (captionIndex < scene.captions.length - 1) setCaptionIndex((index) => index + 1);
+      else revealInteractionOrAdvance();
+    }, perCaption);
+    return () => window.clearTimeout(timer);
+  }, [captionIndex, phase, revealInteractionOrAdvance, scene.captions.length, scene.estimatedDurationMs]);
+
+  useEffect(() => {
+    const onVisibilityChange = () => {
+      if (document.hidden && phase !== "paused") {
+        setPhaseBeforePause(phase);
+        setPhase("paused");
+        storyAudio.stopSpeech();
+        storyAudio.stopMusic();
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      if (phase === "paused") {
+        setPhase(phaseBeforePause);
+        storyAudio.playTheme(scene.music);
+      } else {
+        setPhaseBeforePause(phase);
+        setPhase("paused");
+        storyAudio.stopSpeech();
+        storyAudio.stopMusic();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [phase, phaseBeforePause, scene.music]);
+
+  useEffect(
+    () => () => {
+      storyAudio.stopMusic();
+      storyAudio.stopSpeech();
+    },
+    [],
+  );
+
+  const handlePlayPause = () => {
+    if (phase === "paused") {
+      setPhase(phaseBeforePause);
+      storyAudio.playTheme(scene.music);
+      if (!settings.muted && phaseBeforePause === "playing") storyAudio.speak(caption);
+      return;
+    }
+    setPhaseBeforePause(phase);
+    setPhase("paused");
+    storyAudio.stopSpeech();
+    storyAudio.stopMusic();
+  };
+
+  const handleSoundToggle = async () => {
+    const nextMuted = !settings.muted;
+    if (!nextMuted) await storyAudio.unlock();
+    onSettingsChange({ ...settings, muted: nextMuted });
+  };
+
+  const handleCaptionToggle = () => {
+    onSettingsChange({ ...settings, captions: !settings.captions });
+  };
+
+  const handleNext = () => {
+    if (phase !== "playing") return;
+    if (captionIndex < scene.captions.length - 1) {
+      setCaptionIndex((index) => index + 1);
+      return;
+    }
+    revealInteractionOrAdvance();
+  };
+
+  const chooseOption = (option: ChoiceOption) => {
+    const record: SelectionRecord = {
+      sceneId: scene.id,
+      optionId: option.id,
+      label: option.label,
+      seed: option.seed,
+    };
+    const nextSelections = [...selections.filter((item) => item.sceneId !== scene.id), record];
+    setSelections(nextSelections);
+    setSelectedOption(option);
+    setPhase("feedback");
+    storyAudio.playChime("choice");
+    storyAudio.speak(option.feedback);
+    persist(scene.id, nextSelections);
+  };
+
+  const retryChoice = () => {
+    const nextSelections = selections.filter((item) => item.sceneId !== scene.id);
+    setSelections(nextSelections);
+    setSelectedOption(null);
+    setPhase("choice");
+    persist(scene.id, nextSelections);
+  };
+
+  const continueAfterChoice = () => {
+    const nextSceneId = selectedOption?.nextSceneId ?? scene.nextSceneId;
+    if (nextSceneId) moveToScene(nextSceneId);
+    else finishStory(selections);
+  };
+
+  const handleActivityTap = () => {
+    if (!scene.interaction || scene.interaction.kind !== "tap") return;
+    const nextCount = activityTaps + 1;
+    setActivityTaps(nextCount);
+    storyAudio.playChime("tap");
+    if (nextCount >= scene.interaction.tapsRequired) {
+      setPhase("activityFeedback");
+      storyAudio.speak(scene.interaction.feedback);
+    }
+  };
+
+  const continueAfterActivity = () => {
+    if (scene.nextSceneId) moveToScene(scene.nextSceneId);
+    else finishStory();
+  };
+
+  const choiceInteraction =
+    scene.interaction && "options" in scene.interaction
+      ? (scene.interaction as ChoiceInteraction)
+      : null;
+  const showPanel = ["choice", "feedback", "activity", "activityFeedback"].includes(phase);
+
+  return (
+    <main className="player-shell">
+      <div className="player-stage">
+        <img
+          className={`scene-image scene-image--${scene.motion ?? "still"}`}
+          src={scene.image}
+          alt={scene.imageAlt}
+          style={{ objectPosition: scene.imagePosition ?? "center" }}
+        />
+        <div className="scene-scrim" aria-hidden="true" />
+
+        <header className="player-topbar">
+          <button className="back-button" type="button" onClick={onExit}>
+            <span aria-hidden="true">‹</span> 책장
+          </button>
+          <div className="scene-count" aria-label={`전체 ${episode.scenes.length}장 중 ${sceneIndex + 1}장`}>
+            <span>{String(sceneIndex + 1).padStart(2, "0")}</span>
+            <i aria-hidden="true" />
+            <span>{String(episode.scenes.length).padStart(2, "0")}</span>
+          </div>
+          <div className="player-actions">
+            <IconButton
+              label={settings.captions ? "자막 끄기" : "자막 켜기"}
+              icon="자막"
+              pressed={settings.captions}
+              onClick={handleCaptionToggle}
+            />
+            <IconButton
+              label={settings.muted ? "소리 켜기" : "소리 끄기"}
+              icon={settings.muted ? "♪×" : "♪"}
+              pressed={!settings.muted}
+              onClick={() => void handleSoundToggle()}
+            />
+          </div>
+        </header>
+
+        <div className="scene-meta">
+          <p>{scene.eyebrow}</p>
+          <h1>{scene.title}</h1>
+        </div>
+
+        {!showPanel && settings.captions && (
+          <section className="caption-card" aria-live="polite" aria-atomic="true">
+            <div className="caption-card__speaker">
+              <span aria-hidden="true">◌</span> 이야기 할머니
+            </div>
+            <p>{caption}</p>
+            {scene.soundCaption && <small>{scene.soundCaption}</small>}
+            {scene.safetyNote && <aside>{scene.safetyNote}</aside>}
+          </section>
+        )}
+
+        {!showPanel && (
+          <div className="player-controls">
+            <button className="round-control" type="button" onClick={handlePlayPause}>
+              <span aria-hidden="true">{phase === "paused" ? "▶" : "Ⅱ"}</span>
+              <span className="sr-only">{phase === "paused" ? "이야기 계속 재생" : "이야기 일시정지"}</span>
+            </button>
+            <button className="next-control" type="button" onClick={handleNext} disabled={phase === "paused"}>
+              {captionIndex < scene.captions.length - 1
+                ? "다음 문장"
+                : scene.interaction
+                  ? "함께 골라 보기"
+                  : "다음 장면"}
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        )}
+
+        {showPanel && (
+          <section className="interaction-sheet" aria-live="polite">
+            <div className="sheet-handle" aria-hidden="true" />
+            {phase === "choice" && choiceInteraction && (
+              <>
+                <p className="eyebrow">같이 생각해 볼까요?</p>
+                <h2 ref={interactionHeadingRef} tabIndex={-1}>
+                  {choiceInteraction.prompt}
+                </h2>
+                <div className="choice-list">
+                  {choiceInteraction.options.map((option) => (
+                    <button
+                      className="choice-card"
+                      type="button"
+                      key={option.id}
+                      onClick={() => chooseOption(option)}
+                    >
+                      <span className="choice-card__emoji" aria-hidden="true">{option.emoji}</span>
+                      <span>
+                        <strong>{option.label}</strong>
+                        {option.description && <small>{option.description}</small>}
+                      </span>
+                      <i aria-hidden="true">›</i>
+                    </button>
+                  ))}
+                </div>
+                {scene.safetyNote && <p className="safety-note">{scene.safetyNote}</p>}
+              </>
+            )}
+
+            {phase === "feedback" && selectedOption && choiceInteraction && (
+              <div className="feedback-panel">
+                <span className="feedback-panel__icon" aria-hidden="true">
+                  {selectedOption.guidance === "preferred" ? "✦" : selectedOption.guidance === "neutral" ? "🌱" : "💭"}
+                </span>
+                <p className="eyebrow">
+                  {selectedOption.guidance === "preferred"
+                    ? "다정한 마음을 발견했어요"
+                    : selectedOption.guidance === "neutral"
+                      ? "내 마음밭에 심을 씨앗"
+                      : "한 번 더 마음을 살펴봐요"}
+                </p>
+                <h2 ref={interactionHeadingRef} tabIndex={-1}>{selectedOption.label}</h2>
+                <p className="feedback-copy">{selectedOption.feedback}</p>
+                <div className="sheet-actions">
+                  {selectedOption.guidance === "reflect" && (
+                    <button className="button button--ghost" type="button" onClick={retryChoice}>
+                      {choiceInteraction.retryLabel}
+                    </button>
+                  )}
+                  <button className="button button--primary" type="button" onClick={continueAfterChoice}>
+                    {choiceInteraction.continueLabel} <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {phase === "activity" && scene.interaction?.kind === "tap" && (
+              <div className="activity-panel">
+                <p className="eyebrow">손끝으로 이야기를 도와요</p>
+                <h2 ref={interactionHeadingRef} tabIndex={-1}>{scene.interaction.prompt}</h2>
+                <button
+                  className="activity-target"
+                  type="button"
+                  aria-label={`${scene.interaction.targetLabel}, ${scene.interaction.tapsRequired}번 중 ${activityTaps}번 완료`}
+                  onClick={handleActivityTap}
+                >
+                  <span aria-hidden="true">{scene.interaction.targetEmoji}</span>
+                  <strong>{scene.interaction.targetLabel}</strong>
+                  <small>{activityTaps} / {scene.interaction.tapsRequired}</small>
+                </button>
+                <div className="tap-dots" aria-hidden="true">
+                  {Array.from({ length: scene.interaction.tapsRequired }, (_, index) => (
+                    <i key={index} className={index < activityTaps ? "is-filled" : ""} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {phase === "activityFeedback" && scene.interaction?.kind === "tap" && (
+              <div className="feedback-panel">
+                <span className="feedback-panel__icon" aria-hidden="true">✦</span>
+                <p className="eyebrow">이야기가 한 뼘 자랐어요</p>
+                <h2 ref={interactionHeadingRef} tabIndex={-1}>{scene.interaction.targetLabel} 완료!</h2>
+                <p className="feedback-copy">{scene.interaction.feedback}</p>
+                <div className="sheet-actions">
+                  <button className="button button--primary" type="button" onClick={continueAfterActivity}>
+                    다음 장면 <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {phase === "paused" && (
+          <div className="pause-overlay" role="dialog" aria-modal="true" aria-labelledby="pause-title">
+            <span aria-hidden="true">☕</span>
+            <p className="eyebrow">잠깐 쉬어 가도 좋아요</p>
+            <h2 id="pause-title">이야기가 여기서 기다리고 있어요</h2>
+            <button className="button button--primary" type="button" autoFocus onClick={handlePlayPause}>
+              계속 읽기 <span aria-hidden="true">▶</span>
+            </button>
+            <button className="button button--ghost button--light" type="button" onClick={onExit}>
+              책장으로 돌아가기
+            </button>
+          </div>
+        )}
+
+        <div className="scene-progress" aria-hidden="true">
+          <i style={{ width: `${sceneProgress}%` }} />
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function CompletionScreen({
+  episode,
+  progress,
+  onRestart,
+  onLibrary,
+  onGuide,
+}: {
+  episode: Episode;
+  progress: StoryProgress;
+  onRestart: () => void;
+  onLibrary: () => void;
+  onGuide: () => void;
+}) {
+  const finalSeed = [...progress.selections].reverse().find((selection) => selection.seed)?.seed;
+  const uniqueSeeds = [...new Set(progress.selections.map((selection) => selection.seed).filter(Boolean))].slice(-5);
+
+  return (
+    <main className="completion-screen">
+      <div className="completion-visual">
+        <img src="/episodes/heungbu-nolbu/images/reconciliation.webp" alt="흥부와 놀부가 이웃과 함께 마을을 고치는 따뜻한 저녁 풍경" />
+        <div className="completion-visual__scrim" />
+        <button className="back-button completion-back" type="button" onClick={onLibrary}>
+          <span aria-hidden="true">‹</span> 책장
+        </button>
+        <div className="completion-heading">
+          <span className="completion-seed" aria-hidden="true">🌱</span>
+          <p className="eyebrow">이야기 한 권을 함께 읽었어요</p>
+          <h1>{finalSeed ?? "따뜻한 마음"} 씨앗이 자랐어요</h1>
+        </div>
+      </div>
+      <section className="completion-content">
+        <p className="completion-lesson">“{episode.meta.lesson}”</p>
+        <div className="seed-summary" aria-label="우리가 고른 마음 씨앗">
+          <p>우리가 이야기에서 만난 마음</p>
+          <div>
+            {uniqueSeeds.map((seed) => (
+              <span key={seed}>✦ {seed}</span>
+            ))}
+          </div>
+        </div>
+        <article className="family-card">
+          <span aria-hidden="true">💬</span>
+          <div>
+            <p className="eyebrow">오늘의 가족 질문</p>
+            <h2>{episode.meta.discussionPrompts[2]}</h2>
+          </div>
+        </article>
+        <div className="completion-actions">
+          <button className="button button--primary" type="button" onClick={onRestart}>
+            처음부터 다시 읽기
+          </button>
+          <button className="button button--ghost" type="button" onClick={onGuide}>
+            부모 대화 가이드
+          </button>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+export default function App() {
+  const [view, setView] = useState<AppView>("library");
+  const [catalog, setCatalog] = useState<EpisodeManifestItem[]>([]);
+  const [episode, setEpisode] = useState<Episode | null>(null);
+  const [progress, setProgress] = useState<StoryProgress | null>(null);
+  const [settings, setSettings] = useState<StorySettings>(() => loadSettings());
+  const [showParentGuide, setShowParentGuide] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    const boot = async () => {
+      try {
+        const manifest = await loadManifest();
+        const enabled = manifest.episodes.filter((item) => item.enabled);
+        if (enabled.length === 0) throw new Error("아직 읽을 수 있는 이야기가 없어요.");
+        const featured = enabled.find((item) => item.featured) ?? enabled[0];
+        const loadedEpisode = await loadEpisode(featured.dataPath);
+        if (!active) return;
+        setCatalog(enabled);
+        setEpisode(loadedEpisode);
+        setProgress(loadProgress(loadedEpisode));
+      } catch (reason) {
+        if (!active) return;
+        setError(reason instanceof Error ? reason.message : "이야기책을 열지 못했어요.");
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    void boot();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [view]);
+
+  const updateSettings = (nextSettings: StorySettings) => {
+    setSettings(nextSettings);
+    saveSettings(nextSettings);
+  };
+
+  const selectEpisode = async (item: EpisodeManifestItem) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const loaded = await loadEpisode(item.dataPath);
+      setEpisode(loaded);
+      setProgress(loadProgress(loaded));
+      setView("intro");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "이야기를 열지 못했어요.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const beginStory = async (resume: boolean) => {
+    if (!episode) return;
+    if (!settings.muted) await storyAudio.unlock();
+    const saved = resume ? loadProgress(episode) : null;
+    const nextProgress = saved && !saved.completed ? saved : makeProgress(episode);
+    if (!resume) clearProgress(episode.id);
+    saveProgress(nextProgress);
+    setProgress(nextProgress);
+    setView("player");
+  };
+
+  const restartStory = () => {
+    if (!episode) return;
+    clearProgress(episode.id);
+    const nextProgress = makeProgress(episode);
+    setProgress(nextProgress);
+    setView("intro");
+  };
+
+  if (loading && !episode) {
+    return (
+      <main className="loading-screen" aria-live="polite">
+        <Brand />
+        <div className="loading-book" aria-hidden="true"><span /><span /></div>
+        <p>이야기책을 펼치고 있어요…</p>
+      </main>
+    );
+  }
+
+  if (error || !episode) {
+    return (
+      <main className="error-screen">
+        <span aria-hidden="true">🍂</span>
+        <h1>이야기책을 열지 못했어요</h1>
+        <p>{error ?? "잠시 뒤 다시 시도해 주세요."}</p>
+        <button className="button button--primary" type="button" onClick={() => window.location.reload()}>
+          다시 펼치기
+        </button>
+      </main>
+    );
+  }
+
+  const resumeScene = progress
+    ? episode.scenes.find((candidate) => candidate.id === progress.sceneId)
+    : null;
+
+  return (
+    <>
+      {view === "library" && (
+        <main className="library-screen">
+          <header className="library-header">
+            <Brand />
+            <button className="parent-link" type="button" onClick={() => setShowParentGuide(true)}>
+              <span aria-hidden="true">◌</span> 부모 가이드
+            </button>
+          </header>
+
+          <section className="library-hero">
+            <div className="library-hero__copy">
+              <p className="eyebrow">오늘, 아이와 어떤 마음을 키울까요?</p>
+              <h1>보고, 듣고,<br /><em>함께 고르는</em><br />옛이야기</h1>
+              <p>
+                정답 대신 이유를 나누고, 실수 뒤에도 다시 생각하는
+                <br className="desktop-only" /> 우리 가족의 짧은 동화 시간이에요.
+              </p>
+              <div className="trust-row" aria-label="서비스 특징">
+                <span>✓ 벌점 없음</span>
+                <span>✓ 자막 기본</span>
+                <span>✓ 자동 저장</span>
+              </div>
+            </div>
+            <div className="hero-swallow" aria-hidden="true">⌁</div>
+          </section>
+
+          <section className="bookshelf" aria-labelledby="bookshelf-title">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">오늘의 이야기</p>
+                <h2 id="bookshelf-title">마음씨앗 책장</h2>
+              </div>
+              <span>{catalog.length}권의 이야기</span>
+            </div>
+            <div className="episode-grid">
+              {catalog.map((item, index) => (
+                <article className="episode-card" key={item.id}>
+                  <button type="button" className="episode-card__cover" onClick={() => void selectEpisode(item)}>
+                    <img src={item.cover} alt={`${item.title} 표지`} />
+                    <span className="episode-number">{String(index + 1).padStart(2, "0")}</span>
+                    <span className="episode-play" aria-hidden="true">▶</span>
+                    {item.featured && <span className="featured-badge">첫 이야기</span>}
+                  </button>
+                  <div className="episode-card__body">
+                    <div className="episode-meta">
+                      <span>{item.ageRange}</span>
+                      <span>{item.estimatedMinutes}분</span>
+                    </div>
+                    <h3>{item.title}</h3>
+                    <p>{item.subtitle}</p>
+                    {progress && progress.episodeId === item.id && !progress.completed && (
+                      <div className="resume-line">
+                        <i aria-hidden="true" /> 읽던 장면이 기다리고 있어요
+                      </div>
+                    )}
+                    <button className="text-button" type="button" onClick={() => void selectEpisode(item)}>
+                      이야기 살펴보기 <span aria-hidden="true">→</span>
+                    </button>
+                  </div>
+                </article>
+              ))}
+              <article className="episode-card episode-card--coming">
+                <div aria-hidden="true" className="coming-pattern"><span>달</span><span>토끼</span></div>
+                <div className="episode-card__body">
+                  <div className="episode-meta"><span>다음 이야기</span></div>
+                  <h3>달토끼 이야기</h3>
+                  <p>마음을 내어 주는 지혜를 준비하고 있어요.</p>
+                  <span className="coming-label">곧 만나요</span>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <footer className="library-footer">
+            <Brand />
+            <p>아이의 선택을 판단하지 않고, 그 이유를 함께 들어 주세요.</p>
+          </footer>
+        </main>
+      )}
+
+      {view === "intro" && (
+        <main className="intro-screen">
+          <img className="intro-background" src={episode.meta.cover} alt="" />
+          <div className="intro-scrim" />
+          <header className="intro-topbar">
+            <button className="back-button" type="button" onClick={() => setView("library")}>
+              <span aria-hidden="true">‹</span> 책장
+            </button>
+            <Brand />
+            <button className="parent-link parent-link--light" type="button" onClick={() => setShowParentGuide(true)}>
+              부모 가이드
+            </button>
+          </header>
+          <section className="intro-card">
+            <div className="intro-card__image">
+              <img src={episode.meta.cover} alt="흥부와 놀부, 제비와 박덩굴이 함께 있는 동화 표지" />
+            </div>
+            <div className="intro-card__content">
+              <p className="eyebrow">마음씨앗 첫 번째 이야기</p>
+              <h1>{episode.meta.title}</h1>
+              <p className="intro-subtitle">{episode.meta.subtitle}</p>
+              <div className="intro-tags">
+                <span>⌛ 약 {episode.meta.estimatedMinutes}분</span>
+                <span>☀ {episode.meta.ageRange}</span>
+                <span>▣ 13개 장면</span>
+              </div>
+              <p className="intro-summary">{episode.meta.summary}</p>
+              <article className="opening-question">
+                <span aria-hidden="true">💬</span>
+                <div>
+                  <p>시작 전에 함께 물어보세요</p>
+                  <strong>{episode.meta.openingQuestion}</strong>
+                </div>
+              </article>
+              <div className="intro-settings" aria-label="이야기 설정">
+                <button type="button" aria-pressed={settings.captions} onClick={() => updateSettings({ ...settings, captions: !settings.captions })}>
+                  <span aria-hidden="true">자막</span>
+                  <strong>자막 {settings.captions ? "켜짐" : "꺼짐"}</strong>
+                </button>
+                <button type="button" aria-pressed={!settings.muted} onClick={() => updateSettings({ ...settings, muted: !settings.muted })}>
+                  <span aria-hidden="true">♪</span>
+                  <strong>소리 {settings.muted ? "꺼짐" : "켜짐"}</strong>
+                </button>
+              </div>
+              <div className="intro-actions">
+                <button className="button button--primary button--large" type="button" onClick={() => void beginStory(false)}>
+                  이야기 시작 <span aria-hidden="true">▶</span>
+                </button>
+                {progress && !progress.completed && (
+                  <button className="button button--ghost" type="button" onClick={() => void beginStory(true)}>
+                    {resumeScene ? `${resumeScene.number}장 ${resumeScene.title}부터 이어보기` : "이어서 읽기"}
+                  </button>
+                )}
+              </div>
+              <small className="autoplay-note">소리는 시작 버튼을 누른 뒤 재생되며 언제든 끌 수 있어요.</small>
+            </div>
+          </section>
+        </main>
+      )}
+
+      {view === "player" && progress && (
+        <StoryPlayer
+          key={`${episode.id}:${progress.sceneId}:${progress.updatedAt}`}
+          episode={episode}
+          initialProgress={progress}
+          settings={settings}
+          onSettingsChange={updateSettings}
+          onExit={() => {
+            setProgress(loadProgress(episode));
+            setView("library");
+          }}
+          onComplete={(completed) => {
+            setProgress(completed);
+            setView("complete");
+          }}
+        />
+      )}
+
+      {view === "complete" && progress && (
+        <CompletionScreen
+          episode={episode}
+          progress={progress}
+          onRestart={restartStory}
+          onLibrary={() => setView("library")}
+          onGuide={() => setShowParentGuide(true)}
+        />
+      )}
+
+      {showParentGuide && <ParentGuide episode={episode} onClose={() => setShowParentGuide(false)} />}
+    </>
+  );
+}

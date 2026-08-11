@@ -1,0 +1,609 @@
+{
+  "schemaVersion": "1.0.0",
+  "contentVersion": "1.0.0",
+  "id": "heungbu-nolbu",
+  "meta": {
+    "title": "흥부와 놀부",
+    "subtitle": "마음을 나눌수록 커지는 기쁨",
+    "ageRange": "5~9세",
+    "estimatedMinutes": 9,
+    "cover": "/episodes/heungbu-nolbu/images/cover.webp",
+    "summary": "제비를 돌본 흥부와 결과만 따라 하려던 놀부의 이야기를 함께 선택해 보세요.",
+    "lesson": "친절은 무엇을 받으려는 계산보다, 다른 이의 필요를 먼저 살피는 데서 시작해요.",
+    "openingQuestion": "누군가 도움이 필요해 보일 때 우리는 무엇부터 살펴보면 좋을까요?",
+    "discussionPrompts": [
+      "흥부가 제비를 도울 때 가장 먼저 살핀 것은 무엇이었나요?",
+      "놀부가 미안한 마음을 행동으로 보여 준 방법은 무엇이었나요?",
+      "우리 가족이 이번 주에 함께 키우고 싶은 마음 씨앗은 무엇인가요?"
+    ]
+  },
+  "contentSafety": {
+    "audience": "유아와 초등 저학년, 보호자 공동 시청",
+    "adaptationNote": "원작의 구타, 동물 상해, 도깨비의 폭력 장면을 직접 보여 주지 않고 도움, 정리, 사과와 회복의 행동으로 각색했습니다.",
+    "animalSafetyNote": "실제 다친 야생동물을 발견하면 직접 만지거나 먹이를 주지 말고 어른이나 구조 기관에 알려요."
+  },
+  "startSceneId": "HB00_TITLE",
+  "scenes": [
+    {
+      "id": "HB00_TITLE",
+      "number": 1,
+      "title": "마음의 씨앗",
+      "type": "cinematic",
+      "estimatedDurationMs": 22000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/cover.webp",
+      "imageAlt": "박덩굴 아래에서 흥부와 놀부가 마주 보고 있고 제비가 날아가는 따뜻한 봄 마을",
+      "imagePosition": "center 42%",
+      "motion": "push",
+      "eyebrow": "옛이야기 한 자락",
+      "captions": [
+        "옛날 어느 마을에 형 놀부와 동생 흥부가 살았어요.",
+        "두 형제의 마음에는 서로 다른 씨앗이 자라고 있었지요."
+      ],
+      "soundCaption": "[제비가 봄바람을 가르며 날아요]",
+      "music": "village",
+      "lessonTags": ["소개", "마음"],
+      "nextSceneId": "HB01_TWO_HOMES"
+    },
+    {
+      "id": "HB01_TWO_HOMES",
+      "number": 2,
+      "title": "서로 다른 두 집",
+      "type": "cinematic",
+      "estimatedDurationMs": 30000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/cover.webp",
+      "imageAlt": "기와집과 초가집이 함께 보이는 마을에서 흥부와 놀부가 서로 다른 표정으로 서 있다",
+      "imagePosition": "center center",
+      "motion": "drift-left",
+      "eyebrow": "두 형제의 시작",
+      "captions": [
+        "부모님이 세상을 떠난 뒤, 놀부는 집과 논밭을 혼자 차지했어요.",
+        "흥부 가족은 작은 초가집으로 옮겼지만 서로를 살피며 지냈어요.",
+        "흥부는 남은 쌀도 가족과 조금씩 나누었답니다."
+      ],
+      "music": "village",
+      "lessonTags": ["공평함", "가족"],
+      "nextSceneId": "HB02_GATE"
+    },
+    {
+      "id": "HB02_GATE",
+      "number": 3,
+      "title": "도움을 부탁한 흥부",
+      "type": "choice",
+      "estimatedDurationMs": 26000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/cover.webp",
+      "imageAlt": "흥부가 열린 손으로 마음을 설명하고 놀부가 팔짱을 낀 채 생각하는 모습",
+      "imagePosition": "center 45%",
+      "motion": "drift-right",
+      "eyebrow": "첫 번째 마음 선택",
+      "captions": [
+        "먹을 것이 떨어진 날, 흥부는 형에게 일거리와 쌀을 조금 빌려 달라고 부탁했어요.",
+        "하지만 놀부는 대문을 열어 주지 않았고, 흥부의 마음은 무거워졌지요."
+      ],
+      "soundCaption": "[대문이 조용히 닫혀요]",
+      "music": "care",
+      "lessonTags": ["마음 표현하기", "도움 요청"],
+      "nextSceneId": "HB03_SWALLOW",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "마음이 속상한 흥부는 어떻게 말하면 좋을까요?",
+        "retryLabel": "다시 생각해 보기",
+        "continueLabel": "이야기 계속 보기",
+        "options": [
+          {
+            "id": "HB02_SHOUT",
+            "label": "큰 소리로 따져요",
+            "description": "화난 마음을 큰 목소리로 보여 줘요.",
+            "emoji": "📣",
+            "guidance": "reflect",
+            "feedback": "화가 나는 건 자연스러워요. 하지만 큰 소리는 서로의 귀를 닫게 할 수 있어요. 속상한 마음을 차분히 말해 볼까요?",
+            "seed": "마음 표현하기"
+          },
+          {
+            "id": "HB02_SAY_FEELING",
+            "label": "속상하다고 말해요",
+            "description": "마음을 말하고 다른 도움도 찾아봐요.",
+            "emoji": "💬",
+            "guidance": "preferred",
+            "feedback": "마음을 솔직하고 차분하게 말했네요. 한 사람이 거절해도 믿을 만한 다른 어른에게 도움을 청할 수 있어요.",
+            "seed": "마음 표현하기"
+          },
+          {
+            "id": "HB02_HIDE",
+            "label": "아무 말 없이 숨겨요",
+            "description": "속상해도 혼자 참고 돌아가요.",
+            "emoji": "☁️",
+            "guidance": "reflect",
+            "feedback": "말하기 어려울 때도 있어요. 하지만 참기만 하면 마음이 무거워질 수 있어요. 믿을 만한 어른에게 말해도 괜찮아요.",
+            "seed": "도움 요청하기"
+          }
+        ]
+      }
+    },
+    {
+      "id": "HB03_SWALLOW",
+      "number": 4,
+      "title": "도움이 필요한 제비",
+      "type": "choice",
+      "estimatedDurationMs": 30000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/swallow-care.webp",
+      "imageAlt": "흥부 가족이 마당의 어린 제비를 놀라게 하지 않도록 떨어져 살펴보는 모습",
+      "imagePosition": "center 52%",
+      "motion": "push",
+      "eyebrow": "두 번째 마음 선택",
+      "captions": [
+        "봄이 오자 처마 밑에 제비 가족이 둥지를 틀었어요.",
+        "어느 날 어린 제비 한 마리가 바닥에 내려앉아 발을 제대로 딛지 못했어요.",
+        "피는 보이지 않았지만 도움이 필요해 보였지요."
+      ],
+      "soundCaption": "[제비가 작게 짹짹 울어요]",
+      "music": "care",
+      "lessonTags": ["안전하게 돕기", "생명 존중"],
+      "safetyNote": "실제 다친 동물을 발견하면 직접 만지지 말고 어른에게 알려요.",
+      "nextSceneId": "HB04_SEED",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "제비를 어떻게 도우면 좋을까요?",
+        "retryLabel": "다시 생각해 보기",
+        "continueLabel": "이야기 계속 보기",
+        "options": [
+          {
+            "id": "HB03_GRAB",
+            "label": "손으로 얼른 잡아요",
+            "description": "빨리 잡아서 집 안으로 데려가요.",
+            "emoji": "👐",
+            "guidance": "reflect",
+            "feedback": "빨리 돕고 싶은 마음이 들었군요. 하지만 갑자기 잡으면 제비가 더 놀랄 수 있어요. 먼저 조용히 살펴봐요.",
+            "seed": "안전하게 돕기"
+          },
+          {
+            "id": "HB03_OBSERVE",
+            "label": "어른과 조용히 살펴봐요",
+            "description": "거리를 두고 안전한 방법을 찾아요.",
+            "emoji": "👀",
+            "guidance": "preferred",
+            "feedback": "제비가 놀라지 않도록 거리를 두고, 어른과 함께 안전하게 도울 방법을 찾았어요.",
+            "seed": "안전하게 돕기"
+          },
+          {
+            "id": "HB03_FEED",
+            "label": "먹이를 바로 넣어 줘요",
+            "description": "배고플 것 같아 아무 먹이나 줘요.",
+            "emoji": "🌾",
+            "guidance": "reflect",
+            "feedback": "배가 고플까 걱정했군요. 하지만 맞지 않는 먹이는 오히려 아프게 할 수 있어요. 먼저 어른에게 알려요.",
+            "seed": "어른과 함께하기"
+          }
+        ]
+      }
+    },
+    {
+      "id": "HB04_SEED",
+      "number": 5,
+      "title": "돌아온 제비의 선물",
+      "type": "activity",
+      "estimatedDurationMs": 24000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/swallow-care.webp",
+      "imageAlt": "건강해진 제비와 흥부 가족이 햇살 가득한 마당에서 서로를 바라보는 모습",
+      "imagePosition": "center 35%",
+      "motion": "drift-left",
+      "eyebrow": "톡, 작은 선물",
+      "captions": [
+        "흥부 가족은 깨끗한 천을 가까이 두고 제비가 편히 쉬도록 도왔어요.",
+        "계절이 지나 돌아온 제비는 마당에 박씨 하나를 톡 떨어뜨렸답니다."
+      ],
+      "soundCaption": "[박씨가 흙 위에 톡 떨어져요]",
+      "music": "wonder",
+      "lessonTags": ["고마움", "돌봄"],
+      "nextSceneId": "HB05_GROW",
+      "interaction": {
+        "kind": "tap",
+        "prompt": "박씨를 눌러 흙에 심어 주세요.",
+        "targetLabel": "박씨 심기",
+        "targetEmoji": "🌱",
+        "tapsRequired": 1,
+        "feedback": "작은 씨앗이 포근한 흙 속에 자리를 잡았어요."
+      }
+    },
+    {
+      "id": "HB05_GROW",
+      "number": 6,
+      "title": "기다리는 돌봄",
+      "type": "activity",
+      "estimatedDurationMs": 26000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/swallow-care.webp",
+      "imageAlt": "봄꽃이 핀 흥부네 마당과 처마 아래 제비 둥지",
+      "imagePosition": "left 42%",
+      "motion": "drift-right",
+      "eyebrow": "서두르지 않는 마음",
+      "captions": [
+        "흥부 가족은 박씨를 심고 매일 조금씩 물을 주었어요.",
+        "빨리 자라라고 잡아당기지 않고, 햇빛과 시간을 기다렸지요."
+      ],
+      "soundCaption": "[물방울이 흙에 또르르 스며들어요]",
+      "music": "care",
+      "lessonTags": ["기다림", "꾸준함"],
+      "nextSceneId": "HB06_GOOD_GOURDS",
+      "interaction": {
+        "kind": "tap",
+        "prompt": "물방울을 세 번 눌러 박넝쿨을 돌봐 주세요.",
+        "targetLabel": "조금씩 물 주기",
+        "targetEmoji": "💧",
+        "tapsRequired": 3,
+        "feedback": "작은 돌봄이 차곡차곡 쌓여 지붕 가득 박넝쿨이 자랐어요."
+      }
+    },
+    {
+      "id": "HB06_GOOD_GOURDS",
+      "number": 7,
+      "title": "흥부네 열린 박",
+      "type": "choice",
+      "estimatedDurationMs": 32000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/gourd-gifts.webp",
+      "imageAlt": "흥부 가족이 열린 박 속의 쌀과 이불, 씨앗과 생활 도구를 보고 이웃과 나눌 바구니를 준비하는 모습",
+      "imagePosition": "center 54%",
+      "motion": "push",
+      "eyebrow": "세 번째 마음 선택",
+      "captions": [
+        "지붕 위로 커다란 박 세 통이 열렸어요.",
+        "박 속에는 쌀과 따뜻한 이불, 집을 고칠 도구와 함께 심을 씨앗이 가득했지요.",
+        "흥부 가족이 쓰고도 씨앗과 음식이 넉넉히 남았어요."
+      ],
+      "soundCaption": "[박이 부드럽게 퐁 열리고 작은 차임이 울려요]",
+      "music": "wonder",
+      "lessonTags": ["공평하게 나누기", "이웃"],
+      "nextSceneId": "HB07_RUMOR",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "필요한 만큼 쓰고 남은 것은 어떻게 할까요?",
+        "retryLabel": "다시 생각해 보기",
+        "continueLabel": "이야기 계속 보기",
+        "options": [
+          {
+            "id": "HB06_HIDE",
+            "label": "창고에 모두 감춰요",
+            "description": "혹시 모르니 아무도 모르게 쌓아 둬요.",
+            "emoji": "📦",
+            "guidance": "reflect",
+            "feedback": "앞날을 준비하고 싶었군요. 가족에게 필요한 만큼 남겨 두고, 도움이 필요한 이웃과 나눌 수도 있어요.",
+            "seed": "필요 살피기"
+          },
+          {
+            "id": "HB06_SHARE",
+            "label": "이웃과 함께 나눠요",
+            "description": "필요를 물어보고 씨앗도 함께 심어요.",
+            "emoji": "🧺",
+            "guidance": "preferred",
+            "feedback": "모두의 필요를 살피는 방법을 골랐네요. 씨앗을 나누면 다음 봄의 기쁨도 함께 커질 거예요.",
+            "seed": "공평하게 나누기"
+          },
+          {
+            "id": "HB06_BOAST",
+            "label": "보물을 크게 자랑해요",
+            "description": "우리 집에만 많다고 모두에게 말해요.",
+            "emoji": "📢",
+            "guidance": "reflect",
+            "feedback": "기쁜 마음을 말하고 싶을 수 있어요. 하지만 자랑보다 함께 누릴 방법을 찾으면 기쁨이 더 오래가요.",
+            "seed": "함께 누리기"
+          }
+        ]
+      }
+    },
+    {
+      "id": "HB07_RUMOR",
+      "number": 8,
+      "title": "놀부가 놓친 이야기",
+      "type": "choice",
+      "estimatedDurationMs": 28000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/nolbu-cleanup.webp",
+      "imageAlt": "열린 박과 여러 생활 물건 사이에서 놀부가 턱을 괴고 생각하는 모습",
+      "imagePosition": "center 40%",
+      "motion": "drift-left",
+      "eyebrow": "결과보다 먼저 있었던 것",
+      "captions": [
+        "마을에 웃음이 퍼지자 놀부도 흥부의 박 이야기를 들었어요.",
+        "흥부는 제비를 살핀 일부터 씨앗을 돌본 일까지 차근차근 말했지요.",
+        "그런데 놀부의 귀에는 ‘보물’이라는 결과만 크게 들렸어요."
+      ],
+      "music": "comic",
+      "lessonTags": ["과정 보기", "경청"],
+      "nextSceneId": "HB08_SELFISH_HELP",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "놀부가 이야기에서 놓친 것은 무엇일까요?",
+        "retryLabel": "다시 살펴보기",
+        "continueLabel": "이야기 계속 보기",
+        "options": [
+          {
+            "id": "HB07_CARE",
+            "label": "제비를 걱정한 마음",
+            "description": "보물보다 먼저 있었던 마음이에요.",
+            "emoji": "🐦",
+            "guidance": "preferred",
+            "feedback": "맞아요. 보물보다 먼저 있었던 것은 작은 생명이 필요한 것을 살핀 마음이었어요.",
+            "seed": "과정 살피기"
+          },
+          {
+            "id": "HB07_SIZE",
+            "label": "박의 정확한 크기",
+            "description": "얼마나 큰 박이었는지 생각해요.",
+            "emoji": "📏",
+            "guidance": "reflect",
+            "feedback": "박의 크기도 궁금하지만, 박이 오기 전에 어떤 마음과 행동이 있었는지 다시 살펴봐요.",
+            "seed": "과정 살피기"
+          },
+          {
+            "id": "HB07_SOUND",
+            "label": "박을 여는 소리",
+            "description": "어떤 소리가 났는지만 생각해요.",
+            "emoji": "👂",
+            "guidance": "reflect",
+            "feedback": "소리도 기억에 남지요. 하지만 이야기의 시작은 흥부가 제비의 필요를 살핀 일이었어요.",
+            "seed": "경청하기"
+          }
+        ]
+      }
+    },
+    {
+      "id": "HB08_SELFISH_HELP",
+      "number": 9,
+      "title": "보상부터 생각한 놀부",
+      "type": "choice",
+      "estimatedDurationMs": 28000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/nolbu-cleanup.webp",
+      "imageAlt": "놀부가 마당에서 무엇을 먼저 해야 할지 곰곰이 생각하는 모습",
+      "imagePosition": "center 52%",
+      "motion": "push",
+      "eyebrow": "네 번째 마음 선택",
+      "captions": [
+        "놀부는 박씨를 받고 싶어 제비만 기다렸어요.",
+        "마침 덩굴 끈에 발이 걸린 제비를 보았지만, 제비의 마음보다 박씨부터 떠올렸지요."
+      ],
+      "soundCaption": "[제비가 날개를 살짝 퍼덕여요]",
+      "music": "comic",
+      "lessonTags": ["상대 먼저 살피기", "진심"],
+      "nextSceneId": "HB09_NOISY_GOURDS",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "놀부가 제비에게 먼저 할 말은 무엇일까요?",
+        "retryLabel": "다시 생각해 보기",
+        "continueLabel": "이야기 계속 보기",
+        "options": [
+          {
+            "id": "HB08_SAFE",
+            "label": "괜찮니? 천천히 풀어 줄게.",
+            "description": "제비의 안전부터 물어요.",
+            "emoji": "🤲",
+            "guidance": "preferred",
+            "feedback": "제비의 안전과 마음부터 살폈네요. 도움은 상대에게 무엇이 필요한지 보는 데서 시작해요.",
+            "seed": "상대 먼저 살피기"
+          },
+          {
+            "id": "HB08_TRADE",
+            "label": "도와줄 테니 박씨 꼭 줘!",
+            "description": "도움과 선물을 맞바꾸자고 말해요.",
+            "emoji": "🎁",
+            "guidance": "reflect",
+            "feedback": "도움을 거래처럼 만들면 고마움보다 부담이 커질 수 있어요. 박씨보다 제비의 안전을 먼저 살펴봐요.",
+            "seed": "진심으로 돕기"
+          },
+          {
+            "id": "HB08_IGNORE",
+            "label": "내가 왜 도와야 해?",
+            "description": "귀찮으니 그냥 지나가요.",
+            "emoji": "↩️",
+            "guidance": "reflect",
+            "feedback": "귀찮게 느껴질 수도 있어요. 그래도 작은 도움은 상대에게 큰 안심이 될 수 있지요.",
+            "seed": "작은 도움"
+          }
+        ]
+      }
+    },
+    {
+      "id": "HB09_NOISY_GOURDS",
+      "number": 10,
+      "title": "놀부네 박이 보여 준 것",
+      "type": "choice",
+      "estimatedDurationMs": 36000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/nolbu-cleanup.webp",
+      "imageAlt": "놀부가 이불과 바구니, 볏짚을 정리하며 친근한 작은 정리 도우미들과 방법을 의논하는 모습",
+      "imagePosition": "center 58%",
+      "motion": "drift-right",
+      "eyebrow": "벌이 아니라 돌아볼 기회",
+      "captions": [
+        "놀부의 박도 크게 열렸어요.",
+        "박에서는 혼자 쌓아 둔 이불과 바구니, 돌려주어야 할 곡식이 마당으로 데굴데굴 나왔지요.",
+        "아무도 다치지 않았지만, 놀부는 혼자 가지려 했던 마음이 큰 정리거리를 만들었다는 걸 보았어요."
+      ],
+      "soundCaption": "[바구니가 데굴, 빗자루가 사각사각 움직여요]",
+      "music": "comic",
+      "lessonTags": ["책임지기", "돌려주기"],
+      "nextSceneId": "HB10_APOLOGY",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "놀부는 이제 무엇을 하면 좋을까요?",
+        "retryLabel": "다시 생각해 보기",
+        "continueLabel": "이야기 계속 보기",
+        "options": [
+          {
+            "id": "HB09_BLAME",
+            "label": "다른 사람 탓을 해요",
+            "description": "이웃이 어질렀다고 말해요.",
+            "emoji": "👉",
+            "guidance": "reflect",
+            "feedback": "당황하면 다른 사람 탓을 하고 싶을 수 있어요. 하지만 내가 고칠 일을 먼저 보아야 다시 정리할 수 있어요.",
+            "seed": "내 몫 책임지기"
+          },
+          {
+            "id": "HB09_OWN",
+            "label": "잘못을 인정하고 부탁해요",
+            "description": "내가 고칠 일을 말하고 도움을 청해요.",
+            "emoji": "🧹",
+            "guidance": "preferred",
+            "feedback": "잘못을 인정하는 데는 용기가 필요해요. 이제 말뿐 아니라 정리하고 돌려주는 행동으로 보여 줄 차례예요.",
+            "seed": "책임지기"
+          },
+          {
+            "id": "HB09_HIDE",
+            "label": "문을 닫고 모른 척해요",
+            "description": "정리할 일을 다음으로 미뤄요.",
+            "emoji": "🚪",
+            "guidance": "reflect",
+            "feedback": "숨고 싶은 마음이 들었군요. 하지만 미룰수록 정리할 일과 미안한 마음이 더 커질 수 있어요.",
+            "seed": "용기 내기"
+          }
+        ]
+      }
+    },
+    {
+      "id": "HB10_APOLOGY",
+      "number": 11,
+      "title": "사과와 약속",
+      "type": "choice",
+      "estimatedDurationMs": 34000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/reconciliation.webp",
+      "imageAlt": "흥부와 놀부가 같은 높이에 앉아 곡식 바구니와 약속 두루마리를 사이에 두고 이야기하는 모습",
+      "imagePosition": "center 52%",
+      "motion": "push",
+      "eyebrow": "다섯 번째 마음 선택",
+      "captions": [
+        "놀부는 흥부를 찾아가 자기 욕심 때문에 빼앗고 마음 아프게 한 일을 사과했어요.",
+        "흥부는 사과를 들었지만, 아무 일도 없던 것처럼 서두르지 않았지요.",
+        "두 사람은 빼앗은 몫을 돌려주고 앞으로 지킬 약속을 이야기했어요."
+      ],
+      "music": "repair",
+      "lessonTags": ["사과", "경계", "행동으로 고치기"],
+      "nextSceneId": "HB11_REPAIR",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "다시 잘 지내려면 무엇이 필요할까요?",
+        "retryLabel": "다시 생각해 보기",
+        "continueLabel": "이야기 계속 보기",
+        "options": [
+          {
+            "id": "HB10_FORGET",
+            "label": "아무 일 없던 척 웃어요",
+            "description": "아픈 일은 말하지 않고 바로 넘어가요.",
+            "emoji": "🙂",
+            "guidance": "reflect",
+            "feedback": "다시 웃고 싶은 마음은 따뜻해요. 하지만 용서는 서두르지 않아도 돼요. 아팠던 일을 말하고 바뀔 약속을 정할 수 있어요.",
+            "seed": "천천히 회복하기"
+          },
+          {
+            "id": "HB10_PROMISE",
+            "label": "돌려줄 일과 약속을 정해요",
+            "description": "사과를 행동으로 이어 가요.",
+            "emoji": "🤝",
+            "guidance": "preferred",
+            "feedback": "사과와 함께 책임질 행동을 정했네요. 관계를 다시 만드는 데 꼭 필요한 과정이에요.",
+            "seed": "사과하고 고치기"
+          },
+          {
+            "id": "HB10_REVENGE",
+            "label": "똑같이 외롭게 만들어요",
+            "description": "받은 아픔을 그대로 돌려줘요.",
+            "emoji": "↔️",
+            "guidance": "reflect",
+            "feedback": "화나는 것은 자연스러워요. 하지만 같은 아픔을 돌려주면 상처가 이어질 수 있어요. 안전한 거리를 두고 공평한 약속을 요구할 수 있어요.",
+            "seed": "상처 멈추기"
+          }
+        ]
+      }
+    },
+    {
+      "id": "HB11_REPAIR",
+      "number": 12,
+      "title": "함께 고치는 마을",
+      "type": "activity",
+      "estimatedDurationMs": 26000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/reconciliation.webp",
+      "imageAlt": "두 가족과 이웃들이 곡식을 나누고 지붕을 함께 고치는 평화로운 저녁 마을",
+      "imagePosition": "center 48%",
+      "motion": "drift-left",
+      "eyebrow": "말을 행동으로",
+      "captions": [
+        "놀부는 약속한 몫을 돌려주고, 흩어진 물건을 이웃과 함께 정리했어요.",
+        "흥부 가족의 집도 함께 고치며 말보다 행동으로 마음을 보여 주었지요."
+      ],
+      "soundCaption": "[망치가 톡톡, 바구니가 사뿐 놓여요]",
+      "music": "repair",
+      "lessonTags": ["회복", "협력"],
+      "nextSceneId": "HB12_END",
+      "interaction": {
+        "kind": "tap",
+        "prompt": "바구니를 세 번 눌러 정리를 도와주세요.",
+        "targetLabel": "함께 정리하기",
+        "targetEmoji": "🧺",
+        "tapsRequired": 3,
+        "feedback": "바구니가 제자리를 찾을 때마다 마을의 웃음도 조금씩 돌아왔어요."
+      }
+    },
+    {
+      "id": "HB12_END",
+      "number": 13,
+      "title": "우리가 키울 마음",
+      "type": "ending",
+      "estimatedDurationMs": 32000,
+      "checkpoint": true,
+      "image": "/episodes/heungbu-nolbu/images/reconciliation.webp",
+      "imageAlt": "박덩굴과 제비 아래에서 두 가족과 이웃이 함께 일하고 흥부와 놀부가 다정히 이야기하는 석양 마을",
+      "imagePosition": "center 42%",
+      "motion": "drift-right",
+      "eyebrow": "우리 이야기의 마지막 선택",
+      "captions": [
+        "흥부의 친절은 작은 생명을 살렸고, 놀부의 욕심은 자신을 외롭게 했어요.",
+        "하지만 잘못을 알아차린 뒤에는 사과하고 행동으로 고칠 수 있었답니다.",
+        "나눔은 모두 내주는 일이 아니라, 서로의 필요를 살피는 마음이에요."
+      ],
+      "soundCaption": "[제비가 저녁 하늘을 한 바퀴 돌아요]",
+      "music": "repair",
+      "lessonTags": ["친절", "나눔", "회복"],
+      "interaction": {
+        "kind": "reflection",
+        "prompt": "오늘 가장 마음에 남은 씨앗은 무엇인가요?",
+        "retryLabel": "다른 씨앗 보기",
+        "continueLabel": "내 마음밭에 심기",
+        "options": [
+          {
+            "id": "HB12_SAFE_HELP",
+            "label": "안전하게 도와주기",
+            "description": "상대에게 필요한 방법부터 살펴요.",
+            "emoji": "🐦",
+            "guidance": "neutral",
+            "feedback": "서두르지 않고 안전한 방법을 찾는 따뜻한 씨앗을 골랐어요.",
+            "seed": "안전하게 도와주기"
+          },
+          {
+            "id": "HB12_FAIR_SHARE",
+            "label": "공평하게 나누기",
+            "description": "서로의 필요를 묻고 함께 누려요.",
+            "emoji": "🌾",
+            "guidance": "neutral",
+            "feedback": "나와 다른 사람의 필요를 함께 살피는 넉넉한 씨앗을 골랐어요.",
+            "seed": "공평하게 나누기"
+          },
+          {
+            "id": "HB12_REPAIR",
+            "label": "미안하다고 말하고 고치기",
+            "description": "사과를 책임 있는 행동으로 이어 가요.",
+            "emoji": "🌱",
+            "guidance": "neutral",
+            "feedback": "잘못한 뒤에도 다시 고칠 수 있다는 용기 있는 씨앗을 골랐어요.",
+            "seed": "사과하고 고치기"
+          }
+        ]
+      }
+    }
+  ]
+}

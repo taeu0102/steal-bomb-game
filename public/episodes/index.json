@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "1.0.0",
+  "episodes": [
+    {
+      "id": "heungbu-nolbu",
+      "dataPath": "/episodes/heungbu-nolbu/episode.json",
+      "title": "흥부와 놀부",
+      "subtitle": "마음을 나눌수록 커지는 기쁨",
+      "cover": "/episodes/heungbu-nolbu/images/cover.webp",
+      "ageRange": "5~9세",
+      "estimatedMinutes": 9,
+      "summary": "제비를 돌본 흥부와 결과만 따라 하려던 놀부의 이야기를 함께 선택해 보세요.",
+      "featured": true,
+      "enabled": true
+    }
+  ]
+}
