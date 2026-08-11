@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:hub": "tsc -b && vite build --base=/heungbu-nolbu/ --outDir .hub-dist --emptyOutDir",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc -b --pretty false",

@@ -738,9 +738,14 @@ export default function App() {
         <main className="library-screen">
           <header className="library-header">
             <Brand />
-            <button className="parent-link" type="button" onClick={() => setShowParentGuide(true)}>
-              <span aria-hidden="true">◌</span> 부모 가이드
-            </button>
+            <div className="library-header__actions">
+              <a className="hub-link" href="/">
+                AI 작업물 허브
+              </a>
+              <button className="parent-link" type="button" onClick={() => setShowParentGuide(true)}>
+                <span aria-hidden="true">◌</span> 부모 가이드
+              </button>
+            </div>
           </header>
 
           <section className="library-hero">

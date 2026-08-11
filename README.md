@@ -42,4 +42,13 @@ npm run qa
 
 ## 배포
 
-Vite 정적 빌드 결과물은 `dist/`에 생성되며 Vercel에서 바로 배포할 수 있습니다.
+단독 배포용 결과물은 `npm run build`로 `dist/`에 생성합니다.
+
+AI 작업물 허브 하위 경로용 결과물은 다음 명령으로 `.hub-dist/`에 생성합니다.
+
+```bash
+npm run build:hub
+```
+
+- AI 작업물 허브: https://steal-bomb-game.vercel.app/
+- 흥부와 놀부: https://steal-bomb-game.vercel.app/heungbu-nolbu/

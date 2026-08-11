@@ -231,10 +231,18 @@ p {
   justify-content: space-between;
 }
 
-.parent-link {
+.library-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.parent-link,
+.hub-link {
   display: inline-flex;
   min-height: 48px;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 0 18px;
   border: 1px solid rgba(38, 51, 45, 0.14);
@@ -242,6 +250,11 @@ p {
   background: rgba(255, 253, 248, 0.58);
   color: var(--ink);
   font-weight: 780;
+}
+
+.hub-link {
+  background: var(--ink);
+  color: #fffdf8;
 }
 
 .parent-link span {
@@ -1704,6 +1717,17 @@ p {
   .library-header .parent-link {
     padding-inline: 14px;
     font-size: 0.8rem;
+  }
+
+  .library-header__actions {
+    gap: 6px;
+  }
+
+  .library-header .hub-link,
+  .library-header .parent-link {
+    min-height: 44px;
+    padding-inline: 10px;
+    font-size: 0.74rem;
   }
 
   .library-hero {
