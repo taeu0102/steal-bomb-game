@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Steal & Bomb 멀티플레이</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">1인 AI 연습 · 3~8인 실시간 대전</p>
+          <h1>Steal & Bomb</h1>
+        </div>
+        <div class="setup">
+          <a class="home-link" href="/">허브</a>
+          <div class="mode-switch" aria-label="플레이 모드">
+            <button id="soloModeBtn" class="active" type="button">1인</button>
+            <button id="multiModeBtn" type="button">다인</button>
+          </div>
+          <label for="playerCount">최대 인원</label>
+          <select id="playerCount" aria-label="최대 인원">
+            <option value="3" selected>3명</option>
+            <option value="4">4명</option>
+            <option value="5">5명</option>
+            <option value="6">6명</option>
+            <option value="7">7명</option>
+            <option value="8">8명</option>
+          </select>
+          <button id="soundToggle" class="sound-toggle" type="button" aria-label="사운드 켜기">사운드</button>
+          <button id="newGameBtn" type="button">AI 연습 시작</button>
+        </div>
+      </header>
+
+      <section id="lobbyPanel" class="lobby-panel card-panel">
+        <div class="lobby-copy">
+          <p class="phase-label">멀티플레이 로비</p>
+          <h2 id="lobbyTitle">1인 연습 또는 다인 대전을 선택하세요</h2>
+          <p id="lobbyHint">1인 모드는 AI 봇이 빈자리를 채워 바로 연습할 수 있습니다.</p>
+        </div>
+        <form id="joinForm" class="join-form">
+          <label>
+            이름
+            <input id="playerName" name="playerName" maxlength="16" placeholder="플레이어 이름" required />
+          </label>
+          <label>
+            방 코드
+            <input id="roomCodeInput" name="roomCode" maxlength="8" placeholder="예: A1B2C3" />
+          </label>
+          <button id="joinRoomBtn" type="submit">방 참가</button>
+        </form>
+        <div class="room-tools">
+          <span id="roomCodeBadge">방 코드 없음</span>
+          <button id="copyRoomBtn" type="button" disabled>초대 링크 복사</button>
+          <button id="startRoomBtn" type="button" disabled>게임 시작</button>
+        </div>
+      </section>
+
+      <main class="layout">
+        <aside class="guide card-panel" aria-label="실시간 족보">
+          <div class="panel-title">
+            <span>실시간 족보</span>
+            <small id="jokboHint">내 패 기준</small>
+          </div>
+          <div id="handInsight" class="hand-insight">
+            <b>방 참가 필요</b>
+            <span>게임이 시작되면 현재 족보와 위험도가 표시됩니다.</span>
+          </div>
+          <div id="jokboList" class="jokbo-list"></div>
+          <details class="rules" open>
+            <summary>진행 규칙</summary>
+            <ol>
+              <li>1인 모드는 AI 봇이 참여하고, 다인 모드는 3명 이상 모이면 시작합니다.</li>
+              <li>처음 받은 3장 중 1장을 공개패로 선택합니다.</li>
+              <li>내 차례에는 덱에서 1장을 뽑고 공개패와 교체할지 결정합니다.</li>
+              <li>폭탄은 총 5장이 등장하며, 뽑은 폭탄은 공개패로 쓰지 않고 버릴 수 있습니다.</li>
+              <li>다음 플레이어가 직전 플레이어의 숨은 패 1장을 가져갑니다.</li>
+              <li>가져간 뒤 자기 숨은 패 1장을 돌려줍니다.</li>
+              <li>폭탄 1~2장은 최하위 위험이지만, 3장 이상 모으면 최종 1위가 됩니다.</li>
+              <li>모든 플레이어가 3턴을 마치면 최종 순위가 공개됩니다.</li>
+            </ol>
+          </details>
+        </aside>
+
+        <section class="board card-panel" aria-label="게임판">
+          <div class="board-head">
+            <div>
+              <p id="phaseLabel" class="phase-label">로비</p>
+              <h2 id="turnTitle">참가자를 기다리는 중입니다</h2>
+            </div>
+            <div class="board-status">
+              <div id="actionTimer" class="timer-card idle">
+                <div class="timer-face">
+                  <span id="timerValue">--</span>
+                  <small>초</small>
+                </div>
+                <div class="timer-copy">
+                  <b id="timerLabel">대기 중</b>
+                  <span>선택 시간 15초</span>
+                  <div class="timer-track"><i id="timerBar"></i></div>
+                </div>
+              </div>
+              <div class="round-pill" id="roundPill">0턴 진행</div>
+              <div class="stake-pill" id="stakePill">판돈 0점</div>
+              <div class="risk-pill idle" id="riskPill">위험 대기</div>
+              <div class="last-turn-pill" id="lastTurnPill" hidden>마지막 턴</div>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <div class="table">
+              <div class="table-marquee" aria-hidden="true">
+                <span>STEAL & BOMB</span>
+                <strong id="tableJackpot">ROOM JACKPOT</strong>
+                <em>15 SEC</em>
+              </div>
+              <div class="table-rail rail-top" aria-hidden="true"></div>
+              <div class="table-rail rail-bottom" aria-hidden="true"></div>
+              <div class="table-corner corner-left" aria-hidden="true"></div>
+              <div class="table-corner corner-right" aria-hidden="true"></div>
+              <div class="table-center">
+                <div class="deck-zone">
+                  <div class="deck-card">덱</div>
+                  <span id="deckCount">0장</span>
+                </div>
+                <div class="bomb-token" aria-hidden="true">
+                  <span></span>
+                </div>
+                <div class="discard-zone">
+                  <div id="discardCard" class="small-card muted">없음</div>
+                  <span>최근 버림패</span>
+                </div>
+              </div>
+              <div id="seatLayer" class="seat-layer"></div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="info card-panel" aria-label="상태 정보">
+          <div class="panel-title">
+            <span>플레이어</span>
+            <small id="currentHint">-</small>
+          </div>
+          <div id="playerStatus" class="player-status"></div>
+
+          <div class="panel-title log-title">
+            <span>최근 로그</span>
+            <small>실시간</small>
+          </div>
+          <ul id="logList" class="log-list"></ul>
+        </aside>
+      </main>
+
+      <section class="hand-panel">
+        <div class="hand-copy">
+          <span class="label">내 패</span>
+          <strong id="myBest">대기 중</strong>
+          <small id="myTip">방에 참가하면 내 카드가 표시됩니다.</small>
+        </div>
+        <div id="myHand" class="my-hand" aria-label="내 카드"></div>
+        <div class="actions">
+          <button id="primaryAction" type="button" disabled>대기</button>
+          <button id="fastAction" class="secondary" type="button">새로고침</button>
+        </div>
+      </section>
+    </div>
+
+    <div id="quoteToast" class="quote-toast" aria-live="polite"></div>
+
+    <div id="choiceModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div>
+            <p id="modalKicker" class="phase-label">선택</p>
+            <h2 id="modalTitle">카드를 선택하세요</h2>
+          </div>
+          <div id="modalTimer" class="modal-timer">
+            <span>15</span>
+            <small>초</small>
+          </div>
+          <button id="closeModalBtn" class="icon-btn" type="button" aria-label="닫기">×</button>
+        </div>
+        <p id="modalCopy" class="modal-copy"></p>
+        <div id="modalCards" class="choice-cards"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./public-config.js"></script>
+    <script src="./game.js"></script>
+  </body>
+</html>

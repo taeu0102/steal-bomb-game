@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI 작업물 허브</title>
+    <meta name="app-id" content="ai-work-hub" />
+    <link rel="stylesheet" href="./portal.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="AI 작업물 허브 홈">
+          <span class="brand-mark">AI</span>
+          <span>
+            <strong>AI 작업물 허브</strong>
+            <small>스터디 결과물과 실험 프로젝트</small>
+          </span>
+        </a>
+
+        <nav class="nav-links" aria-label="주요 이동">
+          <a href="#works">작업물</a>
+          <a href="#upload">업로드</a>
+          <a href="/ghost-forge/">귀화로 플레이</a>
+        </nav>
+      </header>
+
+      <main>
+        <section class="hero" aria-labelledby="heroTitle">
+          <div class="hero-copy">
+            <p class="eyebrow">AI Study Archive</p>
+            <h1 id="heroTitle">AI로 만든 결과물을 한 곳에 모아두는 메인 페이지</h1>
+            <p>
+              문서, 게임, 자동화 실험, 프롬프트 샘플을 등록하고 바로 열어볼 수 있는
+              작업물 목록입니다.
+            </p>
+            <div class="hero-actions">
+              <a class="primary-link" href="#upload">작업물 등록</a>
+              <a class="secondary-link" href="/ghost-forge/">귀화로 플레이</a>
+            </div>
+          </div>
+
+          <a class="featured-card" href="/ghost-forge/" aria-label="귀화로 게임 열기">
+            <img src="./ghost-forge/assets/forge-room.webp" alt="먹빛 퇴마 대장간과 화로" />
+            <div>
+              <span class="status-chip">등록됨</span>
+              <h2>귀화로: 악마의 계약</h2>
+              <p>한 자루의 악마검을 네 번의 단조에 걸쳐 +100까지 키우고, 강화 수치마다 달라지는 복수 실패 결말을 모으는 게임입니다.</p>
+            </div>
+          </a>
+        </section>
+
+        <section class="stats-grid" aria-label="작업물 현황">
+          <article>
+            <span>전체 작업물</span>
+            <strong id="totalCount">0</strong>
+          </article>
+          <article>
+            <span>게임/인터랙션</span>
+            <strong id="interactiveCount">0</strong>
+          </article>
+          <article>
+            <span>이번 달 등록</span>
+            <strong id="monthCount">0</strong>
+          </article>
+        </section>
+
+        <section class="section-block update-block" aria-labelledby="latestUpdateTitle">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Latest Update</p>
+              <h2 id="latestUpdateTitle">Steal & Bomb 룰 업데이트</h2>
+            </div>
+            <a class="secondary-link" href="/steal-bomb-game/">게임에서 확인</a>
+          </div>
+          <div class="update-grid">
+            <article>
+              <span>폭탄 처리</span>
+              <strong>뽑은 폭탄은 버릴 수 있습니다</strong>
+              <p>폭탄은 총 5장이 등장하며, 덱에서 뽑은 폭탄은 공개패로 쓰지 않고 바로 버릴 수 있습니다.</p>
+            </article>
+            <article>
+              <span>역전 조건</span>
+              <strong>폭탄 3장을 모으면 최종 승리합니다</strong>
+              <p>폭탄 1~2장은 최하위 위험이지만, 최종 보유 폭탄이 3장 이상이면 족보와 관계없이 1위가 됩니다.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="works" class="section-block">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Works</p>
+              <h2>AI 작업물 목록</h2>
+            </div>
+            <label class="search-box">
+              <span>검색</span>
+              <input id="searchInput" type="search" placeholder="제목, 유형, 설명 검색" />
+            </label>
+          </div>
+
+          <div id="workGrid" class="work-grid" aria-live="polite"></div>
+        </section>
+
+        <section id="upload" class="section-block upload-block">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Upload</p>
+              <h2>새 작업물 등록</h2>
+            </div>
+            <button id="resetButton" class="ghost-button" type="button">샘플 복원</button>
+          </div>
+
+          <form id="uploadForm" class="upload-form">
+            <label>
+              제목
+              <input name="title" required placeholder="예: 회의록 자동 요약 실험" />
+            </label>
+            <label>
+              유형
+              <select name="type" required>
+                <option value="게임">게임</option>
+                <option value="문서">문서</option>
+                <option value="프롬프트">프롬프트</option>
+                <option value="자동화">자동화</option>
+                <option value="데모">데모</option>
+              </select>
+            </label>
+            <label>
+              상태
+              <select name="status" required>
+                <option value="공개">공개</option>
+                <option value="초안">초안</option>
+                <option value="검토중">검토중</option>
+              </select>
+            </label>
+            <label>
+              링크
+              <input name="url" type="url" placeholder="https://..." />
+            </label>
+            <label class="span-2">
+              설명
+              <textarea name="description" rows="4" placeholder="무엇을 만든 작업물인지 간단히 적어주세요."></textarea>
+            </label>
+            <label class="span-2">
+              파일 선택
+              <input name="file" type="file" />
+            </label>
+            <button class="primary-button span-2" type="submit">작업물 추가</button>
+          </form>
+        </section>
+      </main>
+    </div>
+
+    <script src="./portal.js"></script>
+  </body>
+</html>

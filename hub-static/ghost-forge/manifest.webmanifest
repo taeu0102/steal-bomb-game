@@ -1,0 +1,20 @@
+{
+  "name": "귀화로: 악마의 계약",
+  "short_name": "귀화로",
+  "description": "부모의 원한을 품은 무영이 악마의 검을 +100까지 강화해 세상에 복수하는 확률 단조 게임",
+  "lang": "ko-KR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070a0f",
+  "theme_color": "#070a0f",
+  "icons": [
+    {
+      "src": "./assets/icon.svg?v=6.0.1",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

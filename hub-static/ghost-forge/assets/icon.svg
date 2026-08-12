@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="귀화로 불꽃과 퇴마검 문장">
+  <rect width="512" height="512" rx="112" fill="#070a0f"/>
+  <circle cx="256" cy="256" r="176" fill="#111821" stroke="#d5b06a" stroke-width="12"/>
+  <path d="M275 82c20 76-44 89-19 150 17-21 37-46 42-80 56 52 91 108 84 166-8 70-60 115-126 115S137 387 130 319c-6-59 33-113 102-173-4 55 7 80 43 108 12-57 0-104 0-172Z" fill="#e36a38"/>
+  <path d="m266 119 42 41-29 29 22 160-45 70-45-70 22-160-29-29 42-41 10 17 10-17Z" fill="#f2e5c8" stroke="#d5b06a" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M202 210h108M223 247h66" stroke="#070a0f" stroke-width="16" stroke-linecap="square"/>
+  <circle cx="256" cy="366" r="18" fill="#65b9a4" stroke="#070a0f" stroke-width="8"/>
+</svg>

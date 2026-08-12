@@ -1,0 +1,4 @@
+﻿Card assets from game-prototypes/hanafuda, assets/cards.
+Repository: https://github.com/game-prototypes/hanafuda
+License: GPL-3.0 for repository; card images noted in README as CC BY-SA 4.0 by Louie Mantia, sourced from Wikipedia/Hanafuda.
+Original graphics: Louie Mantia Hanafuda deck, CC BY-SA 4.0.

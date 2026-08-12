@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio City</title>
+    <link rel="stylesheet" href="./assets/styles.css?v=20260811-seoul-parcel-fit" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="../" aria-label="AI Study Portal로 이동">
+          <span class="brand-mark"><i data-lucide="building-2" aria-hidden="true"></i></span>
+          <span>
+            <strong>Portfolio City</strong>
+            <small>10종목 투자 도시 시뮬레이터</small>
+          </span>
+        </a>
+
+        <div class="market-pill" aria-live="polite">
+          <span id="marketName">AI 반도체 강세</span>
+          <strong id="marketPulse">도시 생산성 +1.42%</strong>
+        </div>
+
+        <div class="topbar-actions" aria-label="도시 운영 도구">
+          <button class="icon-button" type="button" data-preset="balanced" title="균형형" aria-label="균형형 스쿼드">
+            <i data-lucide="scale" aria-hidden="true"></i>
+          </button>
+          <button class="icon-button" type="button" data-preset="growth" title="성장형" aria-label="성장형 스쿼드">
+            <i data-lucide="rocket" aria-hidden="true"></i>
+          </button>
+          <button class="icon-button" type="button" data-preset="defense" title="방어형" aria-label="방어형 스쿼드">
+            <i data-lucide="shield" aria-hidden="true"></i>
+          </button>
+          <button class="icon-button" id="soundToggle" type="button" title="사운드" aria-label="사운드 끄기">
+            <i data-lucide="volume-2" aria-hidden="true"></i>
+          </button>
+          <button class="primary-button" id="nextMarketDay" type="button">
+            <i data-lucide="calendar-days" aria-hidden="true"></i>
+            다음 시장일
+          </button>
+        </div>
+      </header>
+
+      <main class="dashboard">
+        <aside class="side-panel allocation-panel" aria-label="종목 검색과 스쿼드 구성">
+          <section class="capital-summary">
+            <div>
+              <span class="eyebrow">CITY HALL</span>
+              <h1 id="cityLevel">시청 Lv.2</h1>
+              <p id="cityStatus">스쿼드 구성 안정</p>
+            </div>
+            <div class="capital-meter" aria-label="시드머니 사용률">
+              <svg viewBox="0 0 120 120" role="img" aria-label="투자금 사용률">
+                <circle cx="60" cy="60" r="48"></circle>
+                <circle id="capitalArc" cx="60" cy="60" r="48"></circle>
+              </svg>
+              <strong id="investedRate">100%</strong>
+            </div>
+          </section>
+
+          <section class="stat-grid" aria-label="도시 자금 요약">
+            <div>
+              <span>시드머니</span>
+              <strong id="seedMoney">10,000만원</strong>
+            </div>
+            <div>
+              <span>시장 투자금</span>
+              <strong id="investedMoney">7,000만원</strong>
+            </div>
+            <div>
+              <span>안정형 자산</span>
+              <strong id="cashMoney">3,000만원</strong>
+            </div>
+            <div>
+              <span>오늘 수익</span>
+              <strong id="dailyPnl">+142만원</strong>
+            </div>
+          </section>
+
+          <section class="rule-section" aria-label="10종목 스쿼드 규칙">
+            <div class="section-title">
+              <span>스쿼드 규칙</span>
+              <small id="ruleSummary">룰 충족</small>
+            </div>
+            <div class="rule-grid" id="ruleGrid"></div>
+          </section>
+
+          <section class="search-section" aria-label="종목 검색">
+            <div class="section-title">
+              <span>종목 검색</span>
+              <small id="searchModeLabel">샘플 검색</small>
+            </div>
+            <label class="stock-search" for="stockSearchInput">
+              <i data-lucide="search" aria-hidden="true"></i>
+              <input id="stockSearchInput" type="search" placeholder="종목명, 티커, 산업 검색" autocomplete="off" />
+            </label>
+            <div class="filter-tabs" id="searchFilters" aria-label="검색 필터"></div>
+            <div class="search-results" id="searchResults"></div>
+          </section>
+
+          <section class="control-section" aria-label="선택한 10종목">
+            <div class="section-title">
+              <span>선택 종목</span>
+              <small id="allocationHint">10개 슬롯</small>
+            </div>
+            <div class="asset-list" id="assetList"></div>
+          </section>
+        </aside>
+
+        <section class="city-stage" aria-label="투자 도시 지도">
+          <div class="stage-header">
+            <div>
+              <span class="eyebrow">OPERATING FUNDS</span>
+              <h2 id="operatingFunds">10,142만원</h2>
+              <div class="time-cycle" id="timeCycle" aria-label="시장 시간 흐름"></div>
+            </div>
+            <div class="scenario-tabs" id="scenarioTabs" aria-label="시장 시나리오"></div>
+          </div>
+
+          <div class="game-hud" aria-label="도시 플레이 상태">
+            <div>
+              <span>턴</span>
+              <strong id="turnNumber">DAY 01</strong>
+            </div>
+            <div>
+              <span>도시 등급</span>
+              <strong id="cityGrade">B RANK</strong>
+            </div>
+            <div>
+              <span>스쿼드</span>
+              <strong id="buildingCount">10개</strong>
+            </div>
+          </div>
+
+          <div class="city-map" id="cityMap" aria-label="투자 도시 부지"></div>
+
+          <div class="sector-strip" id="sectorStrip" aria-label="섹터 영향"></div>
+        </section>
+
+        <aside class="side-panel insight-panel" aria-label="선택 종목과 리포트">
+          <section class="building-detail" id="buildingDetail"></section>
+
+          <section class="news-section" aria-label="기업 뉴스">
+            <div class="section-title">
+              <span>기업 뉴스</span>
+              <small id="newsSourceLabel">샘플 뉴스</small>
+            </div>
+            <div class="news-list" id="newsList"></div>
+          </section>
+
+          <section class="flow-section" aria-label="가격 흐름">
+            <div class="section-title">
+              <span>가격 흐름</span>
+              <small id="flowLabel">선택 종목 기준</small>
+            </div>
+            <div class="flow-list" id="flowList"></div>
+          </section>
+
+          <section class="ranking-section" aria-label="멀티플레이 랭킹">
+            <div class="section-title">
+              <span>8인 랭킹</span>
+              <small id="playerCountLabel">4/8</small>
+            </div>
+            <div class="ranking-actions">
+              <button class="secondary-button" id="addRivalButton" type="button">
+                <i data-lucide="user-plus" aria-hidden="true"></i>
+                참가자 추가
+              </button>
+              <button class="secondary-button" id="resetRivalsButton" type="button">
+                <i data-lucide="rotate-ccw" aria-hidden="true"></i>
+                초기화
+              </button>
+            </div>
+            <div class="ranking-list" id="rankingList"></div>
+          </section>
+
+          <section class="report-section" aria-label="도시 운영 리포트">
+            <div class="section-title">
+              <span>도시 운영 리포트</span>
+              <small id="reportDate">Day 1</small>
+            </div>
+            <div class="report-list" id="reportList"></div>
+          </section>
+        </aside>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./assets/config.js?v=20260811-seoul-geo"></script>
+    <script src="./assets/app.js?v=20260811-seoul-geo"></script>
+  </body>
+</html>

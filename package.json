@@ -6,12 +6,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "pnpm run build:hub && node scripts/assemble-hub.mjs",
     "build:hub": "tsc -b && vite build --base=/heungbu-nolbu/ --outDir .hub-dist --emptyOutDir",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc -b --pretty false",
     "qa": "vitest run && tsc -b --pretty false && vite build",
+    "qa:hub": "pnpm run qa && pnpm run build && node scripts/verify-hub.mjs",
     "tts:plan": "node scripts/generate-tts.mjs plan",
     "tts:generate": "node scripts/generate-tts.mjs generate"
   },

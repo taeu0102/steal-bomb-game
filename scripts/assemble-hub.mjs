@@ -1,0 +1,46 @@
+import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const dist = path.join(root, "dist");
+const storyBuild = path.join(root, ".hub-dist");
+const hubSource = path.join(root, "hub-static");
+
+const required = (name) => path.join(hubSource, name);
+
+await rm(dist, { recursive: true, force: true });
+await mkdir(dist, { recursive: true });
+
+for (const name of ["index.html", "portal.css", "portal.js"]) {
+  await cp(required(name), path.join(dist, name));
+}
+
+for (const name of ["assets", "steal-bomb-game", "ghost-forge", "portfolio-city"]) {
+  await cp(required(name), path.join(dist, name), { recursive: true });
+}
+
+await cp(storyBuild, path.join(dist, "heungbu-nolbu"), { recursive: true });
+await rm(path.join(dist, "heungbu-nolbu", "episodes"), {
+  recursive: true,
+  force: true,
+});
+await cp(path.join(root, "public", "episodes"), path.join(dist, "episodes"), {
+  recursive: true,
+});
+
+const config = JSON.parse(await readFile(required("hub-config.json"), "utf8"));
+const publicConfig = {
+  supabaseUrl: process.env.SUPABASE_URL || config.supabaseUrl,
+  supabaseAnonKey:
+    process.env.SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_PUBLISHABLE_KEY ||
+    config.supabaseAnonKey,
+};
+await writeFile(
+  path.join(dist, "steal-bomb-game", "public-config.js"),
+  `window.STEAL_BOMB_CONFIG = ${JSON.stringify(publicConfig)};\n`,
+  "utf8",
+);
+
+console.log("Assembled the AI work hub, existing games, and storybook in dist.");

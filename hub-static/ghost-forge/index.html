@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#070a0f" />
+    <meta
+      name="description"
+      content="부모의 원한을 품은 무영이 악마의 검을 +100까지 강화해 세상을 베려는 확률 단조 게임"
+    />
+    <title>귀화로: 악마의 계약</title>
+    <base id="appBase" href="./" />
+    <script>
+      (() => {
+        const path = window.location.pathname;
+        const lastSegment = path.split("/").pop() || "";
+        if (!path.endsWith("/") && !lastSegment.includes(".")) {
+          document.getElementById("appBase").setAttribute("href", `${path}/`);
+        }
+      })();
+    </script>
+    <link rel="manifest" href="./manifest.webmanifest?v=6.0.1" />
+    <link rel="icon" href="./assets/icon.svg?v=6.0.1" type="image/svg+xml" />
+    <link rel="preload" href="./assets/forge-room.webp" as="image" type="image/webp" />
+    <link rel="preload" href="./assets/relic-blade.webp" as="image" type="image/webp" />
+    <link rel="stylesheet" href="./styles.css?v=6.0.1" />
+  </head>
+  <body>
+    <svg class="svg-defs" aria-hidden="true">
+      <defs>
+        <symbol id="icon-sound" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4Z"/><path d="M16 9c1.5 1.5 1.5 4.5 0 6M19 6c3.5 3.5 3.5 8.5 0 12"/></symbol>
+        <symbol id="icon-muted" viewBox="0 0 24 24"><path d="M4 10v4h4l5 4V6L8 10H4Z"/><path d="m17 10 4 4m0-4-4 4"/></symbol>
+        <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.2"/></symbol>
+        <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 2 4.5 5v5.4c0 5 3.1 9.4 7.5 11.6 4.4-2.2 7.5-6.6 7.5-11.6V5L12 2Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></symbol>
+        <symbol id="icon-flame" viewBox="0 0 24 24"><path d="M13.5 2.5c1 4-2 5-1 8 1-1 2.2-2.4 2.5-4 3 2.5 5 5.4 5 8.2A8 8 0 0 1 4 15c0-3.7 2.5-7 6.6-10.5-.1 3.2 1 4 2.9 5.6"/><path d="M9 17c0-1.7 1-3.2 3-5 0 2 2 2.5 2 4.5A2.5 2.5 0 0 1 9 17Z"/></symbol>
+        <symbol id="icon-seal" viewBox="0 0 24 24"><path d="M8 4h8v8H8zM6 13h12l2 7H4l2-7Z"/><path d="M9 17h6"/></symbol>
+        <symbol id="icon-charm" viewBox="0 0 24 24"><path d="M7 2h10l2 4-2 16-5-3-5 3L5 6l2-4Z"/><path d="m9 7 6 4m-6 2 6-4m-3 0v7"/></symbol>
+        <symbol id="icon-hammer" viewBox="0 0 24 24"><path d="m14.5 4 5.5 5.5-3 3L11.5 7l3-3ZM12 8.5 4 16.5 7.5 20l8-8"/></symbol>
+        <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+      </defs>
+    </svg>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <button class="wordmark" id="homeButton" type="button" aria-label="귀화로 첫 화면으로">
+          <span class="wordmark-seal" aria-hidden="true">鍛</span>
+          <span><strong>귀화로</strong><small>악마의 계약</small></span>
+        </button>
+        <div class="topbar-actions">
+          <button class="icon-button" id="soundButton" type="button" aria-label="소리 켜기" aria-pressed="false"><svg aria-hidden="true"><use id="soundIconUse" href="#icon-muted"></use></svg></button>
+          <button class="icon-button" id="infoButton" type="button" aria-label="게임 방법 보기"><svg aria-hidden="true"><use href="#icon-info"></use></svg></button>
+        </div>
+      </header>
+
+      <main>
+        <section class="screen start-screen" id="startScreen" aria-labelledby="startTitle">
+          <div class="start-art" aria-hidden="true">
+            <img src="./assets/forge-room.webp" alt="" />
+            <div class="start-wash"></div>
+            <img class="start-blade" src="./assets/relic-blade.webp" alt="" />
+          </div>
+          <div class="start-content">
+            <p class="eyebrow">최대 48번의 선택 · +100 복수 단조</p>
+            <h1 id="startTitle" tabindex="-1">귀화로</h1>
+            <p class="start-hook">부모의 원한을 검에 담아,<br /><strong>최고 강화 +100에 도달하라.</strong></p>
+            <button class="contract-teaser" id="contractButton" type="button">
+              <span class="demon-eye" aria-hidden="true"></span>
+              <span><b>악마의 계약</b><small>“+100에 닿으면 신도, 세상도 벨 수 있다.”</small></span>
+              <em>다시 보기</em>
+            </button>
+            <div class="loop-summary" aria-label="게임의 세 가지 선택">
+              <span><svg aria-hidden="true"><use href="#icon-shield"></use></svg><b>안전 강화 +2</b><small>안정도를 쌓는다</small></span>
+              <span><svg aria-hidden="true"><use href="#icon-flame"></use></svg><b>위험 증폭 +5</b><small>크게 전진한다</small></span>
+              <span><svg aria-hidden="true"><use href="#icon-seal"></use></svg><b>강화도 봉인</b><small>다음 밤에 이어간다</small></span>
+            </div>
+            <div class="start-record">
+              <span>최고 봉인점수 <strong id="bestScore">0</strong></span>
+              <label class="start-kit">시작 도구 <select id="kitSelect" aria-label="시작 꾸러미"></select></label>
+              <span>완주 횟수 <strong id="totalSealed">0</strong></span>
+            </div>
+            <div class="start-actions">
+              <button class="primary-button" id="continueButton" type="button" hidden><span>이어 담금질하기</span><small id="continueMeta"></small><svg aria-hidden="true"><use href="#icon-arrow"></use></svg></button>
+              <button class="primary-button primary-button--fire" id="startButton" type="button"><span>복수의 단조 시작</span><small id="startKitHint">수호 꾸러미 · 보호 부적 1개</small><svg aria-hidden="true"><use href="#icon-arrow"></use></svg></button>
+            </div>
+          </div>
+        </section>
+
+        <section class="screen forge-screen" id="forgeScreen" aria-labelledby="artifactTitle" hidden>
+          <div class="run-hud">
+            <div class="artifact-progress" id="artifactProgress" aria-label="네 번의 단조 진행"></div>
+            <div class="bank-score"><span id="bankScoreLabel">확정 점수</span><strong id="bankedScore">0</strong></div>
+          </div>
+
+          <section class="forge-stage" id="forgeStage" aria-busy="false">
+            <img class="forge-background" src="./assets/forge-room.webp" alt="" />
+            <div class="forge-vignette"></div>
+
+            <div class="artifact-heading">
+              <p id="artifactKicker">첫째 밤 · 원한을 새긴다</p>
+              <h1 id="artifactTitle" tabindex="-1">원한검 <span id="gradeLevel">+0</span></h1>
+              <span class="grade-name" id="gradeName">녹슨 원한 · 다음 칭호까지 10강</span>
+            </div>
+
+            <div class="weapon-wrap" id="weaponWrap" data-grade="0" data-damage="0">
+              <div class="weapon-aura"></div>
+              <img id="weaponImage" src="./assets/relic-blade.webp" alt="벽사검" />
+              <div class="rune-overlay" aria-hidden="true"></div>
+              <div class="crack-overlay" aria-hidden="true"></div>
+              <div class="success-flash" aria-hidden="true"></div>
+              <div class="ember-burst" aria-hidden="true"></div>
+            </div>
+
+            <div class="result-callout" id="resultCallout" role="status" aria-live="polite">
+              <span id="resultLabel">악마 · 세상은커녕 무도 삐뚤게 썰겠군.</span><small id="resultDetail">안전 96% · 증폭 58% · 다음 칭호까지 10강</small>
+            </div>
+          </section>
+
+          <section class="forge-panel">
+            <div class="status-grid">
+              <div><span>내구도</span><strong class="durability-pips" id="durabilityPips" aria-label="내구도 3"></strong></div>
+              <div><span>안정도</span><strong class="stability-pips" id="stabilityPips" aria-label="안정도 0"></strong></div>
+              <div><span>현재 봉인값</span><strong id="currentValue">100</strong></div>
+              <div><span>남은 타격</span><strong id="attemptsLeft">12</strong></div>
+            </div>
+
+            <div class="inventory-row" id="inventoryRow">
+              <button class="item-chip charm-chip" id="charmButton" type="button" aria-pressed="false"><svg aria-hidden="true"><use href="#icon-charm"></use></svg><span>보호부적 <b id="charmCount">1</b></span><small id="charmState">다음 타격에 쓰기</small></button>
+              <div class="item-chip passive-items" id="passiveItems" aria-label="보유 단조 도구"></div>
+            </div>
+
+            <div class="action-grid">
+              <button class="forge-action forge-action--safe" id="reinforceButton" type="button">
+                <span class="action-icon"><svg aria-hidden="true"><use href="#icon-shield"></use></svg></span>
+                <span><small>정련</small><b>안전 강화 <em id="reinforceChance">96%</em></b><i id="reinforceOutcome">성공 +2 · 실패 내구 −1</i></span>
+              </button>
+              <button class="forge-action forge-action--risk" id="amplifyButton" type="button">
+                <span class="action-icon"><svg aria-hidden="true"><use href="#icon-flame"></use></svg></span>
+                <span><small>승부</small><b>위험 증폭 <em id="amplifyChance">58%</em></b><i id="amplifyOutcome">성공 +5 · 실패 내구 −2</i></span>
+              </button>
+              <button class="seal-button" id="sealButton" type="button"><svg aria-hidden="true"><use href="#icon-seal"></use></svg><span><b>지금 봉인</b><small id="sealOutcome">100점 확정 · 폭발 위험 없음</small></span></button>
+            </div>
+          </section>
+        </section>
+
+        <section class="screen result-screen" id="resultScreen" aria-labelledby="resultTitle" hidden>
+          <div class="result-hero">
+            <img src="./assets/forge-room.webp" alt="" />
+            <div class="result-wash"></div>
+            <span class="result-seal" aria-hidden="true">封</span>
+          </div>
+          <div class="result-content">
+            <p class="eyebrow">복수 원정 완료</p>
+            <h1 id="resultTitle" tabindex="-1">봉인점수 <span id="finalScore">0</span></h1>
+            <p class="result-rank" id="resultRank">불씨를 읽기 시작한 장인</p>
+            <div class="record-banner" id="newRecordBanner" hidden>새 최고 기록</div>
+            <section class="ending-story" aria-labelledby="endingStoryTitle">
+              <span class="ending-watermark" aria-hidden="true">敗</span>
+              <p class="ending-kicker" id="endingKicker">멸망 실패 기록</p>
+              <h2 id="endingStoryTitle">복수의 첫 상대</h2>
+              <p id="endingStoryBody">떡집 주인이 솥뚜껑으로 무영의 검을 막았다.</p>
+              <blockquote id="demonAfterword">악마 · “저 사람은 일반인 중 최상위야.”</blockquote>
+              <small id="endingCollection">멸망 실패 기록 0/6</small>
+            </section>
+            <div class="artifact-results" id="artifactResults"></div>
+            <div class="result-stats">
+              <span>봉인 <b id="sealedCount">0</b></span><span>폭발 <b id="destroyedCount">0</b></span><span>파편 <b id="scrapCount">0</b></span>
+            </div>
+            <button class="primary-button primary-button--fire" id="retryButton" type="button"><span>다시 계약한다</span><small>한 자루를 +100까지 다시 벼린다</small><svg aria-hidden="true"><use href="#icon-arrow"></use></svg></button>
+            <button class="text-button" id="saveRetryButton" type="button" hidden>결과 저장 다시 시도</button>
+            <button class="text-button" id="resultHomeButton" type="button">첫 화면으로</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="reward-dialog" id="rewardDialog" aria-labelledby="rewardTitle">
+      <div class="reward-flare" aria-hidden="true"></div>
+      <p class="eyebrow" id="artifactOutcomeLabel">검 봉인 완료</p>
+      <h2 id="rewardTitle" tabindex="-1">다음 단조 도구를 고르세요</h2>
+      <p id="artifactOutcomeText">이미 얻은 점수는 이제 사라지지 않습니다.</p>
+      <div class="reward-options" id="rewardOptions"></div>
+      <small class="reward-note">둘 중 하나만 다음 단조에 가져갑니다</small>
+    </dialog>
+
+    <dialog class="contract-dialog" id="contractDialog" aria-labelledby="contractTitle">
+      <div class="contract-sigil" aria-hidden="true"><span class="demon-eye"></span></div>
+      <p class="eyebrow">원한의 시작</p>
+      <h2 id="contractTitle" tabindex="-1">악마가 검의 이름을 말했다</h2>
+      <div class="contract-copy">
+        <p>왕실의 거짓 판결로 부모를 잃은 날, 무영은 세상을 용서하지 않기로 했다.</p>
+        <p>원수 몇 명으로는 모자랐다. 이 부당한 세상 전부를 피로 물들이리라 맹세했다.</p>
+        <blockquote>“한 자루의 검에 네 번 귀화를 봉인해라. +100에 닿으면 신도, 세상도 벨 수 있다.”</blockquote>
+        <p>무영은 망치를 들었다. 계약서 맨 아래의 아주 작은 글씨는 읽지 못한 채.</p>
+      </div>
+      <button class="primary-button primary-button--fire" id="acceptContractButton" type="button"><span id="acceptContractLabel">계약하고 망치를 든다</span><small>네 번의 밤 동안 +100에 도전한다</small><svg aria-hidden="true"><use href="#icon-arrow"></use></svg></button>
+      <button class="text-button" id="closeContractButton" type="button">아직은 돌아선다</button>
+    </dialog>
+
+    <dialog class="bottom-sheet" id="infoDialog" aria-labelledby="infoTitle">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-header"><div><p class="eyebrow">게임 방법</p><h2 id="infoTitle">준비하고, 걸고, 멈추세요</h2></div><button class="close-button" type="button" data-close-dialog aria-label="닫기">×</button></div>
+      <p class="story-note"><b>무영의 목적</b> 악마와 계약해 한 자루를 +100까지 벼리고 세상에 복수합니다. 높은 강화일수록 더 멀리 가지만, 신은 끝내 넘을 수 없습니다.</p>
+      <ol class="how-list">
+        <li><b>안전 강화는 성공 시 +2와 안정도를 얻습니다.</b><span>안정 1마다 다음 위험 증폭 확률이 8%p 오릅니다.</span></li>
+        <li><b>위험 증폭은 성공 시 +5를 올립니다.</b><span>성공해도 실패해도 쌓은 안정도는 모두 사라집니다.</span></li>
+        <li><b>봉인하면 강화도가 체크포인트로 저장됩니다.</b><span>다음 밤은 그 수치부터 시작하며, 폭발하면 그 밤의 시작 수치로 돌아갑니다.</span></li>
+        <li><b>보호부적은 누르기 전에 정합니다.</b><span>다음 타격의 피해를 막지만 성공해도 부적은 소모됩니다.</span></li>
+      </ol>
+      <p class="fair-note"><b>공정한 단조</b> 모든 확률과 실패 결과를 미리 공개합니다. 실제 돈, 결제, 광고 부활, 에너지는 없습니다.</p>
+      <div class="setting-row"><span>진동</span><button id="vibrationButton" type="button" aria-pressed="true">켬</button></div>
+      <button class="primary-button" type="button" data-close-dialog><span>단조로 돌아가기</span></button>
+    </dialog>
+
+    <dialog class="confirm-dialog" id="leaveDialog" aria-labelledby="leaveTitle">
+      <p class="eyebrow">단조 중단</p><h2 id="leaveTitle">첫 화면으로 돌아갈까요?</h2><p>현재 검과 확정 점수는 저장되어 이어서 할 수 있습니다.</p>
+      <div class="confirm-actions"><button class="secondary-button" type="button" data-close-dialog>계속 단조</button><button class="primary-button" id="confirmLeaveButton" type="button"><span>돌아가기</span></button></div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./js/app.js?v=6.0.1"></script>
+  </body>
+</html>
