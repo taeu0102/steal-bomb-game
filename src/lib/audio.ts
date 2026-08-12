@@ -16,8 +16,19 @@ class StoryAudioEngine {
   private muted = false;
 
   async unlock() {
-    if (!this.context) this.context = new AudioContext();
-    if (this.context.state === "suspended") await this.context.resume();
+    try {
+      const AudioContextConstructor =
+        window.AudioContext ??
+        (window as typeof window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioContextConstructor) return false;
+      if (!this.context) this.context = new AudioContextConstructor();
+      if (this.context.state === "suspended") await this.context.resume();
+      return this.context.state === "running";
+    } catch {
+      // 일부 인앱 브라우저는 오디오 생성을 막습니다. 소리 없이도 이야기는 계속 진행합니다.
+      this.context = null;
+      return false;
+    }
   }
 
   setMuted(muted: boolean) {
@@ -26,7 +37,9 @@ class StoryAudioEngine {
       this.stopMusic();
       window.speechSynthesis?.cancel();
     } else if (this.context) {
-      void this.unlock().then(() => this.playTheme(this.theme));
+      void this.unlock().then((ready) => {
+        if (ready) this.playTheme(this.theme);
+      });
     }
   }
 

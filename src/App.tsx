@@ -357,7 +357,7 @@ function StoryPlayer({
 
   const handleSoundToggle = async () => {
     const nextMuted = !settings.muted;
-    if (!nextMuted) await storyAudio.unlock();
+    if (!nextMuted) void storyAudio.unlock();
     onSettingsChange({ ...settings, muted: nextMuted });
   };
 
@@ -818,9 +818,10 @@ export default function App() {
     }
   };
 
-  const beginStory = async (resume: boolean) => {
+  const beginStory = (resume: boolean) => {
     if (!episode) return;
-    if (!settings.muted) await storyAudio.unlock();
+    // 음향 권한이나 AudioContext 지원 여부가 화면 전환을 막지 않도록 기다리지 않습니다.
+    if (!settings.muted) void storyAudio.unlock();
     const saved = resume ? loadProgress(episode) : null;
     const nextProgress = saved && !saved.completed ? saved : makeProgress(episode);
     if (!resume) clearProgress(episode.id);
