@@ -1,5 +1,6 @@
 export type SceneType = "cinematic" | "choice" | "activity" | "ending";
 export type Guidance = "preferred" | "reflect" | "neutral";
+export type SpeakerPosition = "left" | "center" | "right" | "narrator";
 export type MusicTheme =
   | "village"
   | "care"
@@ -80,6 +81,7 @@ export interface StoryScene {
   eyebrow: string;
   captions: string[];
   captionSpeakers?: string[];
+  speakerPositions?: Record<string, SpeakerPosition>;
   soundCaption?: string;
   music: MusicTheme;
   lessonTags: string[];

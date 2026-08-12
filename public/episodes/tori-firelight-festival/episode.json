@@ -42,6 +42,7 @@
         "토리는 뱃속의 작은 불씨처럼 기대가 콩콩 뛰는 것을 느꼈답니다."
       ],
       "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left" },
       "soundCaption": "[먼 곳의 축제 북과 맑은 풍경 소리가 포근하게 다가와요]",
       "music": "festival",
       "lessonTags": ["감정", "시작"],
@@ -65,6 +66,7 @@
         "우리 둘이 만든 거야, 소미야. 축제가 시작되면 제일 먼저 함께 보자!"
       ],
       "captionSpeakers": ["이야기 할머니", "소미", "토리"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left", "소미": "right" },
       "soundCaption": "[종이별이 사각거리고 작은 망치가 똑똑 박자를 맞춰요]",
       "music": "festival",
       "lessonTags": ["우정", "협력"],
@@ -89,6 +91,7 @@
         "토리의 화난 마음이 목구멍까지 올라왔어요. 지금 무엇을 선택하면 좋을까요?"
       ],
       "captionSpeakers": ["이야기 할머니", "소미", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left", "소미": "right" },
       "soundCaption": "[음악의 북소리가 빨라지고, 토리의 작은 불씨가 파직파직 울려요]",
       "music": "storm",
       "lessonTags": ["화", "멈춤", "행동 선택"],
@@ -157,6 +160,7 @@
         "빛방울을 하나씩 눌러 토리와 숨을 세 번 쉬어 주세요."
       ],
       "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left" },
       "soundCaption": "[빠르던 북이 멀어지고, 숨결마다 맑은 유리종이 하나씩 울려요]",
       "music": "calm",
       "lessonTags": ["호흡", "멈춤", "몸의 신호"],
@@ -188,6 +192,7 @@
         "토리의 불꽃은 아직 작게 일렁였지만, 이제 불꽃보다 말이 먼저 나올 준비가 되었답니다."
       ],
       "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left" },
       "soundCaption": "[따뜻한 현악기 한 음 위로 작은 불씨가 사르르 잦아들어요]",
       "music": "ember",
       "lessonTags": ["감정 이름", "속상함", "말하기"],
@@ -211,6 +216,7 @@
         "토리가 꺼낼 말을 함께 골라 주세요."
       ],
       "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left" },
       "soundCaption": "[고요한 불씨의 두근거림과 부드러운 나무 피리 소리가 번갈아 들려요]",
       "music": "ember",
       "lessonTags": ["나 전달법", "정직", "배려"],
@@ -280,6 +286,7 @@
         "두 친구 사이에서 뜨겁던 불씨가 손바닥만 한 따뜻한 빛으로 바뀌었어요."
       ],
       "captionSpeakers": ["토리", "소미", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left", "소미": "right" },
       "soundCaption": "[두 친구의 숨이 같은 박자가 되고, 피리 선율에 따뜻한 종소리가 더해져요]",
       "music": "calm",
       "lessonTags": ["듣기", "사과", "화해"],
@@ -303,6 +310,7 @@
         "화는 한 번 숨 쉬었다고 영영 사라지는 것이 아니에요. 다시 올라온 마음 앞에서 토리는 무엇을 할까요?"
       ],
       "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left" },
       "soundCaption": "[실이 툭 풀릴 때마다 낮은 현이 통통 울리고, 불씨의 박자가 조금 빨라져요]",
       "music": "ember",
       "lessonTags": ["다시 멈춤", "협력", "도움 요청"],
@@ -371,6 +379,7 @@
         "준비됐어, 토리야! 별 조각을 하나씩 눌러 줘. 내가 실을 맞출게!"
       ],
       "captionSpeakers": ["이야기 할머니", "토리", "소미"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left", "소미": "right" },
       "soundCaption": "[별 조각을 붙일 때마다 통통한 불꽃 소리와 맑은 종이 화음을 만들어요]",
       "music": "lantern",
       "lessonTags": ["감정 조절", "협력", "회복"],
@@ -403,6 +412,7 @@
         "아야! 또 망가지면 어떡하지? 내 불꽃이 다시 뜨거워지고 있어!"
       ],
       "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니", "토리"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left" },
       "soundCaption": "[축제 북 위로 바람이 휘익 지나고, 깃발의 작은 방울이 빠르게 흔들려요]",
       "music": "storm",
       "lessonTags": ["반복 연습", "도움 요청", "위기"],
@@ -427,6 +437,7 @@
         "토리는 바람과 뜨거운 마음 앞에서 무엇을 선택하면 좋을까요?"
       ],
       "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left" },
       "soundCaption": "[빠른 북소리 사이로 앞에서 들었던 숨결 종이 작게 다시 울려요]",
       "music": "storm",
       "lessonTags": ["일반화", "다시 멈춤", "도움 요청"],
@@ -497,6 +508,7 @@
         "별깃발의 고친 자리는 밤하늘의 새 별자리처럼 가장 환하게 빛났답니다."
       ],
       "captionSpeakers": ["토리", "소미", "이야기 할머니", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left", "소미": "right" },
       "soundCaption": "[축제 북과 나무 피리, 맑은 종, 포근한 저음이 한꺼번에 어우러지고 친구들의 박수가 퍼져요]",
       "music": "lantern",
       "lessonTags": ["성장", "공동체", "따뜻한 불꽃"],
@@ -520,6 +532,7 @@
         "화는 우리에게 소중한 것이 있다는 신호예요. 몸을 멈추고 마음을 말하면, 뜨거운 불꽃도 길을 비추는 빛이 될 수 있답니다."
       ],
       "captionSpeakers": ["소미", "토리", "이야기 할머니"],
+      "speakerPositions": { "이야기 할머니": "narrator", "토리": "left", "소미": "right" },
       "soundCaption": "[잔잔해진 축제 선율 위로 등불의 작은 불씨가 타닥타닥 자장가처럼 울려요]",
       "music": "lantern",
       "lessonTags": ["멈춤", "감정 말하기", "도움 요청", "선택"],

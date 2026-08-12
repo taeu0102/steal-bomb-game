@@ -4,6 +4,7 @@ import type {
   EpisodeManifest,
   MusicTheme,
   StoryScene,
+  SpeakerPosition,
   VoiceManifest,
 } from "../types/story";
 import { collectVoiceCues } from "./voice";
@@ -23,6 +24,7 @@ const musicThemes = new Set<MusicTheme>([
   "calm",
   "lantern",
 ]);
+const speakerPositions = new Set<SpeakerPosition>(["left", "center", "right", "narrator"]);
 
 export function validateManifest(value: unknown): EpisodeManifest {
   if (!isRecord(value) || !Array.isArray(value.episodes)) {
@@ -66,6 +68,20 @@ function validateScene(scene: StoryScene, sceneIds: Set<string>) {
       )
     ) {
       throw new Error(`${scene.id} 장면의 자막 화자는 자막마다 하나씩 필요해요.`);
+    }
+  }
+  if (scene.speakerPositions !== undefined) {
+    const sceneSpeakers = new Set(scene.captionSpeakers ?? []);
+    if (
+      !isRecord(scene.speakerPositions) ||
+      Object.entries(scene.speakerPositions).some(
+        ([speaker, position]) =>
+          !speaker.trim() ||
+          !speakerPositions.has(position as SpeakerPosition) ||
+          !sceneSpeakers.has(speaker),
+      )
+    ) {
+      throw new Error(`${scene.id} 장면의 화자 말풍선 위치가 올바르지 않아요.`);
     }
   }
   if (!musicThemes.has(scene.music)) {
@@ -228,6 +244,12 @@ export function getCompletionVisual(episode: Episode, completedSceneId?: string)
 
 export function getCaptionSpeaker(scene: StoryScene, captionIndex: number) {
   return scene.captionSpeakers?.[captionIndex]?.trim() || "이야기 할머니";
+}
+
+export function getSpeakerPosition(scene: StoryScene, captionIndex: number): SpeakerPosition {
+  const speaker = getCaptionSpeaker(scene, captionIndex);
+  return scene.speakerPositions?.[speaker] ??
+    (speaker === "이야기 할머니" ? "narrator" : "center");
 }
 
 export async function loadManifest(): Promise<EpisodeManifest> {

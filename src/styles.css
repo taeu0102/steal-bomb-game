@@ -1015,6 +1015,122 @@ p {
   backdrop-filter: blur(18px);
 }
 
+.character-speech {
+  position: absolute;
+  z-index: 4;
+  top: clamp(230px, 35vh, 390px);
+  display: grid;
+  width: min(34vw, 420px);
+  gap: 5px;
+  padding: 16px 20px 18px;
+  border: 2px solid rgba(85, 57, 32, 0.2);
+  border-radius: 24px;
+  background: rgba(255, 253, 244, 0.96);
+  box-shadow: 0 14px 40px rgba(7, 18, 14, 0.3);
+  color: #25372f;
+  pointer-events: none;
+  animation: speech-bubble-in 260ms ease-out both;
+}
+
+.character-speech::after {
+  position: absolute;
+  bottom: -17px;
+  width: 28px;
+  height: 28px;
+  border-right: 2px solid rgba(85, 57, 32, 0.2);
+  border-bottom: 2px solid rgba(85, 57, 32, 0.2);
+  background: rgba(255, 253, 244, 0.96);
+  content: "";
+  transform: rotate(45deg);
+}
+
+.character-speech--left {
+  left: clamp(7%, 12vw, 190px);
+}
+
+.character-speech--left::after {
+  left: 28%;
+}
+
+.character-speech--right {
+  right: clamp(7%, 12vw, 190px);
+}
+
+.character-speech--right::after {
+  right: 28%;
+}
+
+.character-speech--center {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.character-speech--center::after {
+  left: calc(50% - 14px);
+}
+
+.character-speech strong {
+  color: #bd5d3e;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+
+.character-speech span {
+  overflow: hidden;
+  display: -webkit-box;
+  font-family: Georgia, "Nanum Myeongjo", serif;
+  font-size: clamp(1rem, 1.6vw, 1.35rem);
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.caption-card--character {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  clip: rect(0, 0, 0, 0);
+  backdrop-filter: none;
+}
+
+.caption-card--character .caption-card__speaker {
+  margin-bottom: 0;
+}
+
+@keyframes speech-bubble-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.character-speech--center {
+  animation-name: speech-bubble-center-in;
+}
+
+@keyframes speech-bubble-center-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
 .caption-card__speaker {
   display: flex;
   align-items: center;
@@ -2003,6 +2119,26 @@ p {
     border-radius: 18px;
   }
 
+  .character-speech {
+    top: clamp(190px, 31vh, 310px);
+    width: min(42vw, 310px);
+    padding: 13px 15px 15px;
+    border-radius: 19px;
+  }
+
+  .character-speech--left {
+    left: 14px;
+  }
+
+  .character-speech--right {
+    right: 14px;
+  }
+
+  .character-speech span {
+    font-size: clamp(0.92rem, 3.8vw, 1.16rem);
+    -webkit-line-clamp: 4;
+  }
+
   .caption-card p {
     font-size: clamp(1.15rem, 5.2vw, 1.5rem);
   }
@@ -2145,6 +2281,46 @@ p {
     height: 108%;
   }
 
+  .scene-image--speaker-left {
+    object-position: 34% 50% !important;
+  }
+
+  .scene-image--speaker-right {
+    object-position: 66% 50% !important;
+  }
+
+  .scene-image--speaker-center {
+    object-position: 50% 50% !important;
+  }
+
+  .character-speech {
+    top: clamp(180px, 29vh, 270px);
+    width: min(52vw, 230px);
+    padding: 11px 13px 13px;
+  }
+
+  .character-speech--left,
+  .character-speech--right {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+  }
+
+  .character-speech--left::after,
+  .character-speech--right::after {
+    left: calc(50% - 14px);
+    right: auto;
+  }
+
+  .character-speech--left,
+  .character-speech--right {
+    animation-name: speech-bubble-center-in;
+  }
+
+  .character-speech strong {
+    font-size: 0.7rem;
+  }
+
   .scene-meta p {
     font-size: 0.67rem;
   }
@@ -2221,6 +2397,17 @@ p {
     width: min(60%, 680px);
   }
 
+  .character-speech {
+    top: 105px;
+    width: min(34vw, 310px);
+    padding: 10px 14px 12px;
+  }
+
+  .character-speech span {
+    font-size: 0.92rem;
+    -webkit-line-clamp: 2;
+  }
+
   .player-controls {
     bottom: 24px;
   }
@@ -2257,8 +2444,19 @@ p {
 
 @media (prefers-contrast: more) {
   .caption-card,
+  .character-speech,
   .back-button,
   .icon-button {
+    background: rgba(5, 16, 11, 0.94);
+  }
+
+  .character-speech {
+    border-color: white;
+    color: white;
+  }
+
+  .character-speech::after {
+    border-color: white;
     background: rgba(5, 16, 11, 0.94);
   }
 

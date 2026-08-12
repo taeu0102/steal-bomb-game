@@ -9,6 +9,7 @@ import { storyAudio } from "./lib/audio";
 import {
   getCaptionSpeaker,
   getCompletionVisual,
+  getSpeakerPosition,
   loadEpisode,
   loadManifest,
 } from "./lib/story";
@@ -211,6 +212,8 @@ function StoryPlayer({
   const sceneProgress = ((sceneIndex + 1) / episode.scenes.length) * 100;
   const caption = scene.captions[captionIndex] ?? scene.captions[scene.captions.length - 1];
   const captionSpeaker = getCaptionSpeaker(scene, captionIndex);
+  const speakerPosition = getSpeakerPosition(scene, captionIndex);
+  const isCharacterSpeaking = speakerPosition !== "narrator";
   const currentCaptionKey = captionVoiceKey(scene.id, captionIndex);
   const narrationEnabled = narrationAvailable && settings.narration;
 
@@ -558,7 +561,7 @@ function StoryPlayer({
     <main className="player-shell">
       <div className={`player-stage${phase === "failed" ? " player-stage--failed" : ""}`}>
         <img
-          className={`scene-image scene-image--${scene.motion ?? "still"}`}
+          className={`scene-image scene-image--${scene.motion ?? "still"}${isCharacterSpeaking ? ` scene-image--speaker-${speakerPosition}` : ""}`}
           src={scene.image}
           alt={scene.imageAlt}
           style={{ objectPosition: scene.imagePosition ?? "center" }}
@@ -606,13 +609,32 @@ function StoryPlayer({
           <h1>{scene.title}</h1>
         </div>
 
+        {!showPanel && settings.captions && isCharacterSpeaking && (
+          <div
+            key={`${scene.id}:${captionIndex}:${captionSpeaker}`}
+            className={`character-speech character-speech--${speakerPosition}`}
+            aria-hidden="true"
+          >
+            <strong>{captionSpeaker}</strong>
+            <span>{caption}</span>
+          </div>
+        )}
+
         {!showPanel && settings.captions && (
-          <section className="caption-card" aria-live="polite" aria-atomic="true">
-            <div className="caption-card__speaker" aria-label={`말하는 사람: ${captionSpeaker}`}>
-              <span aria-hidden="true">◌</span> <span>{captionSpeaker}</span>
-            </div>
-            <p>{caption}</p>
-            {scene.soundCaption && <small>{scene.soundCaption}</small>}
+          <section
+            className={`caption-card${isCharacterSpeaking ? " caption-card--character" : ""}`}
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {isCharacterSpeaking ? (
+              <span className="sr-only">말하는 사람: {captionSpeaker}.</span>
+            ) : (
+              <div className="caption-card__speaker" aria-label={`말하는 사람: ${captionSpeaker}`}>
+                <span aria-hidden="true">◌</span> <span>{captionSpeaker}</span>
+              </div>
+            )}
+            <p className={isCharacterSpeaking ? "sr-only" : undefined}>{caption}</p>
+            {scene.soundCaption && <small className={isCharacterSpeaking ? "sr-only" : undefined}>{scene.soundCaption}</small>}
             {scene.safetyNote && <aside>{scene.safetyNote}</aside>}
           </section>
         )}

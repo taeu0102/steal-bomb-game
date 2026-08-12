@@ -6,6 +6,7 @@ import toriData from "../../public/episodes/tori-firelight-festival/episode.json
 import {
   getCaptionSpeaker,
   getCompletionVisual,
+  getSpeakerPosition,
   loadEpisode,
   validateEpisode,
   validateManifest,
@@ -69,6 +70,31 @@ describe("에피소드 데이터 계약", () => {
     blank.scenes[0].captionSpeakers = blank.scenes[0].captions.map(() => "해설");
     blank.scenes[0].captionSpeakers[0] = " ";
     expect(() => validateEpisode(blank)).toThrow(/자막 화자/);
+  });
+
+  it("화자 말풍선 위치를 데이터로 정하고 안전한 기본 위치를 사용한다", () => {
+    const created = structuredClone(toriData) as unknown as Episode;
+    const scene = created.scenes[0];
+    scene.speakerPositions = { "이야기 할머니": "narrator", "토리": "left" };
+
+    const episode = validateEpisode(created);
+    expect(getSpeakerPosition(episode.scenes[0], 0)).toBe("narrator");
+    expect(getSpeakerPosition(episode.scenes[0], 1)).toBe("left");
+
+    const legacy = structuredClone(episodeData) as unknown as Episode;
+    expect(getSpeakerPosition(legacy.scenes[0], 0)).toBe("narrator");
+  });
+
+  it("알 수 없는 화자나 위치를 말풍선 위치로 등록하지 못한다", () => {
+    const unknownSpeaker = structuredClone(toriData) as unknown as Episode;
+    unknownSpeaker.scenes[0].speakerPositions = { "다른 친구": "left" };
+    expect(() => validateEpisode(unknownSpeaker)).toThrow(/말풍선 위치/);
+
+    const invalidPosition = structuredClone(toriData) as unknown as Episode;
+    invalidPosition.scenes[0].speakerPositions = {
+      "토리": "top",
+    } as unknown as Episode["scenes"][number]["speakerPositions"];
+    expect(() => validateEpisode(invalidPosition)).toThrow(/말풍선 위치/);
   });
 
   it("용 이야기의 다섯 가지 새 음악 테마를 지원한다", () => {
