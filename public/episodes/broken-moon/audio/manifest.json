@@ -1,0 +1,332 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "broken-moon",
+  "contentVersion": "1.0.0",
+  "model": "gpt-4o-mini-tts",
+  "voice": "marin",
+  "format": "mp3",
+  "speed": 0.96,
+  "promptVersion": "ko-child-story-v1",
+  "instructionsHash": "f54c811a9f3d406d2ee64b8e4a44fc9c54b36938b54e6f7954deeeb079025258",
+  "generatedAt": null,
+  "entries": [
+    {
+      "key": "BM00_TITLE:caption:00",
+      "text": "산 너머 둥근빛 마을에는 해마다 단 한 번, 커다란 달등이 밤하늘로 떠올랐어요.",
+      "inputHash": "f6369d74e773096f0b4f2620411cbc2941be03f2c47fd22a860889aa0b6fd39e",
+      "file": null
+    },
+    {
+      "key": "BM00_TITLE:caption:01",
+      "text": "그 빛이 켜지면 모두의 작은 소원이 은은하게 반짝였지요.",
+      "inputHash": "2c29f1ac5007453434ffb37252d0a3f946151e5c5ef079b8337d34107ba85feb",
+      "file": null
+    },
+    {
+      "key": "BM01_WORKSHOP:caption:00",
+      "text": "꼬마 수리공 하루는 별솔 선생님과 달등의 마지막 빛을 살피고 있었어요.",
+      "inputHash": "ed00bd93a853d45f9ef40d47f937e0be9457aa802f49ff580c722eabf7de390c",
+      "file": null
+    },
+    {
+      "key": "BM01_WORKSHOP:caption:01",
+      "text": "‘은빛 조임쇠는 딱 한 바퀴.’ 선생님은 다른 준비를 하러 가며 천천히 확인해 달라고 했지요.",
+      "inputHash": "d0877cede381e68793f5f3b8083b3a37c744dd301a10cafdeaa39cb5dfa9f416",
+      "file": null
+    },
+    {
+      "key": "BM01_WORKSHOP:caption:02",
+      "text": "하루는 이번 축제에서 가장 밝은 달을 보여 주고 싶었어요.",
+      "inputHash": "aa3320a4748936a6c6bc0484183e6902f3cf67206dab0b15ec2e08244725b285",
+      "file": null
+    },
+    {
+      "key": "BM02_CRACK:caption:00",
+      "text": "한 바퀴를 돌린 뒤에도 빛이 조금 흐려 보이자, 하루는 조임쇠를 한 번 더 돌렸어요.",
+      "inputHash": "dc49ee7009b17fb33957395f1b05e23d245169f94913ba6030175ce7636710fd",
+      "file": null
+    },
+    {
+      "key": "BM02_CRACK:caption:01",
+      "text": "그때 ‘딱!’ 달등 한가운데에 초승달처럼 가느다란 금이 번졌어요.",
+      "inputHash": "3d1e7e835f0202d89a22567b638aeeadcd74cfc0653309c21f7781c7319e46b2",
+      "file": null
+    },
+    {
+      "key": "BM02_CRACK:caption:02",
+      "text": "다친 사람은 없었지만 하루의 가슴은 축제 북처럼 쿵쿵 뛰었지요.",
+      "inputHash": "3b0743891f2b30627a1b13410fed811cbcd63059f704c6a5aca1b3dc96873865",
+      "file": null
+    },
+    {
+      "key": "BM03_TELL_TRUTH:caption:00",
+      "text": "문밖에서 친구 모아와 별솔 선생님의 발소리가 가까워졌어요.",
+      "inputHash": "7597c8f8807bf8ee509b3d5fe446ea718cfa1bfdc208b4e2be721a2d01080782",
+      "file": null
+    },
+    {
+      "key": "BM03_TELL_TRUTH:caption:01",
+      "text": "하루의 손에는 달등을 덮을 수 있는 커다란 천이 들려 있었지요.",
+      "inputHash": "5a2279d8225dd21334216daa86bc34bd10da81bac8c3665fee1f03b9ac2c42a0",
+      "file": null
+    },
+    {
+      "key": "BM03_TELL_TRUTH:caption:02",
+      "text": "‘말하면 실망하실까?’ 숨고 싶은 마음과 말해야 한다는 마음이 서로 잡아당겼어요.",
+      "inputHash": "ab1e0611f7324615313badaef2c1635d92ab19bac2248bc4a40f453415e8f1a0",
+      "file": null
+    },
+    {
+      "key": "BM03_TELL_TRUTH:option:BM03_HIDE:failure",
+      "text": "천 아래에서 자란 금. 달등을 덮자 안의 따뜻한 빛이 빠져나오지 못했어요. 가느다란 금은 테두리까지 늘어났고, 축제 시간이 되어도 불을 켤 수 없었어요. 실수를 숨기면 고칠 시간과 기회까지 함께 사라질 수 있어요.",
+      "inputHash": "0e8b03bde7b804b643117d93e8867c79b34b63c41d0eeaab9954042c5c86a632",
+      "file": null
+    },
+    {
+      "key": "BM03_TELL_TRUTH:option:BM03_TELL:feedback",
+      "text": "무서운 마음이 있어도 사실을 그대로 말했어요. 이제 모두가 금이 더 커지기 전에 도울 수 있어요.",
+      "inputHash": "bf913967e02370e0d95fb6d0056dce6a6e43f42a6ef715f7ba8f1d776187de4d",
+      "file": null
+    },
+    {
+      "key": "BM03_TELL_TRUTH:option:BM03_BLAME_WIND:failure",
+      "text": "엉뚱한 곳을 고친 밤. 사람들은 달등 대신 창문과 지붕만 살폈어요. 진짜 원인을 찾지 못한 채 수리할 시간이 지나 달빛 축제는 깜깜하게 시작되었어요. 사실대로 말해야 필요한 곳을 제대로 고칠 수 있어요.",
+      "inputHash": "1333fede6be4d01c8aefdd9b326a20bce1f2f19f731397a1622a8ff53c6548b7",
+      "file": null
+    },
+    {
+      "key": "BM04_TRUTH_SQUARE:caption:00",
+      "text": "하루는 두 손을 꼭 모으고 말했어요. ‘제가 더 밝게 만들고 싶어서 조임쇠를 두 번 돌렸어요.’",
+      "inputHash": "68b22591c0ecfbcdd5fd972ac2504ec48eba1b37f7a7d0a75d08ce40ac679ade",
+      "file": null
+    },
+    {
+      "key": "BM04_TRUTH_SQUARE:caption:01",
+      "text": "별솔 선생님은 먼저 달등의 빛을 끄고 금이 더 커지지 않게 받침대를 세웠어요.",
+      "inputHash": "e5ed010e562f1c18d54a64e2651597a9d7d5c74cf04acd58d96b41a731b9dd54",
+      "file": null
+    },
+    {
+      "key": "BM04_TRUTH_SQUARE:caption:02",
+      "text": "‘말해 줘서 이제 고칠 수 있겠구나.’ 그 말에 하루의 어깨가 조금 내려왔지요.",
+      "inputHash": "5dce9ef7999a4f290ad88a7ce7b2a7ac1482964785abefb6ac6eda0bf9fa69f8",
+      "file": null
+    },
+    {
+      "key": "BM05_APOLOGY:caption:00",
+      "text": "진실을 말했지만 달등의 금은 아직 그대로였어요.",
+      "inputHash": "2cbe7246dc226588c9f39e50bc2bdd6fc97504aeb8ec59530c4474e285b4b789",
+      "file": null
+    },
+    {
+      "key": "BM05_APOLOGY:caption:01",
+      "text": "하루는 자신이 무엇을 잘못했는지, 이제 무엇을 해야 하는지 생각했어요.",
+      "inputHash": "0431f8f7a81a3844ced850685272d5830410911b683a8b18599297accb001444",
+      "file": null
+    },
+    {
+      "key": "BM05_APOLOGY:caption:02",
+      "text": "미안한 마음이 고치는 길로 이어지려면 어떤 말을 해야 할까요?",
+      "inputHash": "a5f80f78d6fa9e6ca03682094b2d66ff4fc49094f4fc93617e0791475ff472ef",
+      "file": null
+    },
+    {
+      "key": "BM05_APOLOGY:option:BM05_QUICK_SORRY:failure",
+      "text": "길을 못 찾은 사과. 하루가 바로 떠나자 사람들은 어느 조임쇠를 몇 번 돌렸는지 알 수 없었어요. 맞지 않는 도구만 꺼내다 수리 시간이 모두 지나갔어요. 사과할 때는 무엇을 잘못했는지 말하고 고칠 행동까지 함께 찾아요.",
+      "inputHash": "838402e65ec5b469d31268fce6b0f58c754d8f41aa647580602d5017283722e9",
+      "file": null
+    },
+    {
+      "key": "BM05_APOLOGY:option:BM05_CANDY:failure",
+      "text": "포장지만 남은 사과. 사탕은 금세 사라졌지만 달등의 금은 그대로 남았어요. 아무도 수리 방법을 정하지 못해 축제의 달은 희미하게만 빛났어요. 선물보다 솔직한 사과와 책임 있는 행동이 먼저예요.",
+      "inputHash": "35832cd088eda922a3a25190ba9b650799d3d51172ee7aab107fe0fba34cb7d4",
+      "file": null
+    },
+    {
+      "key": "BM05_APOLOGY:option:BM05_REPAIR_APOLOGY:feedback",
+      "text": "무엇을 잘못했는지 말하고 고칠 방법을 물었어요. 사과가 앞으로 나아가는 길이 되었네요.",
+      "inputHash": "c471a9f0445cfc2829da17b4aa47a3c501f613ce50a9ff403a03e43ba4f92a57",
+      "file": null
+    },
+    {
+      "key": "BM06_APOLOGY_BRIDGE:caption:00",
+      "text": "달등을 고칠 은빛실은 마을 밖 달빛 샘에 있었어요.",
+      "inputHash": "c320d3f7d46992088bc94eeaeab3f977b29420d2473ed8faeb4b63956673f7e8",
+      "file": null
+    },
+    {
+      "key": "BM06_APOLOGY_BRIDGE:caption:01",
+      "text": "하루가 ‘사실을 말하기, 미안하다고 말하기, 고칠 일을 하기’를 떠올리자 끊겼던 다리에 발판이 하나씩 나타났지요.",
+      "inputHash": "b4e1c9e8910c2dcc492ced7d5b68a53529b539bd83e00e3ac1beac0f1632e8a0",
+      "file": null
+    },
+    {
+      "key": "BM06_APOLOGY_BRIDGE:activity:feedback",
+      "text": "진실과 미안함과 고칠 약속이 이어지자 건널 수 있는 길이 완성됐어요.",
+      "inputHash": "a0e6bbe071c59d7a06dd648e049c96bea37d6f7f72c587977c5752eed0d7418a",
+      "file": null
+    },
+    {
+      "key": "BM07_REPAIR_JOURNEY:caption:00",
+      "text": "하루와 모아는 달등의 모양을 그린 수리 지도를 들고 다리를 건넜어요.",
+      "inputHash": "ba06cf94c2755ea8adbcbf77045fe56373d6728ba1ee5991542a19d154147c47",
+      "file": null
+    },
+    {
+      "key": "BM07_REPAIR_JOURNEY:caption:01",
+      "text": "실수를 말했어도 해야 할 일은 남아 있었지만, 이제 하루는 혼자가 아니었지요.",
+      "inputHash": "e13aa27efdeca4ac9cae43154ad030a16c02b59b777d7117bfde7bff89ece6a5",
+      "file": null
+    },
+    {
+      "key": "BM07_REPAIR_JOURNEY:caption:02",
+      "text": "마침내 달빛 샘에서 커다란 수리틀과 가느다란 은빛실을 찾았어요.",
+      "inputHash": "646d2310d867cfefbe474cbeb4aa2eae6a0ac9298c83b10c44971fa318abd5c7",
+      "file": null
+    },
+    {
+      "key": "BM08_ASK_HELP:caption:00",
+      "text": "수리틀은 하루의 두 팔보다 넓었고, 은빛실은 서두르면 금세 엉켰어요.",
+      "inputHash": "4f27788889d1a1145d0bb253928cf54b7722438181a072273274834579f42646",
+      "file": null
+    },
+    {
+      "key": "BM08_ASK_HELP:caption:01",
+      "text": "‘내가 만든 실수니까 나 혼자 다 해야 할까?’ 하루는 무거운 손잡이를 바라보았어요.",
+      "inputHash": "e565a58469e334a56d7c97bdbc3e02a03203b037ea724177d114722bf914ed65",
+      "file": null
+    },
+    {
+      "key": "BM08_ASK_HELP:caption:02",
+      "text": "모아와 별솔 선생님은 도움을 청하면 바로 와 주겠다고 했지요.",
+      "inputHash": "cf5f9f0687ed5d77ed623adec5c2779e22933770f236e44797bbe9a65b9f29fa",
+      "file": null
+    },
+    {
+      "key": "BM08_ASK_HELP:option:BM08_ALONE:failure",
+      "text": "엉켜 버린 은빛실. 하루가 혼자 수리틀을 끌자 손잡이가 자꾸 기울고 은빛실은 커다란 매듭이 되었어요. 매듭을 푸는 사이 달이 떠올라 수리를 시작하지 못했어요. 혼자 하기 어려운 일은 도움을 청해야 안전하고 제대로 고칠 수 있어요.",
+      "inputHash": "cab7c73410de09fa9f05e18b1ad9fefcbdd7f0f8a7e89e71f6f8c34fc6b50b0b",
+      "file": null
+    },
+    {
+      "key": "BM08_ASK_HELP:option:BM08_ASK_TEAM:feedback",
+      "text": "하루는 수리틀을 함께 들고 실을 지킬 사람을 정했어요. 도움을 청한 덕분에 모두 안전하게 출발했어요.",
+      "inputHash": "c47ec57fc809cebab83c8ce8d8d2a1fb5bf1469b14458e6c6e30eef8330ae1f1",
+      "file": null
+    },
+    {
+      "key": "BM08_ASK_HELP:option:BM08_PRETEND:failure",
+      "text": "빈 가방의 비밀. 하루가 빈 가방으로 돌아오자 모두는 은빛실을 구한 줄 알고 기다렸어요. 축제 직전에야 재료가 없다는 걸 알아 달등의 금을 잇지 못했어요. 어려움도 솔직히 말해야 함께 해결할 방법을 찾을 수 있어요.",
+      "inputHash": "6b185c336ba55af29f7c172becaf717ec423d19a71993a57dabad81538268047",
+      "file": null
+    },
+    {
+      "key": "BM09_MEND_MOON:caption:00",
+      "text": "모아는 수리틀을 잡고, 별솔 선생님은 매듭 순서를 읽고, 하루는 금을 따라 은빛실을 놓았어요.",
+      "inputHash": "a99d5409267f71f9d1ef6ec0ccea94877d2086fc5186723cdb9dd8b040b0c83c",
+      "file": null
+    },
+    {
+      "key": "BM09_MEND_MOON:caption:01",
+      "text": "깨진 흔적은 사라지지 않았지만 매듭 하나마다 작은 별빛이 피어났지요.",
+      "inputHash": "97255e50e7374c7070cdbeb2fc2d45fdaf6c9cb154196f5223b443820e661dc9",
+      "file": null
+    },
+    {
+      "key": "BM09_MEND_MOON:activity:feedback",
+      "text": "네 개의 매듭이 이어지자 깨진 자리에 새로운 별자리가 생겼어요.",
+      "inputHash": "f89f3439fa2f6abbe547c455805b48a113fa203cbee573ad409ca06ca86b5a73",
+      "file": null
+    },
+    {
+      "key": "BM10_SECOND_TRUTH:caption:00",
+      "text": "수리가 거의 끝났을 때 하루는 마지막 매듭 하나가 느슨한 것을 발견했어요.",
+      "inputHash": "c52408853863bd2b3cf58fef3763ba9c31d694f8b9835b303b654b82f0ee6fde",
+      "file": null
+    },
+    {
+      "key": "BM10_SECOND_TRUTH:caption:01",
+      "text": "자신이 실을 반대 순서로 꿴 탓이었지만, 광장에서는 벌써 축제 노래가 시작되었지요.",
+      "inputHash": "1132d390fad6be29b8d909e8dcab0f8208c32228cea56bc88177b712025f0cbf",
+      "file": null
+    },
+    {
+      "key": "BM10_SECOND_TRUTH:caption:02",
+      "text": "하루는 오늘 배운 용기를 다시 꺼낼 수 있을까요?",
+      "inputHash": "b29bb477afc2ccd0eb44f03045c7b33d137663c1a15e2422b497ca14a35c20bd",
+      "file": null
+    },
+    {
+      "key": "BM10_SECOND_TRUTH:option:BM10_COVER_RIBBON:failure",
+      "text": "리본 뒤에서 풀린 빛. 달등을 들어 올리자 리본 뒤의 실이 조금씩 풀렸어요. 달등이 기울어 모두가 다시 내려놓았고, 축제의 빛은 켜지지 못했어요. 새로운 실수를 발견하면 가리지 말고 바로 알려야 더 큰 문제를 막을 수 있어요.",
+      "inputHash": "950718b183fea0df0b5ceaf05802dc1b3fce746a5c264b3fc771c1e1022feb0f",
+      "file": null
+    },
+    {
+      "key": "BM10_SECOND_TRUTH:option:BM10_BLAME_THREAD:failure",
+      "text": "버려진 좋은 은빛실. 사람들은 멀쩡한 실을 모두 바꾸었지만 반대로 꿴 매듭은 그대로였어요. 달등의 빛은 계속 깜빡였고 축제 시간이 지나갔어요. 누구나 다시 실수할 수 있어요. 그때도 사실을 말해야 제대로 고칠 수 있어요.",
+      "inputHash": "8a8f2dfd99081ec0d45edaf662db098b59952267a215dfdf2176ffe1ee4ab003",
+      "file": null
+    },
+    {
+      "key": "BM10_SECOND_TRUTH:option:BM10_TELL_AGAIN:feedback",
+      "text": "하루는 축제보다 안전한 수리를 먼저 골랐어요. 모두가 한 매듭만 다시 묶어 달등을 단단하게 완성했어요.",
+      "inputHash": "f10700e53c5ff152bec6cf7a5079f02ddc45040a76f8d4d0f33af6e4a9b20a03",
+      "file": null
+    },
+    {
+      "key": "BM11_FESTIVAL:caption:00",
+      "text": "마지막 매듭을 다시 묶자 달등은 천천히 밤하늘로 떠올랐어요.",
+      "inputHash": "09ce3a004894c5325b34094335433506d4f5a1a1529d87c9d324b72960ae45d3",
+      "file": null
+    },
+    {
+      "key": "BM11_FESTIVAL:caption:01",
+      "text": "금이 있던 자리의 은빛실은 전에 없던 별자리가 되어 마을을 비추었지요.",
+      "inputHash": "ac0ab9d49d63b047515499f359cec7f0a51cf947e2c3610ec1b261dc7e5724fe",
+      "file": null
+    },
+    {
+      "key": "BM11_FESTIVAL:caption:02",
+      "text": "사람들은 완벽한 달보다, 진실을 말하고 함께 고친 달을 오래 바라보았답니다.",
+      "inputHash": "92147f2130eb5d41b3de2620bf6ca2b33291181660dd9b9b8f17bf2c6e7e4213",
+      "file": null
+    },
+    {
+      "key": "BM12_END:caption:00",
+      "text": "하루는 다시는 실수하지 않겠다고 약속하지 않았어요. 누구나 또 실수할 수 있으니까요.",
+      "inputHash": "add690091b96bb902d54b42e6856b4e1bb5e094a4d8544866f3dcf43d561581c",
+      "file": null
+    },
+    {
+      "key": "BM12_END:caption:01",
+      "text": "대신 실수하면 숨기지 않고 말하고, 사과하고, 도움을 받아 고치겠다고 약속했지요.",
+      "inputHash": "95895152846f9e6f45dce07a8d4ef6b08741857b2859d41fe6fe9b4cb762acaa",
+      "file": null
+    },
+    {
+      "key": "BM12_END:caption:02",
+      "text": "용기는 실수하지 않는 힘이 아니라, 실수한 뒤 다시 옳은 쪽으로 걸어가는 힘이랍니다.",
+      "inputHash": "ed7069a61ee6fb1df19009c982c72aaba2b73de1e73f30aa395b27d634c68d40",
+      "file": null
+    },
+    {
+      "key": "BM12_END:option:BM12_TRUTH_TOOL:feedback",
+      "text": "문제를 함께 볼 수 있게 만드는 진실의 도구를 골랐어요.",
+      "inputHash": "2875c707f5f63df6bfd1099da8f361a7022b41ff543b706b6b5b40bd874b3a9a",
+      "file": null
+    },
+    {
+      "key": "BM12_END:option:BM12_APOLOGY_TOOL:feedback",
+      "text": "미안한 마음을 책임 있는 행동으로 잇는 사과의 도구를 골랐어요.",
+      "inputHash": "5cee1f589c719ef0a6cb708162fbd1be13e38568d28df79b04610ac87fca98d3",
+      "file": null
+    },
+    {
+      "key": "BM12_END:option:BM12_HELP_TOOL:feedback",
+      "text": "책임을 피하지 않으면서 함께 해결하는 도움의 도구를 골랐어요.",
+      "inputHash": "cef051769adfd5ec49ceb5ceb82de10c134bc96bff31defaae53db9fc3af4bb8",
+      "file": null
+    }
+  ]
+}

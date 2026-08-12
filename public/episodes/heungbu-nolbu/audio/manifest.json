@@ -1,0 +1,374 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "heungbu-nolbu",
+  "contentVersion": "2.0.0",
+  "model": "gpt-4o-mini-tts",
+  "voice": "marin",
+  "format": "mp3",
+  "speed": 0.96,
+  "promptVersion": "ko-child-story-v1",
+  "instructionsHash": "f54c811a9f3d406d2ee64b8e4a44fc9c54b36938b54e6f7954deeeb079025258",
+  "generatedAt": null,
+  "entries": [
+    {
+      "key": "HB00_TITLE:caption:00",
+      "text": "옛날 어느 마을에 형 놀부와 동생 흥부가 살았어요.",
+      "inputHash": "e473de76dd95a4505171af391d01c12dc5c9f5a357b4b9f1a2d4ffb93d245bfb",
+      "file": null
+    },
+    {
+      "key": "HB00_TITLE:caption:01",
+      "text": "두 형제의 마음에는 서로 다른 씨앗이 자라고 있었지요.",
+      "inputHash": "6e116dfea27d3cf182f53ce1def9daae80391cdac952b029c847735aafd1eaea",
+      "file": null
+    },
+    {
+      "key": "HB01_TWO_HOMES:caption:00",
+      "text": "부모님이 세상을 떠난 뒤, 놀부는 집과 논밭을 혼자 차지했어요.",
+      "inputHash": "770b6bc43ac5e43d94edadb61051a40e726a1e12ff106c9a8c565b2bc3c77da6",
+      "file": null
+    },
+    {
+      "key": "HB01_TWO_HOMES:caption:01",
+      "text": "흥부 가족은 작은 초가집으로 옮겼지만 서로를 살피며 지냈어요.",
+      "inputHash": "e79f2f066818b092ebb7851657d10044e21c3174fb42e09bfd40cee1f94dcfe9",
+      "file": null
+    },
+    {
+      "key": "HB01_TWO_HOMES:caption:02",
+      "text": "흥부는 남은 쌀도 가족과 조금씩 나누었답니다.",
+      "inputHash": "bdeaa5061a758f0b64bd80a20c8d93f3d8563aeb7701b1677465c440fd431133",
+      "file": null
+    },
+    {
+      "key": "HB02_GATE:caption:00",
+      "text": "먹을 것이 떨어진 날, 흥부는 형에게 일거리와 쌀을 조금 빌려 달라고 부탁했어요.",
+      "inputHash": "f4e13344411c3d60a37c1d22538bbb77411376accf536e65e32a1d4ac62d5a67",
+      "file": null
+    },
+    {
+      "key": "HB02_GATE:caption:01",
+      "text": "하지만 놀부는 대문을 열어 주지 않았고, 흥부의 마음은 무거워졌지요.",
+      "inputHash": "29aa74170f9bc6db7016ea1952a27c5e8899bb309171283977ca14e8d91276ab",
+      "file": null
+    },
+    {
+      "key": "HB02_GATE:option:HB02_SHOUT:failure",
+      "text": "닫혀 버린 대화. 큰 목소리가 오가자 흥부의 부탁은 제대로 들리지 않았어요. 흥부는 더 무거운 마음으로 돌아섰어요. 화난 마음은 상대가 들을 수 있는 말로 전해요.",
+      "inputHash": "3fb3f002ac712c2748b4140fb82618b9a1f373788c77347c01a1f7a56afc2288",
+      "file": null
+    },
+    {
+      "key": "HB02_GATE:option:HB02_SAY_FEELING:feedback",
+      "text": "마음을 솔직하고 차분하게 말했네요. 한 사람이 거절해도 믿을 만한 다른 어른에게 도움을 청할 수 있어요.",
+      "inputHash": "71edc1e6faeccc219cb419f433c3275c137d9f6654f674c3e0b958dc7cc5825b",
+      "file": null
+    },
+    {
+      "key": "HB02_GATE:option:HB02_HIDE:failure",
+      "text": "혼자 남은 속마음. 흥부가 아무 말 없이 돌아서자 누구도 얼마나 힘든지 알지 못했어요. 다른 도움을 찾을 기회도 멀어졌어요. 힘든 마음은 믿을 만한 사람에게 알려도 괜찮아요.",
+      "inputHash": "1ed8304c53be1bc5c0a46cdd3c81336710b76b0fb054453a19790a53bdd3c8b0",
+      "file": null
+    },
+    {
+      "key": "HB03_SWALLOW:caption:00",
+      "text": "봄이 오자 처마 밑에 제비 가족이 둥지를 틀었어요.",
+      "inputHash": "5ceb33b358c06ff4d675aa9faece46e2e879004eaa8920d9a71d2245ab3c2447",
+      "file": null
+    },
+    {
+      "key": "HB03_SWALLOW:caption:01",
+      "text": "어느 날 어린 제비 한 마리가 바닥에 내려앉아 발을 제대로 딛지 못했어요.",
+      "inputHash": "eff4ba8cbfa11ec2ee282db60f287da7789017df94b048a070d092c423063448",
+      "file": null
+    },
+    {
+      "key": "HB03_SWALLOW:caption:02",
+      "text": "피는 보이지 않았지만 도움이 필요해 보였지요.",
+      "inputHash": "a51245a5768647d4f1c94fe98b7e2a67b31e77034b0e820806ea183f091e46aa",
+      "file": null
+    },
+    {
+      "key": "HB03_SWALLOW:option:HB03_GRAB:failure",
+      "text": "더 놀란 제비. 갑자기 손이 다가오자 제비는 몸을 움츠리고 멀리 피했어요. 흥부도 제비의 상태를 살필 수 없게 되었어요. 도울 때는 서두르기보다 먼저 안전을 살펴요.",
+      "inputHash": "f7e439567d25518e7ce6a0abb23a7be1a5464343db4896d67ca104e873568f45",
+      "file": null
+    },
+    {
+      "key": "HB03_SWALLOW:option:HB03_OBSERVE:feedback",
+      "text": "제비가 놀라지 않도록 거리를 두고, 어른과 함께 안전하게 도울 방법을 찾았어요.",
+      "inputHash": "018f864c03885b24d2d1b1ccfde095b6dd5dbcb6e63255437db9e38f69e6cb2e",
+      "file": null
+    },
+    {
+      "key": "HB03_SWALLOW:option:HB03_FEED:failure",
+      "text": "맞지 않았던 먹이. 제비는 맞지 않는 먹이 때문에 배가 불편해져 더 오래 쉬어야 했어요. 좋은 마음만으로는 안전하게 도울 수 없었어요. 야생동물에게 함부로 먹이를 주지 말고 어른에게 알려요.",
+      "inputHash": "2b4a04cdfc632e82723adf566c85a6b3038c779a61e9061c44d105845f25e5da",
+      "file": null
+    },
+    {
+      "key": "HB04_SEED:caption:00",
+      "text": "흥부 가족은 깨끗한 천을 가까이 두고 제비가 편히 쉬도록 도왔어요.",
+      "inputHash": "c84b24f10cc2571cea41c108d665ba0a408956cf1d6f1e31481d20c48cea8ee0",
+      "file": null
+    },
+    {
+      "key": "HB04_SEED:caption:01",
+      "text": "계절이 지나 돌아온 제비는 마당에 박씨 하나를 톡 떨어뜨렸답니다.",
+      "inputHash": "6b2c1931b9a3dc72025c6e96e4c755334afdc67c22c9b76d232ad421ed2d9689",
+      "file": null
+    },
+    {
+      "key": "HB04_SEED:activity:feedback",
+      "text": "작은 씨앗이 포근한 흙 속에 자리를 잡았어요.",
+      "inputHash": "49578fa60b2bcff45f2ba767c13f420c5c3845b785beeed703e7b7d5cc8831ea",
+      "file": null
+    },
+    {
+      "key": "HB05_GROW:caption:00",
+      "text": "흥부 가족은 박씨를 심고 매일 조금씩 물을 주었어요.",
+      "inputHash": "c8a2ab3b47890f02e3396402999d3ef16d577c122d7af086f535fa3ee5b252ee",
+      "file": null
+    },
+    {
+      "key": "HB05_GROW:caption:01",
+      "text": "빨리 자라라고 잡아당기지 않고, 햇빛과 시간을 기다렸지요.",
+      "inputHash": "32b88da919cd81b0cd912d795f53db0e5a534cd8d0df5cf9623e4dfd3b2eedf1",
+      "file": null
+    },
+    {
+      "key": "HB05_GROW:activity:feedback",
+      "text": "작은 돌봄이 차곡차곡 쌓여 지붕 가득 박넝쿨이 자랐어요.",
+      "inputHash": "a2da63b51fb50f59c29ba54c09df87f1d1fe353e1a529f6204290f537bf74630",
+      "file": null
+    },
+    {
+      "key": "HB06_GOOD_GOURDS:caption:00",
+      "text": "지붕 위로 커다란 박 세 통이 열렸어요.",
+      "inputHash": "b437e8c2fe144eee4a3d1189a174ad95e7fae64a42714e2969d0c39017f791fb",
+      "file": null
+    },
+    {
+      "key": "HB06_GOOD_GOURDS:caption:01",
+      "text": "박 속에는 쌀과 따뜻한 이불, 집을 고칠 도구와 함께 심을 씨앗이 가득했지요.",
+      "inputHash": "b6cad6c922f317932c7323fec6d5e1da1e60aba8926b094b8788e90c42e9cc86",
+      "file": null
+    },
+    {
+      "key": "HB06_GOOD_GOURDS:caption:02",
+      "text": "흥부 가족이 쓰고도 씨앗과 음식이 넉넉히 남았어요.",
+      "inputHash": "f60f4987d3e92a65426f5d8c80ce956820c168f043ad9b1c9c170f1f49019529",
+      "file": null
+    },
+    {
+      "key": "HB06_GOOD_GOURDS:option:HB06_HIDE:failure",
+      "text": "싹트지 못한 씨앗. 씨앗을 모두 어두운 창고에 감추자 심을 때를 놓쳤어요. 이웃의 빈 밭에도 새싹이 자라지 못했어요. 필요한 만큼 남기고 나눌 때 풍요가 함께 자라요.",
+      "inputHash": "7f06898a2f819a6a34a8f41ae6c9f493f0e365700e878f948d66fd158bcfdb07",
+      "file": null
+    },
+    {
+      "key": "HB06_GOOD_GOURDS:option:HB06_SHARE:feedback",
+      "text": "모두의 필요를 살피는 방법을 골랐네요. 씨앗을 나누면 다음 봄의 기쁨도 함께 커질 거예요.",
+      "inputHash": "9abb5e594c3cb1a646dc119c48970294d4b03eb7e703c1c296e582164ea1b39c",
+      "file": null
+    },
+    {
+      "key": "HB06_GOOD_GOURDS:option:HB06_BOAST:failure",
+      "text": "작아진 잔치. 흥부가 가진 것을 자랑하자 이웃들은 함께하라는 말로 듣지 못했어요. 기쁜 마당에서 웃음소리가 하나둘 줄었어요. 기쁨은 자랑하기보다 함께 누릴 때 오래가요.",
+      "inputHash": "efba9ea37484971aa0ed4e40f600ee67cd7ade7426af7dc297e940993baea3d4",
+      "file": null
+    },
+    {
+      "key": "HB07_RUMOR:caption:00",
+      "text": "마을에 웃음이 퍼지자 놀부도 흥부의 박 이야기를 들었어요.",
+      "inputHash": "68a6cf5ddc4ba853e7721609fb97eac4f43bb4f36ad1431d8a9586ab9bea0504",
+      "file": null
+    },
+    {
+      "key": "HB07_RUMOR:caption:01",
+      "text": "흥부는 제비를 살핀 일부터 씨앗을 돌본 일까지 차근차근 말했지요.",
+      "inputHash": "901709d2d5ac97434c5e41eb23674d0ecdeba0b21c4b8169e82fa3a0a1d47ef2",
+      "file": null
+    },
+    {
+      "key": "HB07_RUMOR:caption:02",
+      "text": "그런데 놀부의 귀에는 ‘보물’이라는 결과만 크게 들렸어요.",
+      "inputHash": "dff772f01b4edecea4ed080a9a85c7242624b351f534736ce37cad4f7ea39c5f",
+      "file": null
+    },
+    {
+      "key": "HB07_RUMOR:option:HB07_CARE:feedback",
+      "text": "맞아요. 보물보다 먼저 있었던 것은 작은 생명이 필요한 것을 살핀 마음이었어요.",
+      "inputHash": "a1cb2a9606d45708bd7e7e0f604670be815ccd4cccf99ba1fb9ef88bfb36d9ae",
+      "file": null
+    },
+    {
+      "key": "HB07_RUMOR:option:HB07_SIZE:failure",
+      "text": "큰 박만 본 놀부. 놀부는 박의 크기만 재느라 흥부의 친절을 듣지 못했어요. 무엇이 중요한지 모른 채 보물만 기다리게 되었어요. 결과보다 그 결과를 만든 마음과 과정을 살펴요.",
+      "inputHash": "620d69da7cb1b2d5aa54b0868935d2c99c4a8702d45b347abc7efa064a0c9868",
+      "file": null
+    },
+    {
+      "key": "HB07_RUMOR:option:HB07_SOUND:failure",
+      "text": "소리만 남은 이야기. 놀부는 톱 소리만 흉내 내며 빈 박을 두드렸어요. 제비를 살핀 마음은 끝내 배우지 못했어요. 눈에 띄는 장면보다 이야기의 까닭을 들어요.",
+      "inputHash": "37dd545f7659df7ef2888ba9fa46264f88fe30bac324ad51f6c884505ee4b009",
+      "file": null
+    },
+    {
+      "key": "HB08_SELFISH_HELP:caption:00",
+      "text": "놀부는 박씨를 받고 싶어 제비만 기다렸어요.",
+      "inputHash": "29af13ee00f22d05629d16dda98b9e6970638e9e586dcc71e0406750840cc107",
+      "file": null
+    },
+    {
+      "key": "HB08_SELFISH_HELP:caption:01",
+      "text": "마침 덩굴 끈에 발이 걸린 제비를 보았지만, 제비의 마음보다 박씨부터 떠올렸지요.",
+      "inputHash": "14f88ddd027459e0f328234ebd49b3eec39929fc755ac5a468fde973d8f3964b",
+      "file": null
+    },
+    {
+      "key": "HB08_SELFISH_HELP:option:HB08_SAFE:feedback",
+      "text": "제비의 안전과 마음부터 살폈네요. 도움은 상대에게 무엇이 필요한지 보는 데서 시작해요.",
+      "inputHash": "98860c2e25a7424640e711e1941ebf549cb96fbf3b0e193191cc5962c21624dd",
+      "file": null
+    },
+    {
+      "key": "HB08_SELFISH_HELP:option:HB08_TRADE:failure",
+      "text": "도움이 거래가 된 순간. 놀부가 박씨부터 요구하자 제비는 도움을 받아도 안심하지 못했어요. 두 마음 사이에는 고마움 대신 부담이 남았어요. 도움은 보상보다 상대의 필요를 먼저 살피는 일이에요.",
+      "inputHash": "962b840cdd327ab16a04b35ffd8bd5896d7afba82e44dfe50352460be23ea760",
+      "file": null
+    },
+    {
+      "key": "HB08_SELFISH_HELP:option:HB08_IGNORE:failure",
+      "text": "오래 기다린 제비. 놀부가 그냥 지나가자 제비는 덩굴 끈이 풀리기를 더 오래 기다려야 했어요. 놀부도 마음을 바꿀 기회를 놓쳤어요. 할 수 있는 작은 도움도 상대에게는 큰 안심이 돼요.",
+      "inputHash": "ccad93e928e6b8eff168017493ab6ac93a06bcc1001cd79373258e084501e025",
+      "file": null
+    },
+    {
+      "key": "HB09_NOISY_GOURDS:caption:00",
+      "text": "놀부의 박도 크게 열렸어요.",
+      "inputHash": "af0dbd823c5e2fcb7a2db89dcc290b7ceeb9dadf1e5bbd29c6846f71a96eb1cd",
+      "file": null
+    },
+    {
+      "key": "HB09_NOISY_GOURDS:caption:01",
+      "text": "박에서는 혼자 쌓아 둔 이불과 바구니, 돌려주어야 할 곡식이 마당으로 데굴데굴 나왔지요.",
+      "inputHash": "ed43d3b27cd3a7eaa36842a5f49695c8ed060090e017bd66988d1be546e43ced",
+      "file": null
+    },
+    {
+      "key": "HB09_NOISY_GOURDS:caption:02",
+      "text": "아무도 다치지 않았지만, 놀부는 혼자 가지려 했던 마음이 큰 정리거리를 만들었다는 걸 보았어요.",
+      "inputHash": "685a9eb0bdd8fd57accf266b5a49ea8cc8f00ca494f4eb772d232a95c3c4c4cc",
+      "file": null
+    },
+    {
+      "key": "HB09_NOISY_GOURDS:option:HB09_BLAME:failure",
+      "text": "아무도 돕지 않은 마당. 놀부가 이웃을 탓하자 이웃들은 억울한 마음으로 물러났어요. 돌려줄 곡식과 어지러운 물건은 그대로 남았어요. 내 잘못을 먼저 인정해야 도움을 함께 구할 수 있어요.",
+      "inputHash": "dc6ccfc7bbde1cd9d52557e941b0291ce1a9c9f6f396c1a4eea9f721b485cfd2",
+      "file": null
+    },
+    {
+      "key": "HB09_NOISY_GOURDS:option:HB09_OWN:feedback",
+      "text": "잘못을 인정하는 데는 용기가 필요해요. 이제 말뿐 아니라 정리하고 돌려주는 행동으로 보여 줄 차례예요.",
+      "inputHash": "617bb68d09b3848111393b013f1c44641bcc80485dde6fe99311bf520791489e",
+      "file": null
+    },
+    {
+      "key": "HB09_NOISY_GOURDS:option:HB09_HIDE:failure",
+      "text": "문밖에서 커진 정리거리. 놀부가 문을 닫아도 물건은 사라지지 않았어요. 미뤄 둔 물건이 길을 막아 이웃도 지나가기 어려워졌어요. 잘못은 숨기기보다 할 수 있는 일부터 바로 고쳐요.",
+      "inputHash": "c508b96049b2d0798f527abc6834f0a09f18db3bf4a158f4c067c0ff9e7d2ff2",
+      "file": null
+    },
+    {
+      "key": "HB10_APOLOGY:caption:00",
+      "text": "놀부는 흥부를 찾아가 자기 욕심 때문에 빼앗고 마음 아프게 한 일을 사과했어요.",
+      "inputHash": "7834225dbaae9499ff27b4869dd707fbd3d4533ff189e1357eaa8ceff46dc606",
+      "file": null
+    },
+    {
+      "key": "HB10_APOLOGY:caption:01",
+      "text": "흥부는 사과를 들었지만, 아무 일도 없던 것처럼 서두르지 않았지요.",
+      "inputHash": "5965db9804379ad5c012fbd39cbd9fa2394fb8a27da43fe3e6c991617eb05d00",
+      "file": null
+    },
+    {
+      "key": "HB10_APOLOGY:caption:02",
+      "text": "두 사람은 빼앗은 몫을 돌려주고 앞으로 지킬 약속을 이야기했어요.",
+      "inputHash": "663fd546664f8d8492c7a0f1e7fbcda271413ca7263407b5cdc57d1c39e4b2f0",
+      "file": null
+    },
+    {
+      "key": "HB10_APOLOGY:option:HB10_FORGET:failure",
+      "text": "마음속에 남은 가시. 아무 일도 없던 척 웃었지만 흥부의 속상함과 돌려받지 못한 몫은 그대로였어요. 두 사람은 다시 편히 믿지 못했어요. 화해는 아픈 일을 말하고 책임질 행동을 정할 때 시작돼요.",
+      "inputHash": "f4bbcd6111130fb798f1e25310e94c0e79e8e3577bfada907f8c960f5ae21c2c",
+      "file": null
+    },
+    {
+      "key": "HB10_APOLOGY:option:HB10_PROMISE:feedback",
+      "text": "사과와 함께 책임질 행동을 정했네요. 관계를 다시 만드는 데 꼭 필요한 과정이에요.",
+      "inputHash": "fb0a3e3c12e42e28676216b656308cce08bb95e2d27cd0897b42e1f1d532d034",
+      "file": null
+    },
+    {
+      "key": "HB10_APOLOGY:option:HB10_REVENGE:failure",
+      "text": "이어진 외로움. 흥부가 받은 아픔을 그대로 돌려주자 두 집의 문이 모두 닫혔어요. 상처가 끝나지 않고 한 번 더 이어졌어요. 화난 마음은 인정하되 같은 아픔보다 경계와 공평한 약속을 선택해요.",
+      "inputHash": "1ada036a905b2079cc2c21923bce87a7ca9b13465f92c453453d7ffc5c9821cc",
+      "file": null
+    },
+    {
+      "key": "HB11_REPAIR:caption:00",
+      "text": "놀부는 약속한 몫을 돌려주고, 흩어진 물건을 이웃과 함께 정리했어요.",
+      "inputHash": "2851aff50dbcbb5bcae9a45f7470b973a5facd09dd4ab3ec47c6988c7ea0586c",
+      "file": null
+    },
+    {
+      "key": "HB11_REPAIR:caption:01",
+      "text": "흥부 가족의 집도 함께 고치며 말보다 행동으로 마음을 보여 주었지요.",
+      "inputHash": "94782dde18f19a8256f10aaf7aa4d925daa35aaed017fd075104e624a7ace739",
+      "file": null
+    },
+    {
+      "key": "HB11_REPAIR:activity:feedback",
+      "text": "바구니가 제자리를 찾을 때마다 마을의 웃음도 조금씩 돌아왔어요.",
+      "inputHash": "a32508582b6335f91f5d7cfda03cae2d7761a6ad1396392fb904b6b988db9f15",
+      "file": null
+    },
+    {
+      "key": "HB12_END:caption:00",
+      "text": "흥부의 친절은 작은 생명을 살렸고, 놀부의 욕심은 자신을 외롭게 했어요.",
+      "inputHash": "9b7a800ad55dfde658d1127f25b09bf3c1add075996500022722094e516e34f3",
+      "file": null
+    },
+    {
+      "key": "HB12_END:caption:01",
+      "text": "하지만 잘못을 알아차린 뒤에는 사과하고 행동으로 고칠 수 있었답니다.",
+      "inputHash": "0bb8ed2d12b3b48e9a03afd98e934f159768d1fd181a4e37e1f8869941ab8acc",
+      "file": null
+    },
+    {
+      "key": "HB12_END:caption:02",
+      "text": "나눔은 모두 내주는 일이 아니라, 서로의 필요를 살피는 마음이에요.",
+      "inputHash": "0905615fe9f82e0e67b40bb7b80246bd55cc1a65e58198f847028072240040a8",
+      "file": null
+    },
+    {
+      "key": "HB12_END:option:HB12_SAFE_HELP:feedback",
+      "text": "서두르지 않고 안전한 방법을 찾는 따뜻한 씨앗을 골랐어요.",
+      "inputHash": "0485f71a91b8be99ad51c260cd83949c1536b37f90b3611cbf705ac13fbdaaa2",
+      "file": null
+    },
+    {
+      "key": "HB12_END:option:HB12_FAIR_SHARE:feedback",
+      "text": "나와 다른 사람의 필요를 함께 살피는 넉넉한 씨앗을 골랐어요.",
+      "inputHash": "3c35bdee1d0ed6f3cb1b1bc3a1ca8a8224bca07ce6619e7dc3f23df94e2f0b92",
+      "file": null
+    },
+    {
+      "key": "HB12_END:option:HB12_REPAIR:feedback",
+      "text": "잘못한 뒤에도 다시 고칠 수 있다는 용기 있는 씨앗을 골랐어요.",
+      "inputHash": "e690fc3be00bd2db0ef0f0abdc6dc616b86604dcd1c86998e44c4dc223f2adbf",
+      "file": null
+    }
+  ]
+}

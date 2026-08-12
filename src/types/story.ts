@@ -98,6 +98,28 @@ export interface Episode {
   };
   startSceneId: string;
   scenes: StoryScene[];
+  voice?: VoiceManifest;
+}
+
+export interface VoiceManifestEntry {
+  key: string;
+  text: string;
+  inputHash: string;
+  file: string | null;
+}
+
+export interface VoiceManifest {
+  schemaVersion: 1;
+  episodeId: string;
+  contentVersion: string;
+  model: "gpt-4o-mini-tts";
+  voice: string;
+  format: "mp3";
+  speed: number;
+  promptVersion: string;
+  instructionsHash: string;
+  generatedAt: string | null;
+  entries: VoiceManifestEntry[];
 }
 
 export interface StorySettings {

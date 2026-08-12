@@ -8,6 +8,15 @@ import {
 import { storyAudio } from "./lib/audio";
 import { getCompletionVisual, loadEpisode, loadManifest } from "./lib/story";
 import {
+  activityFeedbackVoiceKey,
+  captionVoiceKey,
+  failureVoiceText,
+  getVoiceEntry,
+  hasGeneratedVoice,
+  optionFailureVoiceKey,
+  optionFeedbackVoiceKey,
+} from "./lib/voice";
+import {
   clearProgress,
   loadProgress,
   loadSettings,
@@ -179,6 +188,8 @@ function StoryPlayer({
   const [selectedOption, setSelectedOption] = useState<ChoiceOption | null>(null);
   const [selections, setSelections] = useState<SelectionRecord[]>(initialProgress.selections);
   const [activityTaps, setActivityTaps] = useState(0);
+  const [elapsedCaptionKey, setElapsedCaptionKey] = useState<string | null>(null);
+  const [finishedVoiceKey, setFinishedVoiceKey] = useState<string | null>(null);
   const interactionHeadingRef = useRef<HTMLHeadingElement>(null);
   const failureDialogRef = useRef<HTMLElement>(null);
   const choiceLockedRef = useRef(false);
@@ -189,6 +200,20 @@ function StoryPlayer({
   const sceneIndex = episode.scenes.findIndex((candidate) => candidate.id === scene.id);
   const sceneProgress = ((sceneIndex + 1) / episode.scenes.length) * 100;
   const caption = scene.captions[captionIndex] ?? scene.captions[scene.captions.length - 1];
+  const currentCaptionKey = captionVoiceKey(scene.id, captionIndex);
+
+  const playVoice = useCallback(
+    (key: string, text: string, onEnded?: () => void) => {
+      const entry = getVoiceEntry(episode, key);
+      storyAudio.playVoice({
+        key: `${episode.id}:${key}`,
+        src: entry?.file,
+        text,
+        onEnded,
+      });
+    },
+    [episode],
+  );
 
   const persist = useCallback(
     (
@@ -257,8 +282,16 @@ function StoryPlayer({
 
   useEffect(() => {
     storyAudio.setMuted(settings.muted);
-    if (!settings.muted && phase === "playing") storyAudio.speak(caption);
-  }, [caption, phase, settings.muted]);
+    if (settings.muted || phase !== "playing") {
+      return;
+    }
+    if (finishedVoiceKey === currentCaptionKey) return;
+
+    setFinishedVoiceKey(null);
+    playVoice(currentCaptionKey, caption, () => {
+      setFinishedVoiceKey(currentCaptionKey);
+    });
+  }, [caption, currentCaptionKey, finishedVoiceKey, phase, playVoice, settings.muted]);
 
   useEffect(() => {
     if (["choice", "feedback", "failed", "activity", "activityFeedback"].includes(phase)) {
@@ -298,19 +331,34 @@ function StoryPlayer({
       12000,
       Math.max(6500, scene.estimatedDurationMs / scene.captions.length),
     );
-    const timer = window.setTimeout(() => {
-      if (captionIndex < scene.captions.length - 1) setCaptionIndex((index) => index + 1);
-      else revealInteractionOrAdvance();
-    }, perCaption);
+    const timer = window.setTimeout(() => setElapsedCaptionKey(currentCaptionKey), perCaption);
     return () => window.clearTimeout(timer);
-  }, [captionIndex, phase, revealInteractionOrAdvance, scene.captions.length, scene.estimatedDurationMs]);
+  }, [currentCaptionKey, phase, scene.captions.length, scene.estimatedDurationMs]);
+
+  useEffect(() => {
+    if (
+      phase !== "playing" ||
+      elapsedCaptionKey !== currentCaptionKey ||
+      finishedVoiceKey !== currentCaptionKey
+    ) return;
+    if (captionIndex < scene.captions.length - 1) setCaptionIndex((index) => index + 1);
+    else revealInteractionOrAdvance();
+  }, [
+    captionIndex,
+    currentCaptionKey,
+    elapsedCaptionKey,
+    finishedVoiceKey,
+    phase,
+    revealInteractionOrAdvance,
+    scene.captions.length,
+  ]);
 
   useEffect(() => {
     const onVisibilityChange = () => {
       if (document.hidden && phase !== "paused") {
         setPhaseBeforePause(phase);
         setPhase("paused");
-        storyAudio.stopSpeech();
+        storyAudio.pauseVoice();
         storyAudio.stopMusic();
       }
     };
@@ -319,10 +367,11 @@ function StoryPlayer({
       if (phase === "paused") {
         setPhase(phaseBeforePause);
         storyAudio.playTheme(scene.music);
+        storyAudio.resumeVoice();
       } else {
         setPhaseBeforePause(phase);
         setPhase("paused");
-        storyAudio.stopSpeech();
+        storyAudio.pauseVoice();
         storyAudio.stopMusic();
       }
     };
@@ -346,12 +395,12 @@ function StoryPlayer({
     if (phase === "paused") {
       setPhase(phaseBeforePause);
       storyAudio.playTheme(scene.music);
-      if (!settings.muted && phaseBeforePause === "playing") storyAudio.speak(caption);
+      storyAudio.resumeVoice();
       return;
     }
     setPhaseBeforePause(phase);
     setPhase("paused");
-    storyAudio.stopSpeech();
+    storyAudio.pauseVoice();
     storyAudio.stopMusic();
   };
 
@@ -367,6 +416,7 @@ function StoryPlayer({
 
   const handleNext = () => {
     if (phase !== "playing") return;
+    storyAudio.stopVoice();
     if (captionIndex < scene.captions.length - 1) {
       setCaptionIndex((index) => index + 1);
       return;
@@ -384,7 +434,10 @@ function StoryPlayer({
       storyAudio.stopSpeech();
       storyAudio.stopMusic();
       storyAudio.playChime("fail");
-      storyAudio.speak(`${option.failure.title}. ${option.failure.ending} ${option.failure.lesson}`);
+      playVoice(
+        optionFailureVoiceKey(scene.id, option.id),
+        failureVoiceText(option.failure),
+      );
       persist(scene.id, selections, false, "choice");
       return;
     }
@@ -399,7 +452,7 @@ function StoryPlayer({
     setSelections(nextSelections);
     setPhase("feedback");
     storyAudio.playChime("choice");
-    storyAudio.speak(option.feedback);
+    playVoice(optionFeedbackVoiceKey(scene.id, option.id), option.feedback);
     persist(scene.id, nextSelections);
   };
 
@@ -439,7 +492,7 @@ function StoryPlayer({
     storyAudio.playChime("tap");
     if (nextCount >= scene.interaction.tapsRequired) {
       setPhase("activityFeedback");
-      storyAudio.speak(scene.interaction.feedback);
+      playVoice(activityFeedbackVoiceKey(scene.id), scene.interaction.feedback);
     }
   };
 
@@ -1007,7 +1060,10 @@ export default function App() {
                   </button>
                 )}
               </div>
-              <small className="autoplay-note">소리는 시작 버튼을 누른 뒤 재생되며 언제든 끌 수 있어요.</small>
+              <small className="autoplay-note">
+                소리는 시작 버튼을 누른 뒤 재생되며 언제든 끌 수 있어요.
+                {hasGeneratedVoice(episode) && " 내레이션은 GPT-4o mini TTS로 만든 AI 음성입니다."}
+              </small>
             </div>
           </section>
         </main>

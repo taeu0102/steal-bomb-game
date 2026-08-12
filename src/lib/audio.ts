@@ -1,5 +1,12 @@
 import type { MusicTheme } from "../types/story";
 
+export interface VoicePlaybackRequest {
+  key: string;
+  src?: string | null;
+  text: string;
+  onEnded?: () => void;
+}
+
 const themeNotes: Record<MusicTheme, number[]> = {
   village: [392, 440, 523.25, 440, 329.63],
   care: [329.63, 392, 440, 392, 293.66],
@@ -14,6 +21,9 @@ class StoryAudioEngine {
   private noteIndex = 0;
   private theme: MusicTheme = "village";
   private muted = false;
+  private voiceAudio: HTMLAudioElement | null = null;
+  private voiceKey: string | null = null;
+  private voiceToken = 0;
 
   async unlock() {
     try {
@@ -32,10 +42,11 @@ class StoryAudioEngine {
   }
 
   setMuted(muted: boolean) {
+    if (this.muted === muted) return;
     this.muted = muted;
     if (muted) {
       this.stopMusic();
-      window.speechSynthesis?.cancel();
+      this.stopVoice();
     } else if (this.context) {
       void this.unlock().then((ready) => {
         if (ready) this.playTheme(this.theme);
@@ -74,22 +85,72 @@ class StoryAudioEngine {
     );
   }
 
-  speak(text: string) {
-    if (this.muted || !("speechSynthesis" in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "ko-KR";
-    utterance.rate = 0.88;
-    utterance.pitch = 1.04;
-    const voice = window.speechSynthesis
-      .getVoices()
-      .find((candidate) => candidate.lang.toLowerCase().startsWith("ko"));
-    if (voice) utterance.voice = voice;
-    window.speechSynthesis.speak(utterance);
+  playVoice({ key, src, text, onEnded }: VoicePlaybackRequest) {
+    if (this.muted) return;
+
+    this.stopVoice();
+    const token = this.voiceToken;
+    this.voiceKey = key;
+
+    if (!src || typeof Audio === "undefined") {
+      this.speakFallback(text, token, onEnded);
+      return;
+    }
+
+    const audio = new Audio(src);
+    this.voiceAudio = audio;
+    audio.preload = "auto";
+    let fallbackStarted = false;
+
+    const finish = () => {
+      if (fallbackStarted || token !== this.voiceToken) return;
+      this.voiceAudio = null;
+      this.voiceKey = null;
+      onEnded?.();
+    };
+    const fallback = () => {
+      if (fallbackStarted || token !== this.voiceToken) return;
+      fallbackStarted = true;
+      audio.removeEventListener("ended", finish);
+      audio.removeEventListener("error", fallback);
+      audio.pause();
+      this.voiceAudio = null;
+      this.speakFallback(text, token, onEnded);
+    };
+
+    audio.addEventListener("ended", finish, { once: true });
+    audio.addEventListener("error", fallback, { once: true });
+    void audio.play().catch(fallback);
+  }
+
+  pauseVoice() {
+    this.voiceAudio?.pause();
+    window.speechSynthesis?.pause();
+  }
+
+  resumeVoice() {
+    if (this.muted) return;
+    if (this.voiceAudio?.paused) void this.voiceAudio.play().catch(() => undefined);
+    window.speechSynthesis?.resume();
+  }
+
+  stopVoice() {
+    this.voiceToken += 1;
+    if (this.voiceAudio) {
+      this.voiceAudio.pause();
+      try {
+        this.voiceAudio.currentTime = 0;
+      } catch {
+        // 아직 메타데이터가 없는 음원은 재생 위치를 바꿀 수 없지만 중지는 유지됩니다.
+      }
+    }
+    this.voiceAudio = null;
+    this.voiceKey = null;
+    window.speechSynthesis?.cancel();
   }
 
   stopSpeech() {
-    window.speechSynthesis?.cancel();
+    this.stopVoice();
   }
 
   stopMusic() {
@@ -110,6 +171,34 @@ class StoryAudioEngine {
     oscillator.connect(gain).connect(this.context.destination);
     oscillator.start(now);
     oscillator.stop(now + duration + 0.05);
+  }
+
+  private speakFallback(text: string, token: number, onEnded?: () => void) {
+    if (this.muted || !("speechSynthesis" in window)) {
+      if (token === this.voiceToken) onEnded?.();
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "ko-KR";
+    utterance.rate = 0.94;
+    utterance.pitch = 1;
+    const voice = window.speechSynthesis
+      .getVoices()
+      .find((candidate) => candidate.lang.toLowerCase().startsWith("ko"));
+    if (voice) utterance.voice = voice;
+
+    let completed = false;
+    const finish = () => {
+      if (completed || token !== this.voiceToken) return;
+      completed = true;
+      this.voiceKey = null;
+      onEnded?.();
+    };
+    utterance.addEventListener("end", finish, { once: true });
+    utterance.addEventListener("error", finish, { once: true });
+    window.speechSynthesis.speak(utterance);
   }
 }
 

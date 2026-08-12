@@ -1,0 +1,326 @@
+{
+  "schemaVersion": 1,
+  "episodeId": "bori-cloud-mountain",
+  "contentVersion": "1.0.0",
+  "model": "gpt-4o-mini-tts",
+  "voice": "marin",
+  "format": "mp3",
+  "speed": 0.96,
+  "promptVersion": "ko-child-story-v1",
+  "instructionsHash": "f54c811a9f3d406d2ee64b8e4a44fc9c54b36938b54e6f7954deeeb079025258",
+  "generatedAt": null,
+  "entries": [
+    {
+      "key": "BC00_TITLE:caption:00",
+      "text": "구름산 꼭대기에는 비가 그친 날에만 빛나는 무지개 종이 있었어요.",
+      "inputHash": "d0b9ec04dce53c82c7005380f573487c22738520d6b4a28246e8a1b0cd575084",
+      "file": null
+    },
+    {
+      "key": "BC00_TITLE:caption:01",
+      "text": "작은 달팽이 보리는 오늘 그 종을 울리러 가기로 했지요.",
+      "inputHash": "4cfab599c81312e9e3f27080ce88c797bd17bdf3fbac38b1e99453cbf477e7a2",
+      "file": null
+    },
+    {
+      "key": "BC01_FIRST_STEP:caption:00",
+      "text": "보리는 잎사귀 지도와 산딸기 한 알을 챙겨 천천히 출발했어요.",
+      "inputHash": "930bc73c45e36ac66fedbd001d31b51b776d6c746e1bb292f366e8a1d707475e",
+      "file": null
+    },
+    {
+      "key": "BC01_FIRST_STEP:caption:01",
+      "text": "길은 길었지만 보리는 꼭대기만 보지 않고 눈앞의 한 걸음부터 내디뎠지요.",
+      "inputHash": "ce52d11813cb1f5b525fcc5d2fac32d4ed2ce306f206834e6b97ff85edc0f655",
+      "file": null
+    },
+    {
+      "key": "BC02_FOG_CHOICE:caption:00",
+      "text": "산길에 하얀 안개가 내려앉자 잎사귀 지도가 보이지 않았어요.",
+      "inputHash": "7b0bccb67cac0b2ea02bf6972ee0f38fa4b9515f541db88369ead8db5254e599",
+      "file": null
+    },
+    {
+      "key": "BC02_FOG_CHOICE:caption:01",
+      "text": "보리는 마음이 조급해졌지만, 안개 사이로 이슬빛 표지가 희미하게 반짝이는 것도 보았지요.",
+      "inputHash": "82f94b7029050f689189aeb99494d0f0ca919efe59aaf327e530e5f40c3ae4f0",
+      "file": null
+    },
+    {
+      "key": "BC02_FOG_CHOICE:caption:02",
+      "text": "앞이 잘 보이지 않을 때는 어떻게 해야 할까요?",
+      "inputHash": "6d7c271d7806565479f532fdf9549d11f6cd98ec3b1d0b606ec2b2c1bb1743e5",
+      "file": null
+    },
+    {
+      "key": "BC02_FOG_CHOICE:option:BC02_RETURN_HOME:failure",
+      "text": "문 옆에 놓인 지도. 보리가 지도를 문 옆에 내려놓자 점심 무렵 안개가 걷혔어요. 하지만 다시 떠날 준비를 하지 않아 그날의 무지개 종은 멀리서만 반짝였어요. 어려울 때는 끝내 버리기 전에 잠깐 멈춰 다시 시작할 길을 살펴봐요.",
+      "inputHash": "d91a52a3956b3c5a518824819695a25aaef7bc52f6f1c7a5ba7d5418359f141a",
+      "file": null
+    },
+    {
+      "key": "BC02_FOG_CHOICE:option:BC02_RUSH_AHEAD:failure",
+      "text": "빙글빙글 안개 길. 보리는 이슬빛 표지를 지나쳐 같은 그루터기를 세 번 만났어요. 안개가 걷혔을 때는 출발한 자리로 되돌아와 있었지요. 막힐수록 속도를 줄이고 주변의 작은 단서를 찾아봐요.",
+      "inputHash": "72927641e038a25d6792d38ae595f32903695220bcc9c4c4817b1c9f2746cc4c",
+      "file": null
+    },
+    {
+      "key": "BC02_FOG_CHOICE:option:BC02_PAUSE_LOOK:feedback",
+      "text": "보리는 잠깐 멈춰 숨을 고르자 이슬빛 표지가 이어진 방향을 알아볼 수 있었어요.",
+      "inputHash": "6254c76dc50f17f9416f81d47a5d80c942ad67d04867e72d9f977d5db8be526f",
+      "file": null
+    },
+    {
+      "key": "BC03_DEW_MARKS:caption:00",
+      "text": "보리는 멀리 있는 꼭대기 대신 가까운 반짝임 하나를 바라보았어요.",
+      "inputHash": "3386b067e3fde6a972be0109abea3bad61a529e528d494f5ee46034dcee57a99",
+      "file": null
+    },
+    {
+      "key": "BC03_DEW_MARKS:caption:01",
+      "text": "표지 하나를 찾을 때마다 다음 한 걸음이 안개 속에서 나타났지요.",
+      "inputHash": "0c67d7116a4b97f10919aacd402baea459e22a86b41d8f27daa6aaa0a0102bff",
+      "file": null
+    },
+    {
+      "key": "BC03_DEW_MARKS:activity:feedback",
+      "text": "작은 표지를 하나씩 찾으니 안개 너머의 길이 또렷해졌어요.",
+      "inputHash": "f550e0cd9610e9a64a5f4ad8defdf3a2f7178bd3b0bf27cb21335e79c2fe496b",
+      "file": null
+    },
+    {
+      "key": "BC04_RAIN_CHOICE:caption:00",
+      "text": "안개 길을 지나자 이번에는 빗방울이 보리의 집을 톡톡 두드렸어요.",
+      "inputHash": "10eb779e032d82cbad718518674748b92572307dc17c290172b59d4419c5b14b",
+      "file": null
+    },
+    {
+      "key": "BC04_RAIN_CHOICE:caption:01",
+      "text": "목도리는 무거워지고 배에서는 꼬르륵 소리가 났지요.",
+      "inputHash": "a8fd38904dfaf3de6601d9e5d3cf7f11656ffc42e0ab2d52e5bb068971e8b881",
+      "file": null
+    },
+    {
+      "key": "BC04_RAIN_CHOICE:caption:02",
+      "text": "바로 옆 큰 잎 아래에는 마른 쉼터가 있었어요.",
+      "inputHash": "ab2159ae4a3ccde5a74c1d2fc6efe6407cb0b89ce73f153f56de5df12d32360a",
+      "file": null
+    },
+    {
+      "key": "BC04_RAIN_CHOICE:option:BC04_FORCE_ON:failure",
+      "text": "젖어 무거워진 목도리. 보리는 쉼터를 지나쳤지만 젖은 목도리가 너무 무거워 길 한가운데 오래 멈췄어요. 쉴 곳으로 돌아가는 사이 밝은 낮이 저물었지요. 쉬는 것은 포기가 아니라 다시 움직일 힘을 채우는 일이에요.",
+      "inputHash": "07924d07d476252e305364844e595502a2d06e64f6d67d25e00f3981f089cf6d",
+      "file": null
+    },
+    {
+      "key": "BC04_RAIN_CHOICE:option:BC04_STOP_FOR_DAY:failure",
+      "text": "비가 그친 뒤의 고요. 보리가 이불처럼 잎을 덮고 하루 종일 나오지 않자 비는 금세 그쳤어요. 마른 길이 열렸지만 보리는 다시 한 걸음을 내딛지 못했어요. 충분히 쉰 뒤에는 할 수 있는 만큼 다시 시작해 봐요.",
+      "inputHash": "5beabcae2a306f2143e68993b5c1826feec56d3a4ee4458e27fb163cd3ab0777",
+      "file": null
+    },
+    {
+      "key": "BC04_RAIN_CHOICE:option:BC04_REST_REFUEL:feedback",
+      "text": "보리는 큰 잎 아래에서 물을 마시고 산딸기를 먹었어요. 몸이 가벼워지자 다시 가고 싶은 힘도 돌아왔지요.",
+      "inputHash": "5a8a8b40c5b8a869e35d67a1636e96a15466ef60d0bc967491e82c70fabe96fb",
+      "file": null
+    },
+    {
+      "key": "BC05_AFTER_REST:caption:00",
+      "text": "비가 가늘어질 때까지 쉰 보리의 눈이 다시 반짝였어요.",
+      "inputHash": "375926c71fdeed0fe5327491d174cd74714fd2e61a4b6456b25be795f8895bd9",
+      "file": null
+    },
+    {
+      "key": "BC05_AFTER_REST:caption:01",
+      "text": "‘쉰 건 그만둔 게 아니야. 다시 가려고 힘을 채운 거야.’",
+      "inputHash": "7ea2ec4a0eabe39aa8edf62a2f4d1a9d13ce4e5b86a6d22790401f413ceefa56",
+      "file": null
+    },
+    {
+      "key": "BC05_AFTER_REST:caption:02",
+      "text": "보리는 가벼워진 몸으로 빗물 사이의 마른 길을 따라갔지요.",
+      "inputHash": "5ec86ec2e073610c296505af2ad040b721c74652ae6fcdb998702b071311aa68",
+      "file": null
+    },
+    {
+      "key": "BC06_STEPS_CHOICE:caption:00",
+      "text": "보리 앞에 껍데기보다 훨씬 높은 돌계단이 나타났어요.",
+      "inputHash": "e390bca1cd22b5f0dfc39a3261de3619138ea51543437927a5134e1ea6c4b02e",
+      "file": null
+    },
+    {
+      "key": "BC06_STEPS_CHOICE:caption:01",
+      "text": "정면은 매끈했지만 옆에는 낮은 이끼 돌들이 띄엄띄엄 놓여 있었지요.",
+      "inputHash": "438d0ada65411739c2d5c5973ad1f04d879e3c750a4ab55c1e23ccd433029cd6",
+      "file": null
+    },
+    {
+      "key": "BC06_STEPS_CHOICE:caption:02",
+      "text": "한 번에 오를 수 없을 때는 어떻게 하면 좋을까요?",
+      "inputHash": "76724f0157242111d4af0987bf40c44ab593b5dfbba27453b2655bca67d6d96d",
+      "file": null
+    },
+    {
+      "key": "BC06_STEPS_CHOICE:option:BC06_SAME_WALL:failure",
+      "text": "제자리의 미끄럼 자국. 보리는 매끈한 벽을 거듭 올랐지만 매번 같은 잎사귀 자리로 미끄러져 왔어요. 힘만 빠지고 계단 위 풍경은 조금도 가까워지지 않았지요. 계속한다는 것은 같은 방법만 되풀이하는 일이 아니에요.",
+      "inputHash": "22a792b138219707d81ca221aaf02c7c54a8594eec810c3b3ea559e0fd2657cb",
+      "file": null
+    },
+    {
+      "key": "BC06_STEPS_CHOICE:option:BC06_TURN_FROM_STEPS:failure",
+      "text": "보지 못한 이끼 길. 보리가 고개를 숙이고 돌아선 뒤, 달빛이 계단 옆 낮은 이끼 돌들을 환히 비추었어요. 오를 수 있는 길은 바로 곁에 남아 있었지요. 너무 커 보이는 일은 작은 순서로 나눌 방법을 찾아봐요.",
+      "inputHash": "97a3eb22fd14d4302bb9f28611fd29d5fc83bbc8225394d5ca62c26395547761",
+      "file": null
+    },
+    {
+      "key": "BC06_STEPS_CHOICE:option:BC06_MOSSY_STEPS:feedback",
+      "text": "보리는 방법을 바꾸어 가장 낮은 돌부터 골랐어요. 한 걸음씩이면 높은 계단도 오를 수 있어요.",
+      "inputHash": "9cb41bd51ea0cd42d2f64daae1360f7522d3f33693008ae04eadfef78ad23f05",
+      "file": null
+    },
+    {
+      "key": "BC07_SMALL_STEPS:caption:00",
+      "text": "보리는 가장 가까운 이끼 돌만 바라보았어요.",
+      "inputHash": "2213c3ec831167abb886258610be1697b400e6517601ef7b1584a2ef812c2401",
+      "file": null
+    },
+    {
+      "key": "BC07_SMALL_STEPS:caption:01",
+      "text": "작은 걸음들이 이어질수록 높던 계단이 보리의 길로 바뀌었지요.",
+      "inputHash": "60b715ff4d156f61b6b01803ef07a566edb6fbf92538347d59987209fb8c42f4",
+      "file": null
+    },
+    {
+      "key": "BC07_SMALL_STEPS:activity:feedback",
+      "text": "한꺼번에 넘지 않아도 괜찮아요. 작은 네 걸음이 보리를 계단 위로 데려왔어요.",
+      "inputHash": "9d53bf0ce5ec63f0ca53b603a94d1fd5047eb85f828f969cd9cf07439a979a3a",
+      "file": null
+    },
+    {
+      "key": "BC08_WIND_BRIDGE:caption:00",
+      "text": "계단 위에는 바람이 휘도는 구름다리가 기다리고 있었어요.",
+      "inputHash": "70a53b2d53acca148ebb7e8a41fb930dbfa20a6232643a92055f872f2b9c7622",
+      "file": null
+    },
+    {
+      "key": "BC08_WIND_BRIDGE:caption:01",
+      "text": "보리가 한 걸음 내딛을 때마다 바람은 살며시 출발점으로 밀어냈지요.",
+      "inputHash": "522a8df736ef03a44c09dc94a4f850f290517ced83a33e32c7242b863a005568",
+      "file": null
+    },
+    {
+      "key": "BC08_WIND_BRIDGE:caption:02",
+      "text": "그때 넓은 잎을 든 구름새 누리가 가까이 날아왔어요.",
+      "inputHash": "bc1e6efe77c10689d4426451a9ca4785e7246cc8c26e9f010d8a6763eba2b3c7",
+      "file": null
+    },
+    {
+      "key": "BC09_HELP_CHOICE:caption:00",
+      "text": "누리는 보리 곁에 앉아 빙그레 웃었지만, 보리에게 무엇이 필요한지는 알 수 없었어요.",
+      "inputHash": "3137a921eed641cbb754335ef744624087f684bf4467af531b4f4b8e6d11c4d4",
+      "file": null
+    },
+    {
+      "key": "BC09_HELP_CHOICE:caption:01",
+      "text": "보리는 ‘내가 시작한 일이니 혼자 해야 하나?’ 하고 생각했지요.",
+      "inputHash": "374e1ff5934289b9019bed2e2f4b50291a8e8ed489bd610e54ae91df5b6e1e83",
+      "file": null
+    },
+    {
+      "key": "BC09_HELP_CHOICE:caption:02",
+      "text": "혼자 하기 어려울 때는 어떻게 하면 좋을까요?",
+      "inputHash": "87bd848fe3cf50cb7061a3c47580f2f614570eab04288449006eaa56b7179c4b",
+      "file": null
+    },
+    {
+      "key": "BC09_HELP_CHOICE:option:BC09_PRETEND_FINE:failure",
+      "text": "바람에 되돌아온 세 걸음. 보리는 괜찮다고 웃으며 세 번 출발했지만 바람이 불 때마다 같은 자리로 돌아왔어요. 누리는 보리가 혼자 연습하고 싶은 줄 알고 멀리 기다렸지요. 혼자 하기 벅찬 일은 어렵다고 솔직히 말해도 괜찮아요.",
+      "inputHash": "bb286829bd9f4833306f03be56d3371edb3ee3748a752970ac9a771d6ca26aaa",
+      "file": null
+    },
+    {
+      "key": "BC09_HELP_CHOICE:option:BC09_WAIT_SILENTLY:failure",
+      "text": "말하지 못한 부탁. 보리가 아무 말 없이 기다리자 누리는 종을 준비하러 가야 하는 줄 알고 먼저 날아갔어요. 넓은 잎만 다리 곁에서 바람에 팔랑였지요. 도움이 필요할 때는 누구에게 무엇이 필요한지 구체적으로 말해요.",
+      "inputHash": "1d33f8776c127502713e70ce64b7783ba7824dce5e467feb5e0dfa418d17f43d",
+      "file": null
+    },
+    {
+      "key": "BC09_HELP_CHOICE:option:BC09_ASK_NURI:feedback",
+      "text": "‘누리야, 바람막이 잎을 함께 잡아 줄래?’ 보리가 구체적으로 부탁하자 누리는 기쁘게 날개를 끄덕였어요.",
+      "inputHash": "79c535796edc2612299275196ed7f31770b34339838032d685ec35a683647554",
+      "file": null
+    },
+    {
+      "key": "BC10_CROSS_TOGETHER:caption:00",
+      "text": "누리는 잎의 위쪽을, 보리는 아래쪽을 단단히 잡았어요.",
+      "inputHash": "cafb192cdf49f062859da644b3be6fc10bc90a3b49766fde6abbf063c9c56956",
+      "file": null
+    },
+    {
+      "key": "BC10_CROSS_TOGETHER:caption:01",
+      "text": "바람이 불면 함께 멈추고, 잦아들면 한 걸음씩 움직였지요.",
+      "inputHash": "5b331726d01ec954b55151ad6ac6f55e25d1930f08a27a7d24e69ab9d5d39189",
+      "file": null
+    },
+    {
+      "key": "BC10_CROSS_TOGETHER:caption:02",
+      "text": "둘이 힘을 나누자 다리 건너편이 조금씩 가까워졌어요.",
+      "inputHash": "fd014d3758af2299cb0b52325c1dc6c768085ef09054213dc941f7b7b66b8e01",
+      "file": null
+    },
+    {
+      "key": "BC11_RING_BELL:caption:00",
+      "text": "마침내 종 앞에 섰지만 줄은 무거웠고, 보리가 처음 당겼을 때는 아무 소리도 나지 않았어요.",
+      "inputHash": "75d380e4b3e79d4c144f9d43214a69d80cd870be2791a9781e9809e04cadafa3",
+      "file": null
+    },
+    {
+      "key": "BC11_RING_BELL:caption:01",
+      "text": "보리는 숨을 고른 뒤 줄을 낮은 고리에 걸어 방법을 바꾸고, 누리에게 매듭을 잡아 달라고 부탁했어요.",
+      "inputHash": "d2cf78f031a28f4cfe01b03814d95c3eccbf6ce16e329f757145ff2f0537ec47",
+      "file": null
+    },
+    {
+      "key": "BC11_RING_BELL:caption:02",
+      "text": "둘이 하나, 둘, 작은 당김을 이어 가자 무지개 종이 온 산에 울렸답니다.",
+      "inputHash": "0651d091d817ecf394a6f20cbea9f0356948f309f0a9f51872d1561e9f721184",
+      "file": null
+    },
+    {
+      "key": "BC12_END:caption:00",
+      "text": "보리는 한 번도 멈추지 않아서 꼭대기에 온 것이 아니었어요.",
+      "inputHash": "aad9ba017303b72b8ccbf547d4ab98618c0683d82b2b56ba9e7b43df371fbbbd",
+      "file": null
+    },
+    {
+      "key": "BC12_END:caption:01",
+      "text": "쉬고, 방법을 바꾸고, 도움을 청한 뒤 다시 한 걸음을 내디뎠기에 도착했지요.",
+      "inputHash": "d1842ab0d4367a8d513b114e79568d6c6bde3ef2452c8c11551771fc1a60599e",
+      "file": null
+    },
+    {
+      "key": "BC12_END:caption:02",
+      "text": "포기하지 않는 용기는 나를 돌보며 다시 시작하는 마음이랍니다.",
+      "inputHash": "60ff32789721267022fd5a32bf87381ae21d205cd2e4324dea3223f0e0f2b1ce",
+      "file": null
+    },
+    {
+      "key": "BC12_END:option:BC12_REST_SEED:feedback",
+      "text": "쉬는 시간을 다시 움직일 힘으로 바꾸는 든든한 씨앗을 골랐어요.",
+      "inputHash": "7293e86fb9eb170f05f10dac8548e81beae162749c17e604c9c6a09c7a801585",
+      "file": null
+    },
+    {
+      "key": "BC12_END:option:BC12_NEW_WAY_SEED:feedback",
+      "text": "막혔을 때 다른 방법으로 작은 한 걸음을 찾는 지혜로운 씨앗을 골랐어요.",
+      "inputHash": "c72b1a1553356ee8068e32675cd56b50b1585916a1e514579d33eaa997da83e4",
+      "file": null
+    },
+    {
+      "key": "BC12_END:option:BC12_HELP_SEED:feedback",
+      "text": "혼자 벅찰 때 함께할 사람을 찾는 용기 있는 씨앗을 골랐어요.",
+      "inputHash": "52231bfa10f2a2c41b5aa8847a8adda107c7789982218ef06c893adf6b98482e",
+      "file": null
+    }
+  ]
+}

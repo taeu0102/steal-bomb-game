@@ -3,7 +3,9 @@ import type {
   Episode,
   EpisodeManifest,
   StoryScene,
+  VoiceManifest,
 } from "../types/story";
+import { collectVoiceCues } from "./voice";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -134,6 +136,53 @@ export function validateEpisode(value: unknown): Episode {
   return episode;
 }
 
+export function validateVoiceManifest(value: unknown, episode: Episode): VoiceManifest {
+  if (
+    !isRecord(value) ||
+    value.schemaVersion !== 1 ||
+    value.episodeId !== episode.id ||
+    value.contentVersion !== episode.contentVersion ||
+    value.model !== "gpt-4o-mini-tts" ||
+    value.format !== "mp3" ||
+    typeof value.speed !== "number" ||
+    value.speed < 0.25 ||
+    value.speed > 4 ||
+    typeof value.voice !== "string" ||
+    typeof value.promptVersion !== "string" ||
+    typeof value.instructionsHash !== "string" ||
+    !Array.isArray(value.entries)
+  ) {
+    throw new Error(`${episode.meta.title}의 음성 목록 형식이 올바르지 않아요.`);
+  }
+
+  const expectedCues = new Map(collectVoiceCues(episode).map((cue) => [cue.key, cue.text]));
+  const seen = new Set<string>();
+  for (const entry of value.entries) {
+    if (
+      !isRecord(entry) ||
+      typeof entry.key !== "string" ||
+      typeof entry.text !== "string" ||
+      typeof entry.inputHash !== "string" ||
+      !(entry.file === null || typeof entry.file === "string")
+    ) {
+      throw new Error(`${episode.meta.title}의 음성 항목 형식이 올바르지 않아요.`);
+    }
+    if (seen.has(entry.key)) throw new Error(`중복된 음성 키: ${entry.key}`);
+    if (expectedCues.get(entry.key) !== entry.text) {
+      throw new Error(`${entry.key} 음성과 현재 이야기 문장이 일치하지 않아요.`);
+    }
+    if (entry.file && !/^\/episodes\/[a-z0-9-]+\/audio\/.+\.mp3$/.test(entry.file)) {
+      throw new Error(`${entry.key} 음성 파일 경로가 올바르지 않아요.`);
+    }
+    seen.add(entry.key);
+  }
+  if (seen.size !== expectedCues.size || [...expectedCues.keys()].some((key) => !seen.has(key))) {
+    throw new Error(`${episode.meta.title}의 음성 항목이 빠졌어요.`);
+  }
+
+  return value as unknown as VoiceManifest;
+}
+
 export function getCompletionVisual(episode: Episode, completedSceneId?: string) {
   const completedScene = completedSceneId
     ? episode.scenes.find((scene) => scene.id === completedSceneId)
@@ -155,5 +204,13 @@ export async function loadManifest(): Promise<EpisodeManifest> {
 export async function loadEpisode(dataPath: string): Promise<Episode> {
   const response = await fetch(dataPath);
   if (!response.ok) throw new Error("이야기를 불러오지 못했어요.");
-  return validateEpisode(await response.json());
+  const episode = validateEpisode(await response.json());
+  const voiceManifestPath = dataPath.replace(/episode\.json(?:\?.*)?$/, "audio/manifest.json");
+
+  const voiceResponse = await fetch(voiceManifestPath).catch(() => null);
+  if (voiceResponse?.ok) {
+    episode.voice = validateVoiceManifest(await voiceResponse.json(), episode);
+  }
+
+  return episode;
 }

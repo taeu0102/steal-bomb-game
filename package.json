@@ -11,7 +11,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc -b --pretty false",
-    "qa": "vitest run && tsc -b --pretty false && vite build"
+    "qa": "vitest run && tsc -b --pretty false && vite build",
+    "tts:plan": "node scripts/generate-tts.mjs plan",
+    "tts:generate": "node scripts/generate-tts.mjs generate"
   },
   "dependencies": {
     "react": "^19.1.1",
