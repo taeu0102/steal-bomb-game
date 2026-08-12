@@ -3,6 +3,35 @@
   "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/heungbu-nolbu/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "steal-bomb-game.vercel.app"
+        }
+      ],
+      "destination": "https://taeu0102-ai.vercel.app/interactive-story/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "steal-bomb-game.vercel.app"
+        }
+      ],
+      "destination": "https://taeu0102-ai.vercel.app/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/heungbu-nolbu/:path*",
+      "destination": "/interactive-story/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",

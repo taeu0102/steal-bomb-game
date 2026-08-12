@@ -21,12 +21,12 @@ const defaultWorks = [
   },
   {
     id: "heungbu-nolbu",
-    title: "마음씨앗 인터랙티브 동화책",
+    title: "마음씨앗 체험형 동화",
     type: "게임",
     status: "공개",
     date: "2026-08-12",
     description: "부모와 아이가 함께 읽고 선택하며, 토리의 감정 표현 이야기 등 네 편의 교훈을 경험하는 가족 동화 게임입니다.",
-    url: "/heungbu-nolbu/",
+    url: "/interactive-story/",
     color: "#dcebd8",
   },
   {

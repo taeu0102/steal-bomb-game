@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "pnpm run build:hub && node scripts/assemble-hub.mjs",
-    "build:hub": "tsc -b && vite build --base=/heungbu-nolbu/ --outDir .hub-dist --emptyOutDir",
+    "build:hub": "tsc -b && vite build --base=/interactive-story/ --outDir .hub-dist --emptyOutDir",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc -b --pretty false",

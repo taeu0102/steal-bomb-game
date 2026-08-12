@@ -20,8 +20,8 @@ for (const name of ["assets", "steal-bomb-game", "ghost-forge", "portfolio-city"
   await cp(required(name), path.join(dist, name), { recursive: true });
 }
 
-await cp(storyBuild, path.join(dist, "heungbu-nolbu"), { recursive: true });
-await rm(path.join(dist, "heungbu-nolbu", "episodes"), {
+await cp(storyBuild, path.join(dist, "interactive-story"), { recursive: true });
+await rm(path.join(dist, "interactive-story", "episodes"), {
   recursive: true,
   force: true,
 });

@@ -68,5 +68,5 @@ AI 작업물 허브 하위 경로용 결과물은 다음 명령으로 `.hub-dist
 npm run build:hub
 ```
 
-- AI 작업물 허브: https://steal-bomb-game.vercel.app/
-- 마음씨앗 동화책: https://steal-bomb-game.vercel.app/heungbu-nolbu/
+- AI 작업물 허브: https://taeu0102-ai.vercel.app/
+- 마음씨앗 체험형 동화: https://taeu0102-ai.vercel.app/interactive-story/
