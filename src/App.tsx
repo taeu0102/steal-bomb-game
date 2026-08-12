@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { storyAudio } from "./lib/audio";
-import { loadEpisode, loadManifest } from "./lib/story";
+import { getCompletionVisual, loadEpisode, loadManifest } from "./lib/story";
 import {
   clearProgress,
   loadProgress,
@@ -86,7 +86,7 @@ function Brand() {
       </span>
       <span>
         <strong>마음씨앗</strong>
-        <small>함께 고르는 우리 옛이야기</small>
+        <small>함께 고르는 우리 이야기</small>
       </span>
     </div>
   );
@@ -688,11 +688,13 @@ function CompletionScreen({
 }) {
   const finalSeed = [...progress.selections].reverse().find((selection) => selection.seed)?.seed;
   const uniqueSeeds = [...new Set(progress.selections.map((selection) => selection.seed).filter(Boolean))].slice(-5);
+  const completionVisual = getCompletionVisual(episode, progress.sceneId);
+  const familyQuestion = episode.meta.discussionPrompts.at(-1) ?? episode.meta.openingQuestion;
 
   return (
     <main className="completion-screen">
       <div className="completion-visual">
-        <img src="/episodes/heungbu-nolbu/images/reconciliation.webp" alt="흥부와 놀부가 이웃과 함께 마을을 고치는 따뜻한 저녁 풍경" />
+        <img src={completionVisual.image} alt={completionVisual.imageAlt} />
         <div className="completion-visual__scrim" />
         <button className="back-button completion-back" type="button" onClick={onLibrary}>
           <span aria-hidden="true">‹</span> 책장
@@ -717,7 +719,7 @@ function CompletionScreen({
           <span aria-hidden="true">💬</span>
           <div>
             <p className="eyebrow">오늘의 가족 질문</p>
-            <h2>{episode.meta.discussionPrompts[2]}</h2>
+            <h2>{familyQuestion}</h2>
           </div>
         </article>
         <div className="completion-actions">
@@ -736,6 +738,10 @@ function CompletionScreen({
 export default function App() {
   const [view, setView] = useState<AppView>("library");
   const [catalog, setCatalog] = useState<EpisodeManifestItem[]>([]);
+  const [episodesById, setEpisodesById] = useState<Record<string, Episode>>({});
+  const [progressByEpisode, setProgressByEpisode] = useState<
+    Record<string, StoryProgress | null>
+  >({});
   const [episode, setEpisode] = useState<Episode | null>(null);
   const [progress, setProgress] = useState<StoryProgress | null>(null);
   const [settings, setSettings] = useState<StorySettings>(() => loadSettings());
@@ -751,11 +757,26 @@ export default function App() {
         const enabled = manifest.episodes.filter((item) => item.enabled);
         if (enabled.length === 0) throw new Error("아직 읽을 수 있는 이야기가 없어요.");
         const featured = enabled.find((item) => item.featured) ?? enabled[0];
-        const loadedEpisode = await loadEpisode(featured.dataPath);
+        const loadedEntries = await Promise.all(
+          enabled.map(async (item) => {
+            const loaded = await loadEpisode(item.dataPath);
+            if (loaded.id !== item.id) {
+              throw new Error(`${item.title}의 이야기 ID가 목록과 달라요.`);
+            }
+            return [item.id, loaded] as const;
+          }),
+        );
+        const loadedEpisodes = Object.fromEntries(loadedEntries) as Record<string, Episode>;
+        const loadedEpisode = loadedEpisodes[featured.id];
+        const savedProgress = Object.fromEntries(
+          loadedEntries.map(([id, loaded]) => [id, loadProgress(loaded)]),
+        ) as Record<string, StoryProgress | null>;
         if (!active) return;
         setCatalog(enabled);
+        setEpisodesById(loadedEpisodes);
+        setProgressByEpisode(savedProgress);
         setEpisode(loadedEpisode);
-        setProgress(loadProgress(loadedEpisode));
+        setProgress(savedProgress[loadedEpisode.id]);
       } catch (reason) {
         if (!active) return;
         setError(reason instanceof Error ? reason.message : "이야기책을 열지 못했어요.");
@@ -782,9 +803,13 @@ export default function App() {
     setLoading(true);
     setError(null);
     try {
-      const loaded = await loadEpisode(item.dataPath);
+      const loaded = episodesById[item.id] ?? await loadEpisode(item.dataPath);
+      if (loaded.id !== item.id) throw new Error(`${item.title}의 이야기 ID가 목록과 달라요.`);
+      const saved = loadProgress(loaded);
+      setEpisodesById((current) => ({ ...current, [loaded.id]: loaded }));
+      setProgressByEpisode((current) => ({ ...current, [loaded.id]: saved }));
       setEpisode(loaded);
-      setProgress(loadProgress(loaded));
+      setProgress(saved);
       setView("intro");
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "이야기를 열지 못했어요.");
@@ -801,14 +826,15 @@ export default function App() {
     if (!resume) clearProgress(episode.id);
     saveProgress(nextProgress);
     setProgress(nextProgress);
+    setProgressByEpisode((current) => ({ ...current, [episode.id]: nextProgress }));
     setView("player");
   };
 
   const restartStory = () => {
     if (!episode) return;
     clearProgress(episode.id);
-    const nextProgress = makeProgress(episode);
-    setProgress(nextProgress);
+    setProgress(null);
+    setProgressByEpisode((current) => ({ ...current, [episode.id]: null }));
     setView("intro");
   };
 
@@ -858,7 +884,7 @@ export default function App() {
           <section className="library-hero">
             <div className="library-hero__copy">
               <p className="eyebrow">오늘, 아이와 어떤 마음을 키울까요?</p>
-              <h1>보고, 듣고,<br /><em>함께 고르는</em><br />옛이야기</h1>
+              <h1>보고, 듣고,<br /><em>함께 고르는</em><br />우리 이야기</h1>
               <p>
                 선택의 결과를 직접 만나고, 실패 뒤에도 다시 도전하는
                 <br className="desktop-only" /> 우리 가족의 짧은 동화 시간이에요.
@@ -887,7 +913,7 @@ export default function App() {
                     <img src={item.cover} alt={`${item.title} 표지`} />
                     <span className="episode-number">{String(index + 1).padStart(2, "0")}</span>
                     <span className="episode-play" aria-hidden="true">▶</span>
-                    {item.featured && <span className="featured-badge">첫 이야기</span>}
+                    {item.featured && <span className="featured-badge">추천 이야기</span>}
                   </button>
                   <div className="episode-card__body">
                     <div className="episode-meta">
@@ -896,7 +922,7 @@ export default function App() {
                     </div>
                     <h3>{item.title}</h3>
                     <p>{item.subtitle}</p>
-                    {progress && progress.episodeId === item.id && !progress.completed && (
+                    {progressByEpisode[item.id] && !progressByEpisode[item.id]?.completed && (
                       <div className="resume-line">
                         <i aria-hidden="true" /> 읽던 장면이 기다리고 있어요
                       </div>
@@ -941,16 +967,16 @@ export default function App() {
           </header>
           <section className="intro-card">
             <div className="intro-card__image">
-              <img src={episode.meta.cover} alt="흥부와 놀부, 제비와 박덩굴이 함께 있는 동화 표지" />
+              <img src={episode.meta.cover} alt={`${episode.meta.title} 동화 표지`} />
             </div>
             <div className="intro-card__content">
-              <p className="eyebrow">마음씨앗 첫 번째 이야기</p>
+              <p className="eyebrow">마음씨앗 이야기</p>
               <h1>{episode.meta.title}</h1>
               <p className="intro-subtitle">{episode.meta.subtitle}</p>
               <div className="intro-tags">
                 <span>⌛ 약 {episode.meta.estimatedMinutes}분</span>
                 <span>☀ {episode.meta.ageRange}</span>
-                <span>▣ 13개 장면</span>
+                <span>▣ {episode.scenes.length}개 장면</span>
               </div>
               <p className="intro-summary">{episode.meta.summary}</p>
               <article className="opening-question">
@@ -994,11 +1020,14 @@ export default function App() {
           settings={settings}
           onSettingsChange={updateSettings}
           onExit={() => {
-            setProgress(loadProgress(episode));
+            const saved = loadProgress(episode);
+            setProgress(saved);
+            setProgressByEpisode((current) => ({ ...current, [episode.id]: saved }));
             setView("library");
           }}
           onComplete={(completed) => {
             setProgress(completed);
+            setProgressByEpisode((current) => ({ ...current, [episode.id]: completed }));
             setView("complete");
           }}
         />

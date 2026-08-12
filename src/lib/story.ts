@@ -128,6 +128,18 @@ export function validateEpisode(value: unknown): Episode {
   return episode;
 }
 
+export function getCompletionVisual(episode: Episode, completedSceneId?: string) {
+  const completedScene = completedSceneId
+    ? episode.scenes.find((scene) => scene.id === completedSceneId)
+    : undefined;
+  const endingScene = [...episode.scenes].reverse().find((scene) => scene.type === "ending");
+  const visualScene = completedScene?.type === "ending" ? completedScene : endingScene;
+
+  return visualScene
+    ? { image: visualScene.image, imageAlt: visualScene.imageAlt }
+    : { image: episode.meta.cover, imageAlt: `${episode.meta.title} 동화 표지` };
+}
+
 export async function loadManifest(): Promise<EpisodeManifest> {
   const response = await fetch("/episodes/index.json");
   if (!response.ok) throw new Error("동화책 목록을 불러오지 못했어요.");

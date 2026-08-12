@@ -1,14 +1,13 @@
 import { describe, expect, it } from "vitest";
 import episodeData from "../../public/episodes/heungbu-nolbu/episode.json";
 import manifestData from "../../public/episodes/index.json";
-import { validateEpisode, validateManifest } from "./story";
+import { getCompletionVisual, validateEpisode, validateManifest } from "./story";
 import type { Episode } from "../types/story";
 
 describe("에피소드 데이터 계약", () => {
   it("에피소드 목록을 검증한다", () => {
     const manifest = validateManifest(manifestData);
-    expect(manifest.episodes).toHaveLength(1);
-    expect(manifest.episodes[0].id).toBe("heungbu-nolbu");
+    expect(manifest.episodes.some((item) => item.id === "heungbu-nolbu")).toBe(true);
   });
 
   it("흥부와 놀부의 13개 장면을 모두 연결한다", () => {
@@ -16,6 +15,26 @@ describe("에피소드 데이터 계약", () => {
     expect(episode.scenes).toHaveLength(13);
     expect(episode.startSceneId).toBe("HB00_TITLE");
     expect(episode.scenes.at(-1)?.type).toBe("ending");
+  });
+
+  it("새 에피소드 완료 화면은 그 이야기의 마지막 장면 이미지를 사용한다", () => {
+    const createdStory = structuredClone(episodeData) as unknown as Episode;
+    createdStory.id = "mended-moon";
+    createdStory.meta = {
+      ...createdStory.meta,
+      title: "깨진 달을 고치는 아이",
+      cover: "/episodes/mended-moon/images/cover.webp",
+    };
+    const ending = createdStory.scenes.find((scene) => scene.type === "ending");
+    if (!ending) throw new Error("테스트 마무리 장면 없음");
+    ending.image = "/episodes/mended-moon/images/moon-festival.webp";
+    ending.imageAlt = "별가루로 이어 붙인 달등 아래에서 마을 사람들이 축제를 여는 모습";
+
+    const episode = validateEpisode(createdStory);
+    expect(getCompletionVisual(episode, ending.id)).toEqual({
+      image: ending.image,
+      imageAlt: ending.imageAlt,
+    });
   });
 
   it("모든 평가 장면은 정답 1개와 즉시 실패 결말을 가진다", () => {
