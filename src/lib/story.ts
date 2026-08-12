@@ -54,6 +54,29 @@ function validateScene(scene: StoryScene, sceneIds: Set<string>) {
       if (option.nextSceneId && !sceneIds.has(option.nextSceneId)) {
         throw new Error(`${option.id}의 다음 장면을 찾을 수 없어요.`);
       }
+      if (option.guidance === "reflect") {
+        if (
+          !option.failure?.title?.trim() ||
+          !option.failure.ending?.trim() ||
+          !option.failure.lesson?.trim()
+        ) {
+          throw new Error(`${option.id}에는 실패 결말과 교훈이 필요해요.`);
+        }
+      } else if (option.failure) {
+        throw new Error(`${option.id}의 올바른 선택에는 실패 결말을 넣을 수 없어요.`);
+      }
+    }
+
+    if (scene.type === "choice") {
+      const preferredCount = interaction.options.filter(
+        (option) => option.guidance === "preferred",
+      ).length;
+      const reflectCount = interaction.options.filter(
+        (option) => option.guidance === "reflect",
+      ).length;
+      if (preferredCount !== 1 || preferredCount + reflectCount !== interaction.options.length) {
+        throw new Error(`${scene.id}에는 정답 1개와 실패 선택지만 있어야 해요.`);
+      }
     }
   }
 

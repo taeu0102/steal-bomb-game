@@ -44,15 +44,21 @@ class StoryAudioEngine {
     this.timer = window.setInterval(playNext, theme === "comic" ? 1150 : 1550);
   }
 
-  playChime(kind: "choice" | "page" | "tap" | "complete") {
+  playChime(kind: "choice" | "page" | "tap" | "complete" | "fail") {
     if (this.muted || !this.context) return;
     const notes = {
       choice: [523.25, 659.25],
       page: [392, 523.25],
       tap: [659.25],
       complete: [523.25, 659.25, 783.99],
+      fail: [392, 349.23, 293.66],
     }[kind];
-    notes.forEach((note, index) => window.setTimeout(() => this.pluck(note, 0.55, 0.035), index * 120));
+    const interval = kind === "fail" ? 240 : 120;
+    const duration = kind === "fail" ? 0.9 : 0.55;
+    const volume = kind === "fail" ? 0.018 : 0.035;
+    notes.forEach((note, index) =>
+      window.setTimeout(() => this.pluck(note, duration, volume), index * interval),
+    );
   }
 
   speak(text: string) {

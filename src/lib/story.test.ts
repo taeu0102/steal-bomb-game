@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import episodeData from "../../public/episodes/heungbu-nolbu/episode.json";
 import manifestData from "../../public/episodes/index.json";
 import { validateEpisode, validateManifest } from "./story";
+import type { Episode } from "../types/story";
 
 describe("에피소드 데이터 계약", () => {
   it("에피소드 목록을 검증한다", () => {
@@ -17,7 +18,7 @@ describe("에피소드 데이터 계약", () => {
     expect(episode.scenes.at(-1)?.type).toBe("ending");
   });
 
-  it("모든 선택 장면은 2~3개 선택지와 부드러운 피드백을 가진다", () => {
+  it("모든 평가 장면은 정답 1개와 즉시 실패 결말을 가진다", () => {
     const episode = validateEpisode(episodeData);
     const choiceScenes = episode.scenes.filter(
       (scene) => scene.interaction && "options" in scene.interaction,
@@ -27,21 +28,55 @@ describe("에피소드 데이터 계약", () => {
       if (!scene.interaction || !("options" in scene.interaction)) continue;
       expect(scene.interaction.options.length).toBeGreaterThanOrEqual(2);
       expect(scene.interaction.options.length).toBeLessThanOrEqual(3);
+      if (scene.type === "choice") {
+        expect(scene.interaction.options.filter((option) => option.guidance === "preferred")).toHaveLength(1);
+      }
       for (const option of scene.interaction.options) {
         expect(option.feedback.trim().length).toBeGreaterThan(15);
+        if (scene.type === "choice" && option.guidance === "reflect") {
+          expect(option.failure?.title.trim().length).toBeGreaterThan(4);
+          expect(option.failure?.ending.trim().length).toBeGreaterThan(20);
+          expect(option.failure?.lesson.trim().length).toBeGreaterThan(12);
+        }
       }
     }
   });
 
-  it("직접 재현하면 위험한 선택은 다시 생각하기 피드백으로 표시한다", () => {
+  it("비권장 선택 14개는 모두 새드 엔딩으로 표시한다", () => {
     const episode = validateEpisode(episodeData);
     const reflectiveOptions = episode.scenes.flatMap((scene) =>
       scene.interaction && "options" in scene.interaction
         ? scene.interaction.options.filter((option) => option.guidance === "reflect")
         : [],
     );
-    expect(reflectiveOptions.length).toBeGreaterThan(0);
-    expect(reflectiveOptions.every((option) => option.feedback.length > 0)).toBe(true);
+    expect(reflectiveOptions).toHaveLength(14);
+    expect(reflectiveOptions.every((option) => Boolean(option.failure))).toBe(true);
+  });
+
+  it("마지막 성찰 장면의 세 교훈은 실패로 처리하지 않는다", () => {
+    const episode = validateEpisode(episodeData);
+    const ending = episode.scenes.find((scene) => scene.id === "HB12_END");
+    expect(ending?.type).toBe("ending");
+    if (!ending?.interaction || !("options" in ending.interaction)) return;
+    expect(ending.interaction.options.every((option) => option.guidance === "neutral")).toBe(true);
+    expect(ending.interaction.options.every((option) => !option.failure)).toBe(true);
+  });
+
+  it("실패 결말이 빠진 비권장 선택을 거부한다", () => {
+    const broken = structuredClone(episodeData) as unknown as Episode;
+    const scene = broken.scenes.find((candidate) => candidate.id === "HB02_GATE");
+    if (!scene?.interaction || !("options" in scene.interaction)) throw new Error("테스트 장면 없음");
+    scene.interaction.options[0].failure = undefined;
+    expect(() => validateEpisode(broken)).toThrow(/실패 결말/);
+  });
+
+  it("정답이 둘 이상인 평가 장면을 거부한다", () => {
+    const broken = structuredClone(episodeData) as unknown as Episode;
+    const scene = broken.scenes.find((candidate) => candidate.id === "HB02_GATE");
+    if (!scene?.interaction || !("options" in scene.interaction)) throw new Error("테스트 장면 없음");
+    scene.interaction.options[0].guidance = "preferred";
+    scene.interaction.options[0].failure = undefined;
+    expect(() => validateEpisode(broken)).toThrow(/정답 1개/);
   });
 
   it("존재하지 않는 다음 장면 참조를 거부한다", () => {

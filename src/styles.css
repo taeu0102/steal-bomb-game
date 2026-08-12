@@ -1226,6 +1226,141 @@ p {
   margin-top: 26px;
 }
 
+.player-stage--failed .scene-image {
+  animation-play-state: paused;
+  filter: saturate(0.55) brightness(0.5);
+  transform: scale(1.02);
+}
+
+.failure-overlay {
+  position: absolute;
+  z-index: 12;
+  inset: 0;
+  display: grid;
+  overflow-y: auto;
+  align-content: center;
+  justify-items: center;
+  padding: max(80px, env(safe-area-inset-top)) clamp(22px, 7vw, 92px) max(34px, env(safe-area-inset-bottom));
+  background:
+    radial-gradient(circle at 50% 22%, rgba(141, 87, 66, 0.3), transparent 36%),
+    linear-gradient(180deg, rgba(20, 27, 31, 0.78), rgba(28, 31, 38, 0.96));
+  color: #fffaf2;
+  text-align: center;
+  animation: failure-fade 700ms ease both;
+}
+
+.failure-overlay__icon {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 230, 214, 0.3);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 2rem;
+}
+
+.failure-overlay__kicker {
+  margin: 0 0 10px;
+  color: #ffd0bf;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+}
+
+.failure-overlay h2 {
+  max-width: 820px;
+  margin: 0;
+  font-family: Georgia, "Nanum Myeongjo", serif;
+  font-size: clamp(2.2rem, 6vw, 5.2rem);
+  letter-spacing: -0.06em;
+  line-height: 1.05;
+}
+
+.failure-overlay__copy {
+  max-width: 720px;
+  margin: 22px 0 0;
+  color: rgba(255, 250, 242, 0.82);
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  line-height: 1.75;
+}
+
+.failure-lesson {
+  width: min(680px, 100%);
+  margin-top: 24px;
+  padding: 18px 22px;
+  border: 1px solid rgba(255, 208, 191, 0.28);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.failure-lesson strong {
+  display: block;
+  margin-bottom: 7px;
+  color: #ffd0bf;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+
+.failure-lesson p {
+  margin: 0;
+  font-weight: 750;
+  line-height: 1.6;
+}
+
+.failure-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+@keyframes failure-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 600px), (max-height: 700px) {
+  .failure-overlay {
+    align-content: start;
+    padding: max(72px, env(safe-area-inset-top)) 20px max(24px, env(safe-area-inset-bottom));
+  }
+
+  .failure-overlay__icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+  }
+
+  .failure-overlay h2 {
+    font-size: clamp(2rem, 11vw, 3.2rem);
+  }
+
+  .failure-overlay__copy {
+    margin-top: 14px;
+    font-size: 0.96rem;
+  }
+
+  .failure-lesson {
+    margin-top: 16px;
+    padding: 14px 16px;
+  }
+
+  .failure-actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+    margin-top: 18px;
+  }
+
+  .failure-actions .button {
+    width: 100%;
+  }
+}
+
 .activity-panel {
   max-width: 780px;
   margin: 0 auto;

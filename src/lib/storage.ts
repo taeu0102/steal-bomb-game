@@ -42,7 +42,10 @@ export function loadProgress(episode: Episode): StoryProgress | null {
     ) {
       return null;
     }
-    return value;
+    return {
+      ...value,
+      resumePhase: value.resumePhase === "choice" ? "choice" : "playing",
+    };
   } catch {
     return null;
   }

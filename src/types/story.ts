@@ -27,6 +27,11 @@ export interface ChoiceOption {
   emoji: string;
   guidance: Guidance;
   feedback: string;
+  failure?: {
+    title: string;
+    ending: string;
+    lesson: string;
+  };
   seed?: string;
   nextSceneId?: string;
 }
@@ -113,6 +118,7 @@ export interface StoryProgress {
   contentVersion: string;
   sceneId: string;
   selections: SelectionRecord[];
+  resumePhase?: "playing" | "choice";
   completed: boolean;
   updatedAt: string;
 }

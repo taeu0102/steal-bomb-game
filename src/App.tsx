@@ -30,6 +30,7 @@ type PlayerPhase =
   | "paused"
   | "choice"
   | "feedback"
+  | "failed"
   | "activity"
   | "activityFeedback";
 
@@ -38,12 +39,14 @@ const makeProgress = (
   sceneId = episode.startSceneId,
   selections: SelectionRecord[] = [],
   completed = false,
+  resumePhase: "playing" | "choice" = "playing",
 ): StoryProgress => ({
   schemaVersion: 1,
   episodeId: episode.id,
   contentVersion: episode.contentVersion,
   sceneId,
   selections,
+  resumePhase,
   completed,
   updatedAt: new Date().toISOString(),
 });
@@ -117,7 +120,7 @@ function ParentGuide({ episode, onClose }: { episode: Episode; onClose: () => vo
         <p className="eyebrow">부모님과 선생님께</p>
         <h2 id="parent-guide-title">함께 읽을 때 이렇게 해 보세요</h2>
         <p className="guide-lead">
-          정답을 맞히게 하기보다 “왜 그렇게 골랐어?”라고 물어보며 아이의 마음을 먼저 들어 주세요.
+          아이가 고른 이유를 먼저 들어 본 뒤, 실패 결말에서 행동과 결과가 어떻게 이어졌는지 함께 이야기해 주세요.
         </p>
         <div className="guide-grid">
           <article>
@@ -160,14 +163,25 @@ function StoryPlayer({
   onExit: () => void;
   onComplete: (progress: StoryProgress) => void;
 }) {
+  const initialScene =
+    episode.scenes.find((candidate) => candidate.id === initialProgress.sceneId) ?? episode.scenes[0];
+  const canResumeChoice =
+    initialProgress.resumePhase === "choice" &&
+    initialScene.type === "choice" &&
+    initialScene.interaction &&
+    "options" in initialScene.interaction;
   const [sceneId, setSceneId] = useState(initialProgress.sceneId);
-  const [captionIndex, setCaptionIndex] = useState(0);
-  const [phase, setPhase] = useState<PlayerPhase>("playing");
+  const [captionIndex, setCaptionIndex] = useState(
+    canResumeChoice ? initialScene.captions.length - 1 : 0,
+  );
+  const [phase, setPhase] = useState<PlayerPhase>(canResumeChoice ? "choice" : "playing");
   const [phaseBeforePause, setPhaseBeforePause] = useState<PlayerPhase>("playing");
   const [selectedOption, setSelectedOption] = useState<ChoiceOption | null>(null);
   const [selections, setSelections] = useState<SelectionRecord[]>(initialProgress.selections);
   const [activityTaps, setActivityTaps] = useState(0);
   const interactionHeadingRef = useRef<HTMLHeadingElement>(null);
+  const failureDialogRef = useRef<HTMLElement>(null);
+  const choiceLockedRef = useRef(false);
   const scene = useMemo(
     () => episode.scenes.find((candidate) => candidate.id === sceneId) ?? episode.scenes[0],
     [episode.scenes, sceneId],
@@ -177,12 +191,17 @@ function StoryPlayer({
   const caption = scene.captions[captionIndex] ?? scene.captions[scene.captions.length - 1];
 
   const persist = useCallback(
-    (nextSceneId: string, nextSelections = selections, completed = false) => {
-      const progress = makeProgress(episode, nextSceneId, nextSelections, completed);
+    (
+      nextSceneId: string,
+      nextSelections: SelectionRecord[],
+      completed = false,
+      resumePhase: "playing" | "choice" = "playing",
+    ) => {
+      const progress = makeProgress(episode, nextSceneId, nextSelections, completed, resumePhase);
       saveProgress(progress);
       return progress;
     },
-    [episode, selections],
+    [episode],
   );
 
   const moveToScene = useCallback(
@@ -193,10 +212,11 @@ function StoryPlayer({
       setCaptionIndex(0);
       setSelectedOption(null);
       setActivityTaps(0);
+      choiceLockedRef.current = false;
       setPhase("playing");
-      persist(nextSceneId);
+      persist(nextSceneId, selections);
     },
-    [persist],
+    [persist, selections],
   );
 
   const finishStory = useCallback(
@@ -217,14 +237,14 @@ function StoryPlayer({
     }
     if (scene.interaction && "options" in scene.interaction) {
       setPhase("choice");
+      persist(scene.id, selections, false, "choice");
       return;
     }
     if (scene.nextSceneId) moveToScene(scene.nextSceneId);
     else finishStory();
-  }, [finishStory, moveToScene, scene]);
+  }, [finishStory, moveToScene, persist, scene, selections]);
 
   useEffect(() => {
-    persist(scene.id);
     storyAudio.playTheme(scene.music);
     const nextScene = scene.nextSceneId
       ? episode.scenes.find((candidate) => candidate.id === scene.nextSceneId)
@@ -233,7 +253,7 @@ function StoryPlayer({
       const image = new Image();
       image.src = nextScene.image;
     }
-  }, [episode.scenes, persist, scene.id, scene.image, scene.music, scene.nextSceneId]);
+  }, [episode.scenes, scene.id, scene.image, scene.music, scene.nextSceneId]);
 
   useEffect(() => {
     storyAudio.setMuted(settings.muted);
@@ -241,9 +261,35 @@ function StoryPlayer({
   }, [caption, phase, settings.muted]);
 
   useEffect(() => {
-    if (["choice", "feedback", "activity", "activityFeedback"].includes(phase)) {
+    if (["choice", "feedback", "failed", "activity", "activityFeedback"].includes(phase)) {
       window.setTimeout(() => interactionHeadingRef.current?.focus({ preventScroll: true }), 80);
     }
+    if (phase === "choice") choiceLockedRef.current = false;
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "failed") return;
+    const dialog = failureDialogRef.current;
+    if (!dialog) return;
+
+    const keepFocusInside = (event: KeyboardEvent) => {
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(
+        dialog.querySelectorAll<HTMLElement>("button:not([disabled]), [href], [tabindex]:not([tabindex='-1'])"),
+      );
+      if (focusable.length === 0) return;
+
+      const activeIndex = focusable.indexOf(document.activeElement as HTMLElement);
+      const shouldWrapBackward = event.shiftKey && activeIndex <= 0;
+      const shouldWrapForward = !event.shiftKey && (activeIndex < 0 || activeIndex === focusable.length - 1);
+      if (!shouldWrapBackward && !shouldWrapForward) return;
+
+      event.preventDefault();
+      focusable[shouldWrapBackward ? focusable.length - 1 : 0].focus();
+    };
+
+    dialog.addEventListener("keydown", keepFocusInside);
+    return () => dialog.removeEventListener("keydown", keepFocusInside);
   }, [phase]);
 
   useEffect(() => {
@@ -329,6 +375,20 @@ function StoryPlayer({
   };
 
   const chooseOption = (option: ChoiceOption) => {
+    if (phase !== "choice" || choiceLockedRef.current) return;
+    choiceLockedRef.current = true;
+    setSelectedOption(option);
+
+    if (option.guidance === "reflect" && option.failure) {
+      setPhase("failed");
+      storyAudio.stopSpeech();
+      storyAudio.stopMusic();
+      storyAudio.playChime("fail");
+      storyAudio.speak(`${option.failure.title}. ${option.failure.ending} ${option.failure.lesson}`);
+      persist(scene.id, selections, false, "choice");
+      return;
+    }
+
     const record: SelectionRecord = {
       sceneId: scene.id,
       optionId: option.id,
@@ -337,7 +397,6 @@ function StoryPlayer({
     };
     const nextSelections = [...selections.filter((item) => item.sceneId !== scene.id), record];
     setSelections(nextSelections);
-    setSelectedOption(option);
     setPhase("feedback");
     storyAudio.playChime("choice");
     storyAudio.speak(option.feedback);
@@ -345,11 +404,26 @@ function StoryPlayer({
   };
 
   const retryChoice = () => {
-    const nextSelections = selections.filter((item) => item.sceneId !== scene.id);
-    setSelections(nextSelections);
+    storyAudio.stopSpeech();
     setSelectedOption(null);
+    choiceLockedRef.current = false;
     setPhase("choice");
-    persist(scene.id, nextSelections);
+    storyAudio.playTheme(scene.music);
+    persist(scene.id, selections, false, "choice");
+  };
+
+  const restartAfterFailure = () => {
+    const firstScene = episode.scenes.find((candidate) => candidate.id === episode.startSceneId);
+    storyAudio.stopSpeech();
+    setSelections([]);
+    setSceneId(episode.startSceneId);
+    setCaptionIndex(0);
+    setSelectedOption(null);
+    setActivityTaps(0);
+    choiceLockedRef.current = false;
+    setPhase("playing");
+    persist(episode.startSceneId, []);
+    if (firstScene) storyAudio.playTheme(firstScene.music);
   };
 
   const continueAfterChoice = () => {
@@ -378,11 +452,12 @@ function StoryPlayer({
     scene.interaction && "options" in scene.interaction
       ? (scene.interaction as ChoiceInteraction)
       : null;
-  const showPanel = ["choice", "feedback", "activity", "activityFeedback"].includes(phase);
+  const showInteractionSheet = ["choice", "feedback", "activity", "activityFeedback"].includes(phase);
+  const showPanel = showInteractionSheet || phase === "failed";
 
   return (
     <main className="player-shell">
-      <div className="player-stage">
+      <div className={`player-stage${phase === "failed" ? " player-stage--failed" : ""}`}>
         <img
           className={`scene-image scene-image--${scene.motion ?? "still"}`}
           src={scene.image}
@@ -449,7 +524,7 @@ function StoryPlayer({
           </div>
         )}
 
-        {showPanel && (
+        {showInteractionSheet && (
           <section className="interaction-sheet" aria-live="polite">
             <div className="sheet-handle" aria-hidden="true" />
             {phase === "choice" && choiceInteraction && (
@@ -541,6 +616,38 @@ function StoryPlayer({
                 </div>
               </div>
             )}
+          </section>
+        )}
+
+        {phase === "failed" && selectedOption?.failure && (
+          <section
+            ref={failureDialogRef}
+            className="failure-overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="failure-title"
+            aria-describedby="failure-description failure-lesson"
+          >
+            <span className="failure-overlay__icon" aria-hidden="true">🍂</span>
+            <p className="failure-overlay__kicker">새드 엔딩 · 실패</p>
+            <h2 id="failure-title" ref={interactionHeadingRef} tabIndex={-1}>
+              {selectedOption.failure.title}
+            </h2>
+            <p id="failure-description" className="failure-overlay__copy">
+              {selectedOption.failure.ending}
+            </p>
+            <article className="failure-lesson" id="failure-lesson">
+              <strong>이 장면의 교훈</strong>
+              <p>{selectedOption.failure.lesson}</p>
+            </article>
+            <div className="failure-actions">
+              <button className="button button--primary button--large" type="button" onClick={retryChoice}>
+                다시 선택하기 <span aria-hidden="true">↺</span>
+              </button>
+              <button className="button button--ghost button--light" type="button" onClick={restartAfterFailure}>
+                처음부터 다시 도전
+              </button>
+            </div>
           </section>
         )}
 
@@ -753,11 +860,11 @@ export default function App() {
               <p className="eyebrow">오늘, 아이와 어떤 마음을 키울까요?</p>
               <h1>보고, 듣고,<br /><em>함께 고르는</em><br />옛이야기</h1>
               <p>
-                정답 대신 이유를 나누고, 실수 뒤에도 다시 생각하는
+                선택의 결과를 직접 만나고, 실패 뒤에도 다시 도전하는
                 <br className="desktop-only" /> 우리 가족의 짧은 동화 시간이에요.
               </p>
               <div className="trust-row" aria-label="서비스 특징">
-                <span>✓ 벌점 없음</span>
+                <span>✓ 실패 후 재도전</span>
                 <span>✓ 자막 기본</span>
                 <span>✓ 자동 저장</span>
               </div>
