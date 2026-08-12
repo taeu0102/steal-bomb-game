@@ -1,0 +1,563 @@
+{
+  "schemaVersion": "1.0.0",
+  "contentVersion": "1.0.0",
+  "id": "tori-firelight-festival",
+  "meta": {
+    "title": "불꽃을 삼킨 아기 용",
+    "subtitle": "화가 날 땐, 불꽃보다 말이 먼저",
+    "ageRange": "5~9세",
+    "estimatedMinutes": 10,
+    "cover": "/episodes/tori-firelight-festival/cover.webp",
+    "summary": "불빛 축제를 준비하던 아기 용 토리와 함께 잠깐 멈추고, 화난 마음을 말로 전하고, 친구와 다시 손을 맞잡아 보세요.",
+    "lesson": "화나는 마음은 잘못이 아니에요. 하지만 화가 났을 때 어떤 행동을 할지는 선택할 수 있어요. 잠깐 멈추고 숨을 쉰 뒤, 내 마음과 바라는 것을 말로 전해 보세요.",
+    "openingQuestion": "소중하게 만든 것이 망가져 화가 난다면, 불꽃이 나오기 전에 어떤 말을 해 볼 수 있을까요?",
+    "discussionPrompts": [
+      "토리의 몸에서 화난 마음은 어떤 신호로 나타났나요?",
+      "토리가 소미를 탓하는 대신 자기 마음을 말했을 때 무엇이 달라졌나요?",
+      "우리 가족이 화가 날 때 함께 쓸 수 있는 '잠깐 멈춤 말'을 정해 볼까요?"
+    ]
+  },
+  "contentSafety": {
+    "audience": "유아와 초등 저학년, 보호자 공동 플레이",
+    "adaptationNote": "불과 화를 위협이나 처벌이 아닌 감정의 시각적 비유로 표현합니다. 잘못된 선택은 다치거나 혼나는 장면 없이 축제 준비가 잠시 멈추는 부드러운 실패로 마무리되며, 곧바로 다시 생각할 수 있습니다.",
+    "animalSafetyNote": "등장인물은 누구도 다치지 않으며, 토리의 불꽃은 작은 장식과 실을 그을릴 수 있을 뿐 친구에게 향하지 않습니다."
+  },
+  "startSceneId": "TF00_TITLE",
+  "scenes": [
+    {
+      "id": "TF00_TITLE",
+      "number": 1,
+      "title": "별빛 골짜기의 불빛 축제",
+      "type": "cinematic",
+      "estimatedDurationMs": 26000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/cover.webp",
+      "imageAlt": "별 모양 등불이 켜진 골짜기에서 하늘빛 아기 용 토리와 크림색 여우 소미가 긴 별깃발을 펼쳐 보이는 따뜻한 동화 장면",
+      "imagePosition": "center 44%",
+      "motion": "push",
+      "eyebrow": "새로운 창작 동화",
+      "captions": [
+        "별빛 골짜기에서는 해마다 가장 긴 밤에 불빛 축제가 열렸어요.",
+        "이번에는 내가 만든 별깃발이 광장 한가운데서 반짝일 거야!",
+        "토리는 뱃속의 작은 불씨처럼 기대가 콩콩 뛰는 것을 느꼈답니다."
+      ],
+      "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "soundCaption": "[먼 곳의 축제 북과 맑은 풍경 소리가 포근하게 다가와요]",
+      "music": "festival",
+      "lessonTags": ["감정", "시작"],
+      "nextSceneId": "TF01_PREPARE"
+    },
+    {
+      "id": "TF01_PREPARE",
+      "number": 2,
+      "title": "토리와 소미의 별깃발",
+      "type": "cinematic",
+      "estimatedDurationMs": 30000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/cover.webp",
+      "imageAlt": "겨자색 목수건을 맨 하늘빛 아기 용 토리와 라벤더색 작업복을 입은 작은 여우 소미가 별깃발을 함께 꾸미는 모습",
+      "imagePosition": "center 50%",
+      "motion": "drift-left",
+      "eyebrow": "축제까지 딱 한 시간",
+      "captions": [
+        "토리는 꼬박 사흘 동안 별 조각을 오리고, 소미는 조각마다 반짝이 실을 꿰었어요.",
+        "토리야, 마지막 등불만 달면 끝이야. 네 별깃발은 정말 멋져!",
+        "우리 둘이 만든 거야, 소미야. 축제가 시작되면 제일 먼저 함께 보자!"
+      ],
+      "captionSpeakers": ["이야기 할머니", "소미", "토리"],
+      "soundCaption": "[종이별이 사각거리고 작은 망치가 똑똑 박자를 맞춰요]",
+      "music": "festival",
+      "lessonTags": ["우정", "협력"],
+      "nextSceneId": "TF02_ACCIDENT_CHOICE"
+    },
+    {
+      "id": "TF02_ACCIDENT_CHOICE",
+      "number": 3,
+      "title": "쫘악, 찢어진 별 하나",
+      "type": "choice",
+      "estimatedDurationMs": 36000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/torn-banner.webp",
+      "imageAlt": "등불 줄에 발이 걸린 소미 앞에서 별깃발이 찢어지고, 놀란 토리의 입가에 아주 작은 주황색 불꽃이 맺힌 안전한 장면",
+      "imagePosition": "center 48%",
+      "motion": "drift-right",
+      "eyebrow": "첫 번째 마음 선택",
+      "captions": [
+        "소미가 마지막 등불을 들고 돌아서던 순간, 작업복 단추가 깃발 실에 걸렸어요. 별깃발 한가운데가 쫘악 찢어지고 말았지요.",
+        "아… 토리야, 미안해! 내가 못 보고 그만…",
+        "사흘이나 만들었는데! 내 가슴이 뜨거워. 불꽃이 금방이라도 튀어나올 것 같아!",
+        "토리의 화난 마음이 목구멍까지 올라왔어요. 지금 무엇을 선택하면 좋을까요?"
+      ],
+      "captionSpeakers": ["이야기 할머니", "소미", "토리", "이야기 할머니"],
+      "soundCaption": "[음악의 북소리가 빨라지고, 토리의 작은 불씨가 파직파직 울려요]",
+      "music": "storm",
+      "lessonTags": ["화", "멈춤", "행동 선택"],
+      "nextSceneId": "TF03_BREATH",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "불꽃이 나오기 직전, 토리는 무엇을 하면 좋을까요?",
+        "retryLabel": "불꽃이 나오기 전으로 돌아가기",
+        "continueLabel": "숨 세 번 쉬러 가기",
+        "options": [
+          {
+            "id": "TF02_BLAST_FIRE",
+            "label": "화난 불꽃을 확 내뿜어요",
+            "description": "속이 시원해지도록 장식 쪽으로 불을 뿜어요.",
+            "emoji": "🔥",
+            "guidance": "reflect",
+            "feedback": "화난 마음은 자연스럽지만, 불꽃을 먼저 내보내면 고칠 것이 더 늘어나요. 마음과 행동은 서로 다르게 선택할 수 있어요.",
+            "failure": {
+              "title": "그을린 별깃발",
+              "ending": "토리의 불꽃이 바닥으로 확 번지자 찢어진 깃발 끝이 까맣게 그을렸어요. 소미는 깜짝 놀라 뒤로 물러났고, 축제 준비도 잠시 멈추었답니다.",
+              "lesson": "화가 난 건 잘못이 아니지만, 불꽃을 내뿜는 행동은 선택이에요. 몸을 먼저 멈춰 보세요."
+            },
+            "seed": "몸부터 멈추기"
+          },
+          {
+            "id": "TF02_SWALLOW_FIRE",
+            "label": "괜찮은 척 불꽃을 삼켜요",
+            "description": "화나지 않았다고 말하고 마음을 꼭 숨겨요.",
+            "emoji": "🤐",
+            "guidance": "reflect",
+            "feedback": "화를 내뿜지 않은 건 좋지만, 마음까지 숨길 필요는 없어요. 삼킨 불꽃은 사라지지 않고 배 속에서 더 뜨거워질 수 있어요.",
+            "failure": {
+              "title": "배 속에서 부푼 불씨",
+              "ending": "토리는 괜찮다고 웃었지만 배 속 불씨는 점점 커졌어요. 손이 떨려 바늘을 잡을 수 없었고, 소미는 토리의 진짜 마음을 알지 못했답니다.",
+              "lesson": "화를 꾹 숨기는 것과 차분히 말하는 것은 달라요. 내 마음을 안전한 말로 알려 주세요."
+            },
+            "seed": "마음을 숨기지 않기"
+          },
+          {
+            "id": "TF02_PAUSE_BREATH",
+            "label": "발을 멈추고 숨을 쉬어요",
+            "description": "두 발을 바닥에 붙이고 천천히 세 번 숨 쉬어요.",
+            "emoji": "🌬️",
+            "guidance": "preferred",
+            "feedback": "토리는 불꽃을 없애려 하지 않고, 불꽃이 작아질 때까지 몸을 잠깐 멈추기로 했어요.",
+            "seed": "잠깐 멈춤"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TF03_BREATH",
+      "number": 4,
+      "title": "후우, 불씨를 바라보는 숨",
+      "type": "activity",
+      "estimatedDurationMs": 26000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/breathing-flame.webp",
+      "imageAlt": "하늘빛 아기 용 토리가 두 발을 바닥에 붙이고 배 위에 앞발을 얹은 채, 세 개의 빛방울을 따라 천천히 숨 쉬는 모습",
+      "imagePosition": "center 48%",
+      "motion": "push",
+      "eyebrow": "토리와 함께 숨 세 번",
+      "captions": [
+        "토리는 두 발바닥으로 차가운 돌의 감촉을 느끼고, 앞발을 배 위에 살며시 올렸어요.",
+        "하나, 코로 천천히 들이마시고… 후우. 아직 화가 나지만, 내가 어떤 말을 할지 고를 수 있어.",
+        "빛방울을 하나씩 눌러 토리와 숨을 세 번 쉬어 주세요."
+      ],
+      "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "soundCaption": "[빠르던 북이 멀어지고, 숨결마다 맑은 유리종이 하나씩 울려요]",
+      "music": "calm",
+      "lessonTags": ["호흡", "멈춤", "몸의 신호"],
+      "nextSceneId": "TF04_NAME_FEELING",
+      "interaction": {
+        "kind": "tap",
+        "prompt": "빛방울을 세 번 눌러 토리의 숨을 천천히 이어 주세요.",
+        "targetLabel": "천천히 숨 쉬기",
+        "targetEmoji": "✨",
+        "tapsRequired": 3,
+        "feedback": "화난 마음은 그대로 있어도 괜찮아요. 토리의 몸이 이제 말을 고를 만큼 천천히 움직여요."
+      }
+    },
+    {
+      "id": "TF04_NAME_FEELING",
+      "number": 5,
+      "title": "불꽃에게 이름 붙이기",
+      "type": "cinematic",
+      "estimatedDurationMs": 28000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/honest-words.webp",
+      "imageAlt": "조금 찢어진 별깃발을 사이에 두고 토리와 소미가 눈높이를 맞추며 차분히 바라보는 모습",
+      "imagePosition": "center 50%",
+      "motion": "drift-left",
+      "eyebrow": "화 속에 숨은 진짜 마음",
+      "captions": [
+        "숨이 느려지자 토리는 불꽃 아래 숨어 있던 마음을 찾았어요.",
+        "나는 깃발이 찢어져서 속상해. 열심히 만든 걸 모두에게 보여 주고 싶었거든.",
+        "토리의 불꽃은 아직 작게 일렁였지만, 이제 불꽃보다 말이 먼저 나올 준비가 되었답니다."
+      ],
+      "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "soundCaption": "[따뜻한 현악기 한 음 위로 작은 불씨가 사르르 잦아들어요]",
+      "music": "ember",
+      "lessonTags": ["감정 이름", "속상함", "말하기"],
+      "nextSceneId": "TF05_WORDS_CHOICE"
+    },
+    {
+      "id": "TF05_WORDS_CHOICE",
+      "number": 6,
+      "title": "불꽃보다 먼저 꺼낼 말",
+      "type": "choice",
+      "estimatedDurationMs": 36000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/honest-words.webp",
+      "imageAlt": "토리가 작은 앞발을 가슴에 대고 소미에게 자기 마음을 설명하려는 다정한 장면",
+      "imagePosition": "center 48%",
+      "motion": "drift-right",
+      "eyebrow": "두 번째 마음 선택",
+      "captions": [
+        "소미는 귀를 축 늘어뜨린 채 토리의 말을 기다렸어요.",
+        "무슨 말을 해야 내 마음을 숨기지 않으면서도 소미를 다치게 하지 않을까?",
+        "토리가 꺼낼 말을 함께 골라 주세요."
+      ],
+      "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "soundCaption": "[고요한 불씨의 두근거림과 부드러운 나무 피리 소리가 번갈아 들려요]",
+      "music": "ember",
+      "lessonTags": ["나 전달법", "정직", "배려"],
+      "nextSceneId": "TF06_LISTEN",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "토리는 소미에게 어떻게 말하면 좋을까요?",
+        "retryLabel": "마음을 전할 말을 다시 고르기",
+        "continueLabel": "소미의 대답 듣기",
+        "options": [
+          {
+            "id": "TF05_BLAME_SOMI",
+            "label": "너 때문에 다 망쳤어!",
+            "description": "소미가 잘못한 일만 크게 말해요.",
+            "emoji": "💥",
+            "guidance": "reflect",
+            "feedback": "무엇이 속상한지 말할 수는 있어요. 하지만 '너 때문에'라는 말은 친구가 마음을 닫게 만들 수 있어요.",
+            "failure": {
+              "title": "닫혀 버린 여우 귀",
+              "ending": "토리의 큰 목소리에 소미는 두 귀를 꼭 접었어요. 둘은 서로의 마음을 듣지 못했고, 찢어진 깃발은 작업대 위에 그대로 남았답니다.",
+              "lesson": "상대방을 탓하기보다 '나는 무엇 때문에 어떤 마음이야'라고 내 마음부터 말해 보세요."
+            },
+            "seed": "내 마음부터 말하기"
+          },
+          {
+            "id": "TF05_DENY_ANGER",
+            "label": "난 하나도 안 화났어",
+            "description": "소미가 걱정하지 않도록 진짜 마음을 감춰요.",
+            "emoji": "🎭",
+            "guidance": "reflect",
+            "feedback": "친구를 안심시키고 싶었군요. 그래도 진짜 마음을 숨기면 소미는 무엇을 고쳐야 할지 알기 어려워요.",
+            "failure": {
+              "title": "웃는 가면 뒤의 불꽃",
+              "ending": "토리는 억지로 웃으며 바느질을 시작했지만 속에서는 불씨가 계속 튀었어요. 결국 둘은 말없이 등을 돌리고 각자 장식을 고쳤답니다.",
+              "lesson": "차분함은 감정을 감추는 것이 아니에요. 솔직한 마음을 부드러운 말에 담아 보세요."
+            },
+            "seed": "부드럽고 솔직하게"
+          },
+          {
+            "id": "TF05_I_MESSAGE",
+            "label": "나는 속상하고 화가 났어",
+            "description": "깃발이 왜 소중했는지와 지금 마음을 말해요.",
+            "emoji": "💬",
+            "guidance": "preferred",
+            "feedback": "토리는 소미를 공격하지 않고, 일어난 일과 자기 마음을 또박또박 알려 주었어요.",
+            "seed": "마음을 말로 전하기"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TF06_LISTEN",
+      "number": 7,
+      "title": "소미가 들은 토리의 마음",
+      "type": "cinematic",
+      "estimatedDurationMs": 30000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/honest-words.webp",
+      "imageAlt": "소미가 토리의 앞발을 다정히 잡고 사과하며, 두 친구가 찢어진 별깃발을 함께 바라보는 모습",
+      "imagePosition": "center 52%",
+      "motion": "push",
+      "eyebrow": "말이 닿으면 마음도 보여요",
+      "captions": [
+        "소미야, 깃발이 찢어져서 속상하고 화가 났어. 우리가 오래 만든 걸 축제에서 꼭 보여 주고 싶었어.",
+        "미안해, 토리야. 네가 얼마나 기다렸는지 이제 알겠어. 내가 네 말을 먼저 들을게. 그리고 함께 고쳐도 될까?",
+        "응. 아직 조금 화가 나지만, 같이 고치고 싶어. 내 말을 끝까지 들어 줘서 고마워.",
+        "두 친구 사이에서 뜨겁던 불씨가 손바닥만 한 따뜻한 빛으로 바뀌었어요."
+      ],
+      "captionSpeakers": ["토리", "소미", "토리", "이야기 할머니"],
+      "soundCaption": "[두 친구의 숨이 같은 박자가 되고, 피리 선율에 따뜻한 종소리가 더해져요]",
+      "music": "calm",
+      "lessonTags": ["듣기", "사과", "화해"],
+      "nextSceneId": "TF07_REPAIR_CHOICE"
+    },
+    {
+      "id": "TF07_REPAIR_CHOICE",
+      "number": 8,
+      "title": "뜻대로 안 되는 반짝이 실",
+      "type": "choice",
+      "estimatedDurationMs": 36000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/repair-workshop.webp",
+      "imageAlt": "토리와 소미가 별 조각과 반짝이 실이 놓인 작업대 앞에서 찢어진 깃발을 함께 고치려는 모습",
+      "imagePosition": "center 50%",
+      "motion": "drift-left",
+      "eyebrow": "세 번째 마음 선택",
+      "captions": [
+        "두 친구는 찢어진 자리에 새 별 조각을 덧대기로 했어요. 그런데 반짝이 실이 자꾸만 매듭에서 빠져나왔지요.",
+        "으으, 또 풀렸어! 조용해졌던 불꽃이 다시 간질간질 올라와.",
+        "화는 한 번 숨 쉬었다고 영영 사라지는 것이 아니에요. 다시 올라온 마음 앞에서 토리는 무엇을 할까요?"
+      ],
+      "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "soundCaption": "[실이 툭 풀릴 때마다 낮은 현이 통통 울리고, 불씨의 박자가 조금 빨라져요]",
+      "music": "ember",
+      "lessonTags": ["다시 멈춤", "협력", "도움 요청"],
+      "nextSceneId": "TF08_PATCH_ACTIVITY",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "고치기가 뜻대로 되지 않을 때 토리는 무엇을 하면 좋을까요?",
+        "retryLabel": "실이 풀리기 전으로 돌아가기",
+        "continueLabel": "함께 별 조각 붙이기",
+        "options": [
+          {
+            "id": "TF07_SNATCH_THREAD",
+            "label": "내가 혼자 할 거야!",
+            "description": "소미의 손에서 실을 빼앗아 혼자 서둘러요.",
+            "emoji": "🧵",
+            "guidance": "reflect",
+            "feedback": "답답해서 직접 하고 싶었군요. 하지만 화난 손으로 서두르면 친구의 도움도, 조심할 틈도 놓칠 수 있어요.",
+            "failure": {
+              "title": "더 엉켜 버린 실뭉치",
+              "ending": "토리가 실을 홱 당기자 반짝이 실이 뿔과 날개에 빙글빙글 엉켰어요. 둘은 한참 동안 실만 풀다가 축제의 첫 북소리를 놓치고 말았답니다.",
+              "lesson": "혼자 차지하기 전에 '지금 답답해, 천천히 같이 해 줄래?'라고 부탁해 보세요."
+            },
+            "seed": "도움을 말로 청하기"
+          },
+          {
+            "id": "TF07_ORDER_SOMI",
+            "label": "소미에게 명령해요",
+            "description": "내 방식대로 하라고 차갑게 시켜요.",
+            "emoji": "☝️",
+            "guidance": "reflect",
+            "feedback": "할 일을 나누는 건 좋은 생각이지만, 명령하는 말은 소미의 생각을 들을 자리를 없애요.",
+            "failure": {
+              "title": "서로 다른 두 개의 매듭",
+              "ending": "토리는 한쪽을 세게 묶으라고 하고 소미는 말없이 반대쪽을 잡았어요. 서로 설명하지 않아 깃발이 비뚤게 당겨졌고, 새 별 조각도 가운데에서 쭈글쭈글해졌답니다.",
+              "lesson": "함께할 때는 명령보다 제안이 좋아요. '나는 불로 붙일게, 너는 실을 잡아 줄래?'라고 물어보세요."
+            },
+            "seed": "부드럽게 역할 나누기"
+          },
+          {
+            "id": "TF07_SHARE_PLAN",
+            "label": "잠깐, 역할을 나누자고 해요",
+            "description": "마음을 알리고 서로 잘하는 일을 나눠요.",
+            "emoji": "🤝",
+            "guidance": "preferred",
+            "feedback": "토리는 다시 올라온 화를 알아차리고 멈췄어요. 소미는 실을 잡고, 토리는 작고 따뜻한 불로 별 조각을 붙이기로 했답니다.",
+            "seed": "다시 멈추고 함께하기"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TF08_PATCH_ACTIVITY",
+      "number": 9,
+      "title": "따뜻한 불꽃 바느질",
+      "type": "activity",
+      "estimatedDurationMs": 30000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/repair-workshop.webp",
+      "imageAlt": "소미가 반짝이 실을 잡고 토리가 아주 작은 따뜻한 불꽃으로 네 개의 별 조각을 깃발에 붙이는 모습",
+      "imagePosition": "center 48%",
+      "motion": "push",
+      "eyebrow": "토리의 불꽃이 가진 새 쓰임",
+      "captions": [
+        "소미는 실이 흔들리지 않도록 두 앞발로 꼭 잡았어요.",
+        "소미야, 준비됐어? 이번 불꽃은 화를 쏟는 불이 아니라 별을 붙이는 따뜻한 불이야.",
+        "준비됐어, 토리야! 별 조각을 하나씩 눌러 줘. 내가 실을 맞출게!"
+      ],
+      "captionSpeakers": ["이야기 할머니", "토리", "소미"],
+      "soundCaption": "[별 조각을 붙일 때마다 통통한 불꽃 소리와 맑은 종이 화음을 만들어요]",
+      "music": "lantern",
+      "lessonTags": ["감정 조절", "협력", "회복"],
+      "nextSceneId": "TF09_WIND_RISE",
+      "interaction": {
+        "kind": "tap",
+        "prompt": "별 조각을 네 번 눌러 토리와 소미의 깃발을 이어 주세요.",
+        "targetLabel": "별 조각 붙이기",
+        "targetEmoji": "⭐",
+        "tapsRequired": 4,
+        "feedback": "토리의 불꽃이 네 개의 별을 따뜻하게 이어 주었어요. 찢어진 자리는 숨기지 않아도 멋진 새 무늬가 되었답니다."
+      }
+    },
+    {
+      "id": "TF09_WIND_RISE",
+      "number": 10,
+      "title": "축제 광장에 분 갑작스러운 바람",
+      "type": "cinematic",
+      "estimatedDurationMs": 30000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/wind-banner.webp",
+      "imageAlt": "불빛 축제 광장에서 갑작스러운 바람에 긴 별깃발이 펄럭이고 토리와 소미가 양쪽 끈을 붙잡는 모습",
+      "imagePosition": "center 46%",
+      "motion": "drift-right",
+      "eyebrow": "축제 시작까지 열 번의 북소리",
+      "captions": [
+        "두 친구가 고친 별깃발을 광장에 걸자, 기다리던 친구들이 박수를 쳤어요.",
+        "해냈다, 소미야! 찢어진 자리에 별자리가 생겼어!",
+        "그때 골짜기 바람이 휘익 불어와 깃발 한쪽을 높이 들어 올렸어요. 토리의 뿔에 묶인 끈이 팽팽해졌지요.",
+        "아야! 또 망가지면 어떡하지? 내 불꽃이 다시 뜨거워지고 있어!"
+      ],
+      "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니", "토리"],
+      "soundCaption": "[축제 북 위로 바람이 휘익 지나고, 깃발의 작은 방울이 빠르게 흔들려요]",
+      "music": "storm",
+      "lessonTags": ["반복 연습", "도움 요청", "위기"],
+      "safetyNote": "바람은 깃발만 흔들며 토리와 친구들을 날리거나 다치게 하지 않습니다.",
+      "nextSceneId": "TF10_WIND_CHOICE"
+    },
+    {
+      "id": "TF10_WIND_CHOICE",
+      "number": 11,
+      "title": "두 번째 불꽃, 새로운 선택",
+      "type": "choice",
+      "estimatedDurationMs": 37000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/wind-banner.webp",
+      "imageAlt": "바람에 펄럭이는 별깃발 아래에서 토리가 숨을 고르며 소미와 주변 친구들을 바라보는 모습",
+      "imagePosition": "center 50%",
+      "motion": "push",
+      "eyebrow": "네 번째 마음 선택",
+      "captions": [
+        "토리는 목구멍까지 올라온 불꽃을 알아차렸어요. 이번에는 아까 배운 선택을 혼자 해 볼 차례였지요.",
+        "화가 다시 온 건 실패가 아니야. 나는 다시 멈출 수 있어.",
+        "토리는 바람과 뜨거운 마음 앞에서 무엇을 선택하면 좋을까요?"
+      ],
+      "captionSpeakers": ["이야기 할머니", "토리", "이야기 할머니"],
+      "soundCaption": "[빠른 북소리 사이로 앞에서 들었던 숨결 종이 작게 다시 울려요]",
+      "music": "storm",
+      "lessonTags": ["일반화", "다시 멈춤", "도움 요청"],
+      "nextSceneId": "TF11_LANTERN",
+      "interaction": {
+        "kind": "choice",
+        "prompt": "다시 화가 올라온 토리는 어떤 행동을 선택하면 좋을까요?",
+        "retryLabel": "바람이 불기 시작한 순간으로 돌아가기",
+        "continueLabel": "친구들과 깃발 지키기",
+        "options": [
+          {
+            "id": "TF10_BURN_WIND",
+            "label": "큰불로 바람을 막아요",
+            "description": "바람을 겁주려고 하늘로 큰 불꽃을 뿜어요.",
+            "emoji": "🐲",
+            "guidance": "reflect",
+            "feedback": "깃발을 지키고 싶은 마음은 소중해요. 하지만 큰불은 바람을 멈추지 못하고 친구들을 놀라게 할 수 있어요.",
+            "failure": {
+              "title": "연기 속에 가려진 별빛",
+              "ending": "토리가 하늘로 큰불을 뿜자 바람이 연기를 광장으로 밀어 보냈어요. 별깃발은 무사했지만 반짝이 등불이 보이지 않아 축제 행렬이 잠시 길을 멈췄답니다.",
+              "lesson": "급한 마음일수록 큰 행동 전에 멈춰 보세요. 필요한 도움을 말로 청하는 편이 더 정확해요."
+            },
+            "seed": "큰 행동 전에 멈춤"
+          },
+          {
+            "id": "TF10_QUIT_HIDE",
+            "label": "깃발을 놓고 숨어요",
+            "description": "또 망칠까 봐 아무 말 없이 축제 밖으로 나가요.",
+            "emoji": "🙈",
+            "guidance": "reflect",
+            "feedback": "두렵고 화가 나서 숨고 싶었군요. 하지만 아무 말 없이 놓으면 소미는 토리에게 어떤 도움이 필요한지 알 수 없어요.",
+            "failure": {
+              "title": "주인공을 기다린 빈 자리",
+              "ending": "토리가 깃발 끈을 놓고 돌담 뒤에 숨자 소미가 혼자 두 끈을 붙잡았어요. 친구들은 토리가 돌아오길 기다리느라 첫 등불을 켜지 못했답니다.",
+              "lesson": "잠깐 떨어져 쉬어도 괜찮지만 먼저 말해 주세요. '지금 힘들어, 잠깐 도와줘'라고 부탁할 수 있어요."
+            },
+            "seed": "쉬기 전에도 말하기"
+          },
+          {
+            "id": "TF10_NAME_AND_ASK",
+            "label": "화가 났다고 말하고 도움을 청해요",
+            "description": "숨을 한 번 쉬고 친구들에게 줄을 잡아 달라고 해요.",
+            "emoji": "📣",
+            "guidance": "preferred",
+            "feedback": "토리는 다시 멈추고 마음과 필요한 도움을 또렷하게 말했어요. 한 번 배운 선택을 다시 해낸 멋진 순간이에요.",
+            "seed": "마음 말하기와 도움 요청"
+          }
+        ]
+      }
+    },
+    {
+      "id": "TF11_LANTERN",
+      "number": 12,
+      "title": "말이 먼저, 불꽃은 따뜻하게",
+      "type": "cinematic",
+      "estimatedDurationMs": 36000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/ember-festival.webp",
+      "imageAlt": "친구들이 함께 별깃발을 붙잡고 토리가 따뜻한 작은 불꽃으로 등불을 켜며, 별빛 골짜기의 축제가 환하게 시작되는 모습",
+      "imagePosition": "center 42%",
+      "motion": "drift-left",
+      "eyebrow": "불빛 축제의 첫 번째 등불",
+      "captions": [
+        "잠깐! 나 지금 또 화가 올라와. 깃발이 망가질까 봐 무서워. 모두 줄을 함께 잡아 줄래?",
+        "내가 왼쪽을 잡을게! 토리야, 넌 천천히 등불을 켜 줘!",
+        "친구들이 하나둘 달려와 별깃발을 단단히 붙잡았어요. 토리는 가장 작고 따뜻한 불꽃을 후우 불어 첫 등불을 밝혔지요.",
+        "내 불꽃은 나쁜 게 아니었어. 말보다 먼저 튀어나오지만 않으면, 이렇게 모두를 따뜻하게 비출 수 있구나!",
+        "별깃발의 고친 자리는 밤하늘의 새 별자리처럼 가장 환하게 빛났답니다."
+      ],
+      "captionSpeakers": ["토리", "소미", "이야기 할머니", "토리", "이야기 할머니"],
+      "soundCaption": "[축제 북과 나무 피리, 맑은 종, 포근한 저음이 한꺼번에 어우러지고 친구들의 박수가 퍼져요]",
+      "music": "lantern",
+      "lessonTags": ["성장", "공동체", "따뜻한 불꽃"],
+      "nextSceneId": "TF12_END"
+    },
+    {
+      "id": "TF12_END",
+      "number": 13,
+      "title": "내 마음의 불꽃 사용법",
+      "type": "ending",
+      "estimatedDurationMs": 34000,
+      "checkpoint": true,
+      "image": "/episodes/tori-firelight-festival/ember-festival.webp",
+      "imageAlt": "환한 별깃발 아래에서 토리와 소미가 어깨를 맞대고 따뜻한 등불을 바라보는 평화로운 마지막 장면",
+      "imagePosition": "center 44%",
+      "motion": "push",
+      "eyebrow": "우리 이야기의 마지막 선택",
+      "captions": [
+        "토리야, 네가 마음을 말해 줘서 나도 어떻게 도울지 알 수 있었어.",
+        "나도 알게 됐어. 화가 나는 건 괜찮아. 하지만 불꽃을 내뿜을지, 멈추고 말할지는 내가 고를 수 있어.",
+        "화는 우리에게 소중한 것이 있다는 신호예요. 몸을 멈추고 마음을 말하면, 뜨거운 불꽃도 길을 비추는 빛이 될 수 있답니다."
+      ],
+      "captionSpeakers": ["소미", "토리", "이야기 할머니"],
+      "soundCaption": "[잔잔해진 축제 선율 위로 등불의 작은 불씨가 타닥타닥 자장가처럼 울려요]",
+      "music": "lantern",
+      "lessonTags": ["멈춤", "감정 말하기", "도움 요청", "선택"],
+      "interaction": {
+        "kind": "reflection",
+        "prompt": "다음에 화가 올라오면 가장 먼저 꺼내고 싶은 마음 도구는 무엇인가요?",
+        "retryLabel": "다른 마음 도구도 살펴보기",
+        "continueLabel": "내 마음 도구로 담기",
+        "options": [
+          {
+            "id": "TF12_PAUSE_TOOL",
+            "label": "두 발 멈추고 숨 쉬기",
+            "description": "몸이 천천히 움직일 때까지 숨을 세 번 쉬어요.",
+            "emoji": "🌬️",
+            "guidance": "neutral",
+            "feedback": "멈춤은 화를 없애는 마법이 아니라, 내가 행동을 고를 시간을 만들어 주는 멋진 도구예요.",
+            "seed": "잠깐 멈춤"
+          },
+          {
+            "id": "TF12_WORD_TOOL",
+            "label": "내 마음을 말로 전하기",
+            "description": "무슨 일이 있었고 어떤 마음인지 차분히 말해요.",
+            "emoji": "💬",
+            "guidance": "neutral",
+            "feedback": "'나는 속상해', '나는 화가 났어'처럼 내 마음부터 말하면 상대도 귀를 열기 쉬워져요.",
+            "seed": "감정을 말로 표현하기"
+          },
+          {
+            "id": "TF12_HELP_TOOL",
+            "label": "필요한 도움 부탁하기",
+            "description": "친구나 어른에게 지금 필요한 것을 구체적으로 말해요.",
+            "emoji": "🤝",
+            "guidance": "neutral",
+            "feedback": "'잠깐 들어 줄래?', '함께 잡아 줄래?'처럼 필요한 도움을 말하면 혼자 버티지 않아도 돼요.",
+            "seed": "도움 요청하기"
+          }
+        ]
+      }
+    }
+  ]
+}

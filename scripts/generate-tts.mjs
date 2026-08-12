@@ -204,7 +204,9 @@ async function loadPlans(voice) {
     throw new Error("에피소드 index.json에 episodes 배열이 없습니다.");
   }
 
-  const enabled = index.episodes.filter((item) => item.enabled !== false);
+  const enabled = index.episodes.filter(
+    (item) => item.enabled !== false && item.ttsEnabled !== false,
+  );
   const ids = enabled.map((item) => item.id);
   if (
     ids.length !== EXPECTED_EPISODE_IDS.length ||

@@ -1,9 +1,16 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import brokenMoonData from "../../public/episodes/broken-moon/episode.json";
 import episodeData from "../../public/episodes/heungbu-nolbu/episode.json";
 import manifestData from "../../public/episodes/index.json";
-import { getCompletionVisual, validateEpisode, validateManifest } from "./story";
-import type { Episode } from "../types/story";
+import toriData from "../../public/episodes/tori-firelight-festival/episode.json";
+import {
+  getCaptionSpeaker,
+  getCompletionVisual,
+  loadEpisode,
+  validateEpisode,
+  validateManifest,
+} from "./story";
+import type { Episode, MusicTheme } from "../types/story";
 
 const episodeModules = import.meta.glob("../../public/episodes/*/episode.json", {
   eager: true,
@@ -17,12 +24,63 @@ describe("에피소드 데이터 계약", () => {
     const manifest = validateManifest(manifestData);
     const episodeIds = registeredEpisodeData.map((data) => validateEpisode(data).id);
 
-    expect(manifest.episodes).toHaveLength(3);
+    expect(manifest.episodes).toHaveLength(4);
     expect(manifest.episodes.map((item) => item.id).sort()).toEqual(episodeIds.sort());
     expect(manifest.episodes.map((item) => item.id)).toEqual(
-      expect.arrayContaining(["heungbu-nolbu", "broken-moon", "bori-cloud-mountain"]),
+      expect.arrayContaining([
+        "heungbu-nolbu",
+        "broken-moon",
+        "bori-cloud-mountain",
+        "tori-firelight-festival",
+      ]),
     );
     expect(manifest.episodes.filter((item) => item.featured)).toHaveLength(1);
+  });
+
+  it("에피소드 목록의 선택적 자동 낭독 표시를 검증한다", () => {
+    const manifest = structuredClone(manifestData);
+    manifest.episodes[0].ttsEnabled = true;
+    expect(validateManifest(manifest).episodes[0].ttsEnabled).toBe(true);
+
+    const broken = structuredClone(manifestData) as unknown as {
+      episodes: Array<Record<string, unknown>>;
+    };
+    broken.episodes[0].ttsEnabled = "yes";
+    expect(() => validateManifest(broken)).toThrow(/자동 낭독 설정/);
+  });
+
+  it("자막마다 화자를 표시하고 기존 장면은 기본 화자를 사용한다", () => {
+    const created = structuredClone(episodeData) as unknown as Episode;
+    const scene = created.scenes[0];
+    scene.captionSpeakers = scene.captions.map((_, index) => index === 0 ? "용이" : "해설");
+
+    const episode = validateEpisode(created);
+    expect(getCaptionSpeaker(episode.scenes[0], 0)).toBe("용이");
+    expect(getCaptionSpeaker(episode.scenes[0], 1)).toBe("해설");
+    expect(getCaptionSpeaker(episode.scenes[1], 0)).toBe("이야기 할머니");
+  });
+
+  it("자막 수와 맞지 않거나 빈 자막 화자를 거부한다", () => {
+    const missing = structuredClone(episodeData) as unknown as Episode;
+    missing.scenes[0].captionSpeakers = ["해설"];
+    expect(() => validateEpisode(missing)).toThrow(/자막 화자/);
+
+    const blank = structuredClone(episodeData) as unknown as Episode;
+    blank.scenes[0].captionSpeakers = blank.scenes[0].captions.map(() => "해설");
+    blank.scenes[0].captionSpeakers[0] = " ";
+    expect(() => validateEpisode(blank)).toThrow(/자막 화자/);
+  });
+
+  it("용 이야기의 다섯 가지 새 음악 테마를 지원한다", () => {
+    const created = structuredClone(episodeData) as unknown as Episode;
+    const newThemes: MusicTheme[] = ["festival", "ember", "storm", "calm", "lantern"];
+    newThemes.forEach((theme, index) => {
+      created.scenes[index].music = theme;
+    });
+    expect(() => validateEpisode(created)).not.toThrow();
+
+    (created.scenes[0] as unknown as { music: string }).music = "thunder";
+    expect(() => validateEpisode(created)).toThrow(/음악 테마/);
   });
 
   it("구름산의 보리는 선택, 활동, 마무리 장면까지 모두 연결된다", () => {
@@ -187,5 +245,53 @@ describe("에피소드 데이터 계약", () => {
     const broken = structuredClone(episodeData);
     broken.scenes[0].nextSceneId = "MISSING_SCENE";
     expect(() => validateEpisode(broken)).toThrow(/찾을 수 없어요/);
+  });
+
+  it("토리의 불빛 축제는 대사와 네 번의 마음 선택을 끝까지 연결한다", () => {
+    const episode = validateEpisode(toriData);
+    const choices = episode.scenes.filter((scene) => scene.type === "choice");
+    const activities = episode.scenes.filter((scene) => scene.type === "activity");
+    const failures = choices.flatMap((scene) =>
+      scene.interaction && "options" in scene.interaction
+        ? scene.interaction.options.filter((option) => option.guidance === "reflect")
+        : [],
+    );
+    const speakers = new Set(episode.scenes.flatMap((scene) => scene.captionSpeakers ?? []));
+
+    expect(episode.scenes).toHaveLength(13);
+    expect(choices).toHaveLength(4);
+    expect(activities).toHaveLength(2);
+    expect(failures).toHaveLength(8);
+    expect(new Set(failures.map((option) => option.failure?.title)).size).toBe(8);
+    expect(speakers.has("이야기 할머니")).toBe(true);
+    expect(speakers.has("토리")).toBe(true);
+    expect(speakers.has("소미")).toBe(true);
+    expect(episode.scenes.at(-1)?.type).toBe("ending");
+  });
+
+  it("오래된 음성 목록이 있어도 이야기 본문은 열 수 있다", async () => {
+    const staleVoice = {
+      schemaVersion: 1,
+      episodeId: "heungbu-nolbu",
+      contentVersion: "2.0.0",
+      model: "gpt-4o-mini-tts",
+      voice: "marin",
+      format: "mp3",
+      speed: 0.96,
+      promptVersion: "ko-child-story-v1",
+      instructionsHash: "stale",
+      generatedAt: null,
+      entries: [],
+    };
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => structuredClone(episodeData) })
+      .mockResolvedValueOnce({ ok: true, json: async () => staleVoice });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const loaded = await loadEpisode("/episodes/heungbu-nolbu/episode.json");
+
+    expect(loaded.id).toBe("heungbu-nolbu");
+    expect(loaded.voice).toBeUndefined();
+    vi.unstubAllGlobals();
   });
 });

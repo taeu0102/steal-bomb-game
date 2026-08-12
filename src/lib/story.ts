@@ -2,6 +2,7 @@ import type {
   ChoiceInteraction,
   Episode,
   EpisodeManifest,
+  MusicTheme,
   StoryScene,
   VoiceManifest,
 } from "../types/story";
@@ -9,6 +10,19 @@ import { collectVoiceCues } from "./voice";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
+
+const musicThemes = new Set<MusicTheme>([
+  "village",
+  "care",
+  "wonder",
+  "comic",
+  "repair",
+  "festival",
+  "ember",
+  "storm",
+  "calm",
+  "lantern",
+]);
 
 export function validateManifest(value: unknown): EpisodeManifest {
   if (!isRecord(value) || !Array.isArray(value.episodes)) {
@@ -22,6 +36,9 @@ export function validateManifest(value: unknown): EpisodeManifest {
       throw new Error("에피소드 카드에 id와 dataPath가 필요해요.");
     }
     if (ids.has(item.id)) throw new Error(`중복된 에피소드 ID: ${item.id}`);
+    if ("ttsEnabled" in item && typeof item.ttsEnabled !== "boolean") {
+      throw new Error(`${item.id}의 자동 낭독 설정은 참 또는 거짓이어야 해요.`);
+    }
     ids.add(item.id);
     if (item.featured === true) featuredCount += 1;
   }
@@ -39,6 +56,20 @@ function validateScene(scene: StoryScene, sceneIds: Set<string>) {
   }
   if (scene.captions.some((caption) => typeof caption !== "string" || !caption.trim())) {
     throw new Error(`${scene.id} 장면의 모든 자막에는 내용이 필요해요.`);
+  }
+  if (scene.captionSpeakers !== undefined) {
+    if (
+      !Array.isArray(scene.captionSpeakers) ||
+      scene.captionSpeakers.length !== scene.captions.length ||
+      scene.captionSpeakers.some(
+        (speaker) => typeof speaker !== "string" || !speaker.trim(),
+      )
+    ) {
+      throw new Error(`${scene.id} 장면의 자막 화자는 자막마다 하나씩 필요해요.`);
+    }
+  }
+  if (!musicThemes.has(scene.music)) {
+    throw new Error(`${scene.id} 장면의 음악 테마가 올바르지 않아요.`);
   }
   if (scene.nextSceneId && !sceneIds.has(scene.nextSceneId)) {
     throw new Error(`${scene.id}의 다음 장면 ${scene.nextSceneId}을 찾을 수 없어요.`);
@@ -195,6 +226,10 @@ export function getCompletionVisual(episode: Episode, completedSceneId?: string)
     : { image: episode.meta.cover, imageAlt: `${episode.meta.title} 동화 표지` };
 }
 
+export function getCaptionSpeaker(scene: StoryScene, captionIndex: number) {
+  return scene.captionSpeakers?.[captionIndex]?.trim() || "이야기 할머니";
+}
+
 export async function loadManifest(): Promise<EpisodeManifest> {
   const response = await fetch("/episodes/index.json");
   if (!response.ok) throw new Error("동화책 목록을 불러오지 못했어요.");
@@ -209,7 +244,13 @@ export async function loadEpisode(dataPath: string): Promise<Episode> {
 
   const voiceResponse = await fetch(voiceManifestPath).catch(() => null);
   if (voiceResponse?.ok) {
-    episode.voice = validateVoiceManifest(await voiceResponse.json(), episode);
+    try {
+      episode.voice = validateVoiceManifest(await voiceResponse.json(), episode);
+    } catch {
+      // 이야기 본문이 바뀐 뒤 아직 음성 파일을 다시 만들지 않았더라도
+      // 자막과 부모 낭독으로 에피소드는 끝까지 열려야 합니다.
+      episode.voice = undefined;
+    }
   }
 
   return episode;

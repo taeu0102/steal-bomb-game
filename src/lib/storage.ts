@@ -3,7 +3,11 @@ import type { Episode, StoryProgress, StorySettings } from "../types/story";
 const SETTINGS_KEY = "maeum-seed:settings:v1";
 const progressKey = (episodeId: string) => `maeum-seed:progress:${episodeId}`;
 
-export const defaultSettings: StorySettings = { captions: true, muted: false };
+export const defaultSettings: StorySettings = {
+  captions: true,
+  muted: false,
+  narration: false,
+};
 
 export function loadSettings(): StorySettings {
   try {
@@ -13,6 +17,7 @@ export function loadSettings(): StorySettings {
     return {
       captions: typeof value.captions === "boolean" ? value.captions : true,
       muted: typeof value.muted === "boolean" ? value.muted : false,
+      narration: typeof value.narration === "boolean" ? value.narration : false,
     };
   } catch {
     return defaultSettings;

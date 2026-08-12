@@ -1,6 +1,16 @@
 export type SceneType = "cinematic" | "choice" | "activity" | "ending";
 export type Guidance = "preferred" | "reflect" | "neutral";
-export type MusicTheme = "village" | "care" | "wonder" | "comic" | "repair";
+export type MusicTheme =
+  | "village"
+  | "care"
+  | "wonder"
+  | "comic"
+  | "repair"
+  | "festival"
+  | "ember"
+  | "storm"
+  | "calm"
+  | "lantern";
 
 export interface EpisodeManifestItem {
   id: string;
@@ -13,6 +23,7 @@ export interface EpisodeManifestItem {
   summary: string;
   featured: boolean;
   enabled: boolean;
+  ttsEnabled?: boolean;
 }
 
 export interface EpisodeManifest {
@@ -68,6 +79,7 @@ export interface StoryScene {
   motion?: "push" | "drift-left" | "drift-right" | "still";
   eyebrow: string;
   captions: string[];
+  captionSpeakers?: string[];
   soundCaption?: string;
   music: MusicTheme;
   lessonTags: string[];
@@ -125,6 +137,7 @@ export interface VoiceManifest {
 export interface StorySettings {
   captions: boolean;
   muted: boolean;
+  narration: boolean;
 }
 
 export interface SelectionRecord {

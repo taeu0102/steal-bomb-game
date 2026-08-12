@@ -6,7 +6,12 @@ import {
   useState,
 } from "react";
 import { storyAudio } from "./lib/audio";
-import { getCompletionVisual, loadEpisode, loadManifest } from "./lib/story";
+import {
+  getCaptionSpeaker,
+  getCompletionVisual,
+  loadEpisode,
+  loadManifest,
+} from "./lib/story";
 import {
   activityFeedbackVoiceKey,
   captionVoiceKey,
@@ -64,11 +69,13 @@ function IconButton({
   label,
   icon,
   pressed,
+  disabled,
   onClick,
 }: {
   label: string;
   icon: string;
   pressed?: boolean;
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
@@ -77,6 +84,7 @@ function IconButton({
       type="button"
       aria-label={label}
       aria-pressed={pressed}
+      disabled={disabled}
       title={label}
       onClick={onClick}
     >
@@ -161,6 +169,7 @@ function StoryPlayer({
   episode,
   initialProgress,
   settings,
+  narrationAvailable,
   onSettingsChange,
   onExit,
   onComplete,
@@ -168,6 +177,7 @@ function StoryPlayer({
   episode: Episode;
   initialProgress: StoryProgress;
   settings: StorySettings;
+  narrationAvailable: boolean;
   onSettingsChange: (settings: StorySettings) => void;
   onExit: () => void;
   onComplete: (progress: StoryProgress) => void;
@@ -200,10 +210,16 @@ function StoryPlayer({
   const sceneIndex = episode.scenes.findIndex((candidate) => candidate.id === scene.id);
   const sceneProgress = ((sceneIndex + 1) / episode.scenes.length) * 100;
   const caption = scene.captions[captionIndex] ?? scene.captions[scene.captions.length - 1];
+  const captionSpeaker = getCaptionSpeaker(scene, captionIndex);
   const currentCaptionKey = captionVoiceKey(scene.id, captionIndex);
+  const narrationEnabled = narrationAvailable && settings.narration;
 
   const playVoice = useCallback(
     (key: string, text: string, onEnded?: () => void) => {
+      if (!narrationEnabled) {
+        onEnded?.();
+        return;
+      }
       const entry = getVoiceEntry(episode, key);
       storyAudio.playVoice({
         key: `${episode.id}:${key}`,
@@ -212,7 +228,7 @@ function StoryPlayer({
         onEnded,
       });
     },
-    [episode],
+    [episode, narrationEnabled],
   );
 
   const persist = useCallback(
@@ -282,7 +298,12 @@ function StoryPlayer({
 
   useEffect(() => {
     storyAudio.setMuted(settings.muted);
-    if (settings.muted || phase !== "playing") {
+    storyAudio.setNarrationEnabled(narrationEnabled);
+    if (!narrationEnabled) {
+      if (finishedVoiceKey !== currentCaptionKey) setFinishedVoiceKey(currentCaptionKey);
+      return;
+    }
+    if (phase !== "playing") {
       return;
     }
     if (finishedVoiceKey === currentCaptionKey) return;
@@ -291,7 +312,15 @@ function StoryPlayer({
     playVoice(currentCaptionKey, caption, () => {
       setFinishedVoiceKey(currentCaptionKey);
     });
-  }, [caption, currentCaptionKey, finishedVoiceKey, phase, playVoice, settings.muted]);
+  }, [
+    caption,
+    currentCaptionKey,
+    finishedVoiceKey,
+    narrationEnabled,
+    phase,
+    playVoice,
+    settings.muted,
+  ]);
 
   useEffect(() => {
     if (["choice", "feedback", "failed", "activity", "activityFeedback"].includes(phase)) {
@@ -326,18 +355,25 @@ function StoryPlayer({
   }, [phase]);
 
   useEffect(() => {
-    if (phase !== "playing") return;
+    if (phase !== "playing" || !narrationEnabled) return;
     const perCaption = Math.min(
       12000,
       Math.max(6500, scene.estimatedDurationMs / scene.captions.length),
     );
     const timer = window.setTimeout(() => setElapsedCaptionKey(currentCaptionKey), perCaption);
     return () => window.clearTimeout(timer);
-  }, [currentCaptionKey, phase, scene.captions.length, scene.estimatedDurationMs]);
+  }, [
+    currentCaptionKey,
+    narrationEnabled,
+    phase,
+    scene.captions.length,
+    scene.estimatedDurationMs,
+  ]);
 
   useEffect(() => {
     if (
       phase !== "playing" ||
+      !narrationEnabled ||
       elapsedCaptionKey !== currentCaptionKey ||
       finishedVoiceKey !== currentCaptionKey
     ) return;
@@ -348,6 +384,7 @@ function StoryPlayer({
     currentCaptionKey,
     elapsedCaptionKey,
     finishedVoiceKey,
+    narrationEnabled,
     phase,
     revealInteractionOrAdvance,
     scene.captions.length,
@@ -412,6 +449,15 @@ function StoryPlayer({
 
   const handleCaptionToggle = () => {
     onSettingsChange({ ...settings, captions: !settings.captions });
+  };
+
+  const handleNarrationToggle = () => {
+    if (!narrationAvailable) return;
+    const nextNarration = !settings.narration;
+    storyAudio.setNarrationEnabled(nextNarration);
+    if (nextNarration && phase === "playing") setFinishedVoiceKey(null);
+    if (!nextNarration) setFinishedVoiceKey(currentCaptionKey);
+    onSettingsChange({ ...settings, narration: nextNarration });
   };
 
   const handleNext = () => {
@@ -536,7 +582,18 @@ function StoryPlayer({
               onClick={handleCaptionToggle}
             />
             <IconButton
-              label={settings.muted ? "소리 켜기" : "소리 끄기"}
+              label={
+                narrationAvailable
+                  ? settings.narration ? "자동 낭독 끄기" : "자동 낭독 켜기"
+                  : "이 이야기는 부모 낭독 모드예요"
+              }
+              icon={narrationAvailable ? narrationEnabled ? "낭독" : "낭독×" : "함께"}
+              pressed={narrationEnabled}
+              disabled={!narrationAvailable}
+              onClick={handleNarrationToggle}
+            />
+            <IconButton
+              label={settings.muted ? "배경음과 효과음 켜기" : "배경음과 효과음 끄기"}
               icon={settings.muted ? "♪×" : "♪"}
               pressed={!settings.muted}
               onClick={() => void handleSoundToggle()}
@@ -551,8 +608,8 @@ function StoryPlayer({
 
         {!showPanel && settings.captions && (
           <section className="caption-card" aria-live="polite" aria-atomic="true">
-            <div className="caption-card__speaker">
-              <span aria-hidden="true">◌</span> 이야기 할머니
+            <div className="caption-card__speaker" aria-label={`말하는 사람: ${captionSpeaker}`}>
+              <span aria-hidden="true">◌</span> <span>{captionSpeaker}</span>
             </div>
             <p>{caption}</p>
             {scene.soundCaption && <small>{scene.soundCaption}</small>}
@@ -918,6 +975,8 @@ export default function App() {
   const resumeScene = progress
     ? episode.scenes.find((candidate) => candidate.id === progress.sceneId)
     : null;
+  const activeManifestItem = catalog.find((item) => item.id === episode.id);
+  const narrationAvailable = activeManifestItem?.ttsEnabled !== false;
 
   return (
     <>
@@ -1045,9 +1104,22 @@ export default function App() {
                   <span aria-hidden="true">자막</span>
                   <strong>자막 {settings.captions ? "켜짐" : "꺼짐"}</strong>
                 </button>
+                <button
+                  type="button"
+                  aria-pressed={narrationAvailable && settings.narration}
+                  disabled={!narrationAvailable}
+                  onClick={() => updateSettings({ ...settings, narration: !settings.narration })}
+                >
+                  <span aria-hidden="true">낭독</span>
+                  <strong>
+                    {narrationAvailable
+                      ? `자동 낭독 ${settings.narration ? "켜짐" : "꺼짐"}`
+                      : "부모가 읽기"}
+                  </strong>
+                </button>
                 <button type="button" aria-pressed={!settings.muted} onClick={() => updateSettings({ ...settings, muted: !settings.muted })}>
                   <span aria-hidden="true">♪</span>
-                  <strong>소리 {settings.muted ? "꺼짐" : "켜짐"}</strong>
+                  <strong>배경음 {settings.muted ? "꺼짐" : "켜짐"}</strong>
                 </button>
               </div>
               <div className="intro-actions">
@@ -1061,8 +1133,8 @@ export default function App() {
                 )}
               </div>
               <small className="autoplay-note">
-                소리는 시작 버튼을 누른 뒤 재생되며 언제든 끌 수 있어요.
-                {hasGeneratedVoice(episode) && " 내레이션은 GPT-4o mini TTS로 만든 AI 음성입니다."}
+                배경음은 시작 버튼을 누른 뒤 재생돼요. 자동 낭독은 기본으로 꺼져 있어 부모님이 직접 읽고 다음 버튼으로 속도를 맞출 수 있어요.
+                {settings.narration && hasGeneratedVoice(episode) && " 켜진 내레이션은 GPT-4o mini TTS로 만든 AI 음성입니다."}
               </small>
             </div>
           </section>
@@ -1075,6 +1147,7 @@ export default function App() {
           episode={episode}
           initialProgress={progress}
           settings={settings}
+          narrationAvailable={narrationAvailable}
           onSettingsChange={updateSettings}
           onExit={() => {
             const saved = loadProgress(episode);
