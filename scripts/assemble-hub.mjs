@@ -25,6 +25,12 @@ await rm(path.join(dist, "interactive-story", "episodes"), {
   recursive: true,
   force: true,
 });
+await mkdir(path.join(dist, "heungbu-nolbu"), { recursive: true });
+await writeFile(
+  path.join(dist, "heungbu-nolbu", "index.html"),
+  `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="refresh" content="0;url=/interactive-story/"><link rel="canonical" href="https://taeu0102-ai.vercel.app/interactive-story/"><title>체험형 동화로 이동 중</title></head><body><p><a href="/interactive-story/">체험형 동화로 이동하기</a></p><script>location.replace("/interactive-story/" + location.search + location.hash)</script></body></html>`,
+  "utf8",
+);
 await cp(path.join(root, "public", "episodes"), path.join(dist, "episodes"), {
   recursive: true,
 });

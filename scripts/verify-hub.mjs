@@ -13,6 +13,7 @@ const requiredFiles = [
   "steal-bomb-game/game.js",
   "steal-bomb-game/public-config.js",
   "interactive-story/index.html",
+  "heungbu-nolbu/index.html",
   "ghost-forge/index.html",
   "portfolio-city/index.html",
   "episodes/index.json",
@@ -40,6 +41,10 @@ const publicConfigScript = await readFile(
   path.join(dist, "steal-bomb-game", "public-config.js"),
   "utf8",
 );
+const legacyStoryHtml = await readFile(
+  path.join(dist, "heungbu-nolbu", "index.html"),
+  "utf8",
+);
 
 if (!portalHtml.includes("portal.css") || !portalHtml.includes("portal.js")) {
   throw new Error("The root page is not the AI work hub.");
@@ -52,6 +57,9 @@ if (!storyHtml.includes("/interactive-story/assets/")) {
 }
 if (!manifest.episodes?.some(({ id }) => id === "tori-firelight-festival")) {
   throw new Error("The Tori episode is missing from the episode registry.");
+}
+if (!legacyStoryHtml.includes('location.replace("/interactive-story/"')) {
+  throw new Error("The legacy story URL does not forward to the new path.");
 }
 if (
   process.env.VERCEL_ENV === "production" &&
