@@ -5,12 +5,75 @@ import manifestData from "../../public/episodes/index.json";
 import { getCompletionVisual, validateEpisode, validateManifest } from "./story";
 import type { Episode } from "../types/story";
 
+const episodeModules = import.meta.glob("../../public/episodes/*/episode.json", {
+  eager: true,
+  import: "default",
+}) as Record<string, unknown>;
+
+const registeredEpisodeData = Object.values(episodeModules);
+
 describe("에피소드 데이터 계약", () => {
   it("에피소드 목록을 검증한다", () => {
     const manifest = validateManifest(manifestData);
-    expect(manifest.episodes.some((item) => item.id === "heungbu-nolbu")).toBe(true);
-    expect(manifest.episodes.some((item) => item.id === "broken-moon")).toBe(true);
+    const episodeIds = registeredEpisodeData.map((data) => validateEpisode(data).id);
+
+    expect(manifest.episodes).toHaveLength(3);
+    expect(manifest.episodes.map((item) => item.id).sort()).toEqual(episodeIds.sort());
+    expect(manifest.episodes.map((item) => item.id)).toEqual(
+      expect.arrayContaining(["heungbu-nolbu", "broken-moon", "bori-cloud-mountain"]),
+    );
     expect(manifest.episodes.filter((item) => item.featured)).toHaveLength(1);
+  });
+
+  it("구름산의 보리는 선택, 활동, 마무리 장면까지 모두 연결된다", () => {
+    const episodeData = registeredEpisodeData.find(
+      (data) => (data as { id?: string }).id === "bori-cloud-mountain",
+    );
+    expect(episodeData).toBeDefined();
+
+    const episode = validateEpisode(episodeData);
+    const choiceScenes = episode.scenes.filter((scene) => scene.type === "choice");
+    const activities = episode.scenes.filter((scene) => scene.type === "activity");
+    const endings = episode.scenes.filter((scene) => scene.type === "ending");
+
+    expect(episode.scenes).toHaveLength(13);
+    expect(choiceScenes).toHaveLength(4);
+    expect(activities).toHaveLength(2);
+    expect(endings).toHaveLength(1);
+    expect(episode.scenes.at(-1)?.id).toBe(endings[0].id);
+
+    for (const scene of choiceScenes) {
+      if (!scene.interaction || !("options" in scene.interaction)) {
+        throw new Error(`${scene.id} 선택 상호작용이 없어요.`);
+      }
+      expect(scene.interaction.options.filter((option) => option.guidance === "preferred")).toHaveLength(1);
+      expect(scene.interaction.options.filter((option) => option.guidance === "reflect")).toHaveLength(
+        scene.interaction.options.length - 1,
+      );
+      for (const option of scene.interaction.options.filter(
+        (candidate) => candidate.guidance === "reflect",
+      )) {
+        expect(option.failure?.title.trim()).toBeTruthy();
+        expect(option.failure?.ending.trim()).toBeTruthy();
+        expect(option.failure?.lesson.trim()).toBeTruthy();
+      }
+    }
+
+    const reachable = new Set<string>();
+    const visit = (sceneId: string) => {
+      if (reachable.has(sceneId)) return;
+      reachable.add(sceneId);
+      const scene = episode.scenes.find((candidate) => candidate.id === sceneId);
+      if (!scene) return;
+      if (scene.nextSceneId) visit(scene.nextSceneId);
+      if (scene.interaction && "options" in scene.interaction) {
+        scene.interaction.options.forEach((option) => {
+          if (option.nextSceneId) visit(option.nextSceneId);
+        });
+      }
+    };
+    visit(episode.startSceneId);
+    expect(reachable.size).toBe(episode.scenes.length);
   });
 
   it("깨진 달을 고치는 아이의 몰입형 장면과 실패 결말을 검증한다", () => {

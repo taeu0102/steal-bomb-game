@@ -14,13 +14,16 @@ export function validateManifest(value: unknown): EpisodeManifest {
   }
 
   const ids = new Set<string>();
+  let featuredCount = 0;
   for (const item of value.episodes) {
     if (!isRecord(item) || typeof item.id !== "string" || typeof item.dataPath !== "string") {
       throw new Error("에피소드 카드에 id와 dataPath가 필요해요.");
     }
     if (ids.has(item.id)) throw new Error(`중복된 에피소드 ID: ${item.id}`);
     ids.add(item.id);
+    if (item.featured === true) featuredCount += 1;
   }
+  if (featuredCount !== 1) throw new Error("추천 에피소드는 정확히 하나여야 해요.");
 
   return value as unknown as EpisodeManifest;
 }
@@ -31,6 +34,9 @@ function validateScene(scene: StoryScene, sceneIds: Set<string>) {
   }
   if (!Array.isArray(scene.captions) || scene.captions.length === 0) {
     throw new Error(`${scene.id} 장면에는 자막이 필요해요.`);
+  }
+  if (scene.captions.some((caption) => typeof caption !== "string" || !caption.trim())) {
+    throw new Error(`${scene.id} 장면의 모든 자막에는 내용이 필요해요.`);
   }
   if (scene.nextSceneId && !sceneIds.has(scene.nextSceneId)) {
     throw new Error(`${scene.id}의 다음 장면 ${scene.nextSceneId}을 찾을 수 없어요.`);

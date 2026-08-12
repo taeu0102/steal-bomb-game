@@ -2,6 +2,18 @@
   "schemaVersion": "1.0.0",
   "episodes": [
     {
+      "id": "bori-cloud-mountain",
+      "dataPath": "/episodes/bori-cloud-mountain/episode.json",
+      "title": "보리와 구름산의 무지개 종",
+      "subtitle": "멈추어도 괜찮아, 다시 한 걸음이면 돼",
+      "cover": "/episodes/bori-cloud-mountain/images/cover.webp",
+      "ageRange": "5~9세",
+      "estimatedMinutes": 9,
+      "summary": "작은 달팽이 보리와 구름산을 오르며, 쉬고 방법을 바꾸고 도움을 청해 다시 한 걸음을 내디뎌 보세요.",
+      "featured": true,
+      "enabled": true
+    },
+    {
       "id": "broken-moon",
       "dataPath": "/episodes/broken-moon/episode.json",
       "title": "깨진 달을 고치는 아이",
@@ -10,7 +22,7 @@
       "ageRange": "5~9세",
       "estimatedMinutes": 9,
       "summary": "달빛 축제를 앞두고 달등에 금을 낸 하루와 함께, 실수를 말하고 사과하고 고치는 용기를 선택해 보세요.",
-      "featured": true,
+      "featured": false,
       "enabled": true
     },
     {

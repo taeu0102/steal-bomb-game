@@ -935,11 +935,11 @@ export default function App() {
                 </article>
               ))}
               <article className="episode-card episode-card--coming">
-                <div aria-hidden="true" className="coming-pattern"><span>달</span><span>토끼</span></div>
+                <div aria-hidden="true" className="coming-pattern"><span>별</span><span>씨앗</span></div>
                 <div className="episode-card__body">
                   <div className="episode-meta"><span>다음 이야기</span></div>
-                  <h3>달토끼 이야기</h3>
-                  <p>마음을 내어 주는 지혜를 준비하고 있어요.</p>
+                  <h3>새 마음 씨앗을 준비 중이에요</h3>
+                  <p>아이와 함께 나눌 또 다른 이야기가 찾아올 거예요.</p>
                   <span className="coming-label">곧 만나요</span>
                 </div>
               </article>
