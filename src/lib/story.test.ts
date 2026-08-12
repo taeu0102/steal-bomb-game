@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import brokenMoonData from "../../public/episodes/broken-moon/episode.json";
 import episodeData from "../../public/episodes/heungbu-nolbu/episode.json";
 import manifestData from "../../public/episodes/index.json";
 import { getCompletionVisual, validateEpisode, validateManifest } from "./story";
@@ -8,6 +9,27 @@ describe("에피소드 데이터 계약", () => {
   it("에피소드 목록을 검증한다", () => {
     const manifest = validateManifest(manifestData);
     expect(manifest.episodes.some((item) => item.id === "heungbu-nolbu")).toBe(true);
+    expect(manifest.episodes.some((item) => item.id === "broken-moon")).toBe(true);
+    expect(manifest.episodes.filter((item) => item.featured)).toHaveLength(1);
+  });
+
+  it("깨진 달을 고치는 아이의 몰입형 장면과 실패 결말을 검증한다", () => {
+    const episode = validateEpisode(brokenMoonData);
+    const choiceScenes = episode.scenes.filter((scene) => scene.type === "choice");
+    const activities = episode.scenes.filter((scene) => scene.type === "activity");
+    const failureOptions = choiceScenes.flatMap((scene) =>
+      scene.interaction && "options" in scene.interaction
+        ? scene.interaction.options.filter((option) => option.guidance === "reflect")
+        : [],
+    );
+
+    expect(episode.id).toBe("broken-moon");
+    expect(episode.scenes).toHaveLength(13);
+    expect(choiceScenes).toHaveLength(4);
+    expect(activities).toHaveLength(2);
+    expect(failureOptions).toHaveLength(8);
+    expect(failureOptions.every((option) => Boolean(option.failure))).toBe(true);
+    expect(episode.scenes.at(-1)?.type).toBe("ending");
   });
 
   it("흥부와 놀부의 13개 장면을 모두 연결한다", () => {
