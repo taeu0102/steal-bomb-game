@@ -25,7 +25,7 @@ describe("에피소드 데이터 계약", () => {
     const manifest = validateManifest(manifestData);
     const episodeIds = registeredEpisodeData.map((data) => validateEpisode(data).id);
 
-    expect(manifest.episodes).toHaveLength(4);
+    expect(manifest.episodes).toHaveLength(registeredEpisodeData.length);
     expect(manifest.episodes.map((item) => item.id).sort()).toEqual(episodeIds.sort());
     expect(manifest.episodes.map((item) => item.id)).toEqual(
       expect.arrayContaining([
@@ -33,6 +33,7 @@ describe("에피소드 데이터 계약", () => {
         "broken-moon",
         "bori-cloud-mountain",
         "tori-firelight-festival",
+        "lulu-heart-mail",
       ]),
     );
     expect(manifest.episodes.filter((item) => item.featured)).toHaveLength(1);
@@ -95,6 +96,62 @@ describe("에피소드 데이터 계약", () => {
       "토리": "top",
     } as unknown as Episode["scenes"][number]["speakerPositions"];
     expect(() => validateEpisode(invalidPosition)).toThrow(/말풍선 위치/);
+  });
+
+  it("기존 터치 활동에 부모 낭독과 아이 참여 안내를 선택적으로 더한다", () => {
+    const created = structuredClone(toriData) as unknown as Episode;
+    const activity = created.scenes.find((scene) => scene.type === "activity");
+    if (!activity?.interaction || activity.interaction.kind !== "tap") {
+      throw new Error("테스트 활동 장면 없음");
+    }
+    activity.interaction.participation = [
+      {
+        kind: "parent-read",
+        speaker: "토리",
+        instruction: "부모님은 숨이 조금 가쁜 아기 용 목소리로 읽어 주세요.",
+        line: "후우, 아직 화가 나지만 어떤 말을 할지는 고를 수 있어.",
+      },
+      {
+        kind: "child-repeat",
+        instruction: "아이가 토리와 함께 천천히 따라 말해요.",
+        line: "나는 잠깐 멈출 수 있어.",
+      },
+      {
+        kind: "child-question",
+        instruction: "아이에게 물어보세요. 토리의 몸은 지금 어떻게 달라졌을까요?",
+      },
+    ];
+
+    const episode = validateEpisode(created);
+    const validatedActivity = episode.scenes.find((scene) => scene.id === activity.id);
+    expect(validatedActivity?.interaction?.kind).toBe("tap");
+    if (validatedActivity?.interaction?.kind !== "tap") return;
+    expect(validatedActivity.interaction.participation).toHaveLength(3);
+  });
+
+  it("부모 낭독의 화자·대사와 아이 따라 말할 문장이 빠지면 거부한다", () => {
+    const missingParentLine = structuredClone(toriData) as unknown as Episode;
+    const firstActivity = missingParentLine.scenes.find((scene) => scene.type === "activity");
+    if (!firstActivity?.interaction || firstActivity.interaction.kind !== "tap") {
+      throw new Error("테스트 활동 장면 없음");
+    }
+    firstActivity.interaction.participation = [{
+      kind: "parent-read",
+      speaker: "토리",
+      instruction: "토리 목소리로 읽어 주세요.",
+    }];
+    expect(() => validateEpisode(missingParentLine)).toThrow(/화자와 대사/);
+
+    const missingChildLine = structuredClone(toriData) as unknown as Episode;
+    const secondActivity = missingChildLine.scenes.find((scene) => scene.type === "activity");
+    if (!secondActivity?.interaction || secondActivity.interaction.kind !== "tap") {
+      throw new Error("테스트 활동 장면 없음");
+    }
+    secondActivity.interaction.participation = [{
+      kind: "child-repeat",
+      instruction: "아이가 따라 말해요.",
+    }];
+    expect(() => validateEpisode(missingChildLine)).toThrow(/아이가 말할 문장/);
   });
 
   it("용 이야기의 다섯 가지 새 음악 테마를 지원한다", () => {

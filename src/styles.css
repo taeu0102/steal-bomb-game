@@ -1077,18 +1077,16 @@ p {
 }
 
 .character-speech span {
-  overflow: hidden;
-  display: -webkit-box;
   font-family: Georgia, "Nanum Myeongjo", serif;
   font-size: clamp(1rem, 1.6vw, 1.35rem);
   font-weight: 750;
   letter-spacing: -0.025em;
   line-height: 1.42;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
+  overflow-wrap: anywhere;
 }
 
-.caption-card--character {
+.caption-card--character,
+.caption-card--visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -1099,6 +1097,51 @@ p {
   box-shadow: none;
   clip: rect(0, 0, 0, 0);
   backdrop-filter: none;
+}
+
+.speaker-cue {
+  position: absolute;
+  z-index: 4;
+  top: clamp(230px, 35vh, 390px);
+  display: inline-flex;
+  max-width: min(42vw, 300px);
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  background: rgba(17, 35, 28, 0.86);
+  box-shadow: 0 10px 30px rgba(7, 18, 14, 0.28);
+  color: white;
+  pointer-events: none;
+  backdrop-filter: blur(14px);
+}
+
+.speaker-cue span {
+  color: #f5d58c;
+  font-size: 0.66rem;
+  font-weight: 900;
+}
+
+.speaker-cue strong {
+  overflow: hidden;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.speaker-cue--left,
+.speaker-cue--narrator {
+  left: clamp(7%, 12vw, 190px);
+}
+
+.speaker-cue--right {
+  right: clamp(7%, 12vw, 190px);
+}
+
+.speaker-cue--center {
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .caption-card--character .caption-card__speaker {
@@ -1510,6 +1553,72 @@ p {
 .activity-panel {
   max-width: 780px;
   margin: 0 auto;
+}
+
+.participation-guide {
+  display: grid;
+  max-width: 920px;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+  margin: 18px auto 4px;
+}
+
+.participation-card {
+  padding: 14px 16px;
+  border: 1px solid rgba(47, 88, 73, 0.18);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 9px 24px rgba(47, 88, 73, 0.08);
+}
+
+.participation-card--parent-read {
+  border-color: rgba(189, 93, 62, 0.25);
+  background: rgba(255, 246, 231, 0.82);
+}
+
+.participation-card__heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+  margin-bottom: 7px;
+}
+
+.participation-card__heading > span {
+  font-size: 1.15rem;
+}
+
+.participation-card__heading strong {
+  color: var(--pine);
+  font-size: 0.9rem;
+}
+
+.participation-card__heading small {
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(189, 93, 62, 0.1);
+  color: #964a32;
+  font-size: 0.66rem;
+  font-weight: 850;
+}
+
+.participation-card > p {
+  margin: 0;
+  color: rgba(38, 51, 45, 0.78);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.participation-card blockquote {
+  margin: 9px 0 0;
+  padding: 9px 11px;
+  border-left: 3px solid var(--terracotta);
+  border-radius: 0 10px 10px 0;
+  background: rgba(255, 255, 255, 0.74);
+  font-family: Georgia, "Nanum Myeongjo", serif;
+  font-size: 0.92rem;
+  font-weight: 750;
+  line-height: 1.42;
 }
 
 .activity-target {
@@ -2136,7 +2245,19 @@ p {
 
   .character-speech span {
     font-size: clamp(0.92rem, 3.8vw, 1.16rem);
-    -webkit-line-clamp: 4;
+  }
+
+  .speaker-cue {
+    top: clamp(190px, 31vh, 310px);
+  }
+
+  .speaker-cue--left,
+  .speaker-cue--narrator {
+    left: 14px;
+  }
+
+  .speaker-cue--right {
+    right: 14px;
   }
 
   .caption-card p {
@@ -2317,6 +2438,20 @@ p {
     animation-name: speech-bubble-center-in;
   }
 
+  .speaker-cue {
+    top: clamp(180px, 29vh, 270px);
+    max-width: calc(100% - 28px);
+  }
+
+  .speaker-cue--left,
+  .speaker-cue--right,
+  .speaker-cue--center,
+  .speaker-cue--narrator {
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
   .character-speech strong {
     font-size: 0.7rem;
   }
@@ -2345,6 +2480,20 @@ p {
 
   .feedback-copy {
     font-size: 0.94rem;
+  }
+
+  .participation-guide {
+    grid-template-columns: 1fr;
+    margin-top: 14px;
+  }
+
+  .participation-card {
+    padding: 12px 13px;
+    border-radius: 15px;
+  }
+
+  .participation-card blockquote {
+    font-size: 0.86rem;
   }
 
   .activity-target {
@@ -2405,7 +2554,10 @@ p {
 
   .character-speech span {
     font-size: 0.92rem;
-    -webkit-line-clamp: 2;
+  }
+
+  .speaker-cue {
+    top: 105px;
   }
 
   .player-controls {
@@ -2445,6 +2597,7 @@ p {
 @media (prefers-contrast: more) {
   .caption-card,
   .character-speech,
+  .speaker-cue,
   .back-button,
   .icon-button {
     background: rgba(5, 16, 11, 0.94);

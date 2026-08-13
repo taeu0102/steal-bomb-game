@@ -1,4 +1,5 @@
 import type {
+  ActivityInteraction,
   ChoiceInteraction,
   Episode,
   EpisodeManifest,
@@ -25,6 +26,7 @@ const musicThemes = new Set<MusicTheme>([
   "lantern",
 ]);
 const speakerPositions = new Set<SpeakerPosition>(["left", "center", "right", "narrator"]);
+const participationKinds = new Set(["parent-read", "child-repeat", "child-question"]);
 
 export function validateManifest(value: unknown): EpisodeManifest {
   if (!isRecord(value) || !Array.isArray(value.episodes)) {
@@ -139,8 +141,56 @@ function validateScene(scene: StoryScene, sceneIds: Set<string>) {
     if (!scene.interaction || scene.interaction.kind !== "tap") {
       throw new Error(`${scene.id}에는 터치 활동이 필요해요.`);
     }
-    if (scene.interaction.tapsRequired < 1 || scene.interaction.tapsRequired > 5) {
+    const interaction = scene.interaction as ActivityInteraction;
+    if (
+      !interaction.prompt?.trim() ||
+      !interaction.targetLabel?.trim() ||
+      !interaction.targetEmoji?.trim() ||
+      !interaction.feedback?.trim()
+    ) {
+      throw new Error(`${scene.id}의 터치 활동 안내가 빠졌어요.`);
+    }
+    if (
+      !Number.isInteger(interaction.tapsRequired) ||
+      interaction.tapsRequired < 1 ||
+      interaction.tapsRequired > 5
+    ) {
       throw new Error(`${scene.id}의 터치 횟수는 1~5회여야 해요.`);
+    }
+    if (interaction.participation !== undefined) {
+      if (
+        !Array.isArray(interaction.participation) ||
+        interaction.participation.length < 1 ||
+        interaction.participation.length > 3
+      ) {
+        throw new Error(`${scene.id}의 가족 참여 안내는 1~3개여야 해요.`);
+      }
+      for (const item of interaction.participation) {
+        if (
+          !isRecord(item) ||
+          !participationKinds.has(item.kind as string) ||
+          typeof item.instruction !== "string" ||
+          !item.instruction.trim() ||
+          (item.speaker !== undefined &&
+            (typeof item.speaker !== "string" || !item.speaker.trim())) ||
+          (item.line !== undefined && (typeof item.line !== "string" || !item.line.trim()))
+        ) {
+          throw new Error(`${scene.id}의 가족 참여 안내 형식이 올바르지 않아요.`);
+        }
+        if (
+          item.kind === "parent-read" &&
+          (typeof item.speaker !== "string" || !item.speaker.trim() ||
+            typeof item.line !== "string" || !item.line.trim())
+        ) {
+          throw new Error(`${scene.id}의 부모 낭독 안내에는 화자와 대사가 필요해요.`);
+        }
+        if (
+          item.kind === "child-repeat" &&
+          (typeof item.line !== "string" || !item.line.trim())
+        ) {
+          throw new Error(`${scene.id}의 따라 말하기 안내에는 아이가 말할 문장이 필요해요.`);
+        }
+      }
     }
   }
 }

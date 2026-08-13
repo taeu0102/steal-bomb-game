@@ -30,6 +30,7 @@ import {
   saveSettings,
 } from "./lib/storage";
 import type {
+  ActivityParticipation,
   ChoiceInteraction,
   ChoiceOption,
   Episode,
@@ -163,6 +164,41 @@ function ParentGuide({ episode, onClose }: { episode: Episode; onClose: () => vo
         </button>
       </section>
     </div>
+  );
+}
+
+const participationMeta: Record<
+  ActivityParticipation["kind"],
+  { icon: string; label: string; lineLabel: string }
+> = {
+  "parent-read": { icon: "🎭", label: "부모님 목소리 차례", lineLabel: "부모님이 읽을 대사" },
+  "child-repeat": { icon: "🗣️", label: "아이 말하기 차례", lineLabel: "아이가 따라 말할 문장" },
+  "child-question": { icon: "💬", label: "아이에게 물어보기", lineLabel: "함께 나눌 질문" },
+};
+
+function ParticipationGuide({ items }: { items: ActivityParticipation[] }) {
+  return (
+    <section className="participation-guide" aria-label="부모와 아이의 참여 안내">
+      {items.map((item, index) => {
+        const meta = participationMeta[item.kind];
+        return (
+          <article className={`participation-card participation-card--${item.kind}`} key={`${item.kind}:${index}`}>
+            <div className="participation-card__heading">
+              <span aria-hidden="true">{meta.icon}</span>
+              <strong>{item.speaker ? `${item.speaker} 목소리` : meta.label}</strong>
+              {item.speaker && <small>{meta.label}</small>}
+            </div>
+            <p>{item.instruction}</p>
+            {item.line && (
+              <blockquote>
+                <span className="sr-only">{meta.lineLabel}: </span>
+                “{item.line}”
+              </blockquote>
+            )}
+          </article>
+        );
+      })}
+    </section>
   );
 }
 
@@ -620,9 +656,19 @@ function StoryPlayer({
           </div>
         )}
 
-        {!showPanel && settings.captions && (
+        {!showPanel && !settings.captions && (
+          <div
+            className={`speaker-cue speaker-cue--${speakerPosition}`}
+            aria-hidden="true"
+          >
+            <span>{isCharacterSpeaking ? "대사" : "해설"}</span>
+            <strong>{captionSpeaker}</strong>
+          </div>
+        )}
+
+        {!showPanel && (
           <section
-            className={`caption-card${isCharacterSpeaking ? " caption-card--character" : ""}`}
+            className={`caption-card${isCharacterSpeaking ? " caption-card--character" : ""}${!settings.captions ? " caption-card--visually-hidden" : ""}`}
             aria-live="polite"
             aria-atomic="true"
           >
@@ -657,7 +703,7 @@ function StoryPlayer({
         )}
 
         {showInteractionSheet && (
-          <section className="interaction-sheet" aria-live="polite">
+          <section className="interaction-sheet">
             <div className="sheet-handle" aria-hidden="true" />
             {phase === "choice" && choiceInteraction && (
               <>
@@ -717,10 +763,13 @@ function StoryPlayer({
               <div className="activity-panel">
                 <p className="eyebrow">손끝으로 이야기를 도와요</p>
                 <h2 ref={interactionHeadingRef} tabIndex={-1}>{scene.interaction.prompt}</h2>
+                {scene.interaction.participation && (
+                  <ParticipationGuide items={scene.interaction.participation} />
+                )}
                 <button
                   className="activity-target"
                   type="button"
-                  aria-label={`${scene.interaction.targetLabel}, ${scene.interaction.tapsRequired}번 중 ${activityTaps}번 완료`}
+                  aria-label={`${scene.interaction.targetLabel}, 모두 ${scene.interaction.tapsRequired}번 누르기`}
                   onClick={handleActivityTap}
                 >
                   <span aria-hidden="true">{scene.interaction.targetEmoji}</span>
@@ -732,6 +781,11 @@ function StoryPlayer({
                     <i key={index} className={index < activityTaps ? "is-filled" : ""} />
                   ))}
                 </div>
+                <span className="sr-only" role="status" aria-atomic="true">
+                  {activityTaps > 0 && activityTaps < scene.interaction.tapsRequired
+                    ? `${scene.interaction.tapsRequired}번 중 ${activityTaps}번 완료`
+                    : ""}
+                </span>
               </div>
             )}
 

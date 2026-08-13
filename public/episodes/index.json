@@ -2,6 +2,19 @@
   "schemaVersion": "1.0.0",
   "episodes": [
     {
+      "id": "lulu-heart-mail",
+      "dataPath": "/episodes/lulu-heart-mail/episode.json",
+      "title": "마음 우체부 루루와 말없는 곰",
+      "subtitle": "짐작 대신 물어보고, 마음이 올 때까지 기다려요",
+      "cover": "/episodes/lulu-heart-mail/cover.webp",
+      "ageRange": "5~9세",
+      "estimatedMinutes": 10,
+      "summary": "재잘재잘 마음 우체부 루루와 함께 말없는 아기 곰 모모의 표정과 목소리를 살피고, 다정하게 묻고, 대답을 끝까지 기다려 보세요.",
+      "featured": true,
+      "enabled": true,
+      "ttsEnabled": false
+    },
+    {
       "id": "tori-firelight-festival",
       "dataPath": "/episodes/tori-firelight-festival/episode.json",
       "title": "불꽃을 삼킨 아기 용",
@@ -10,7 +23,7 @@
       "ageRange": "5~9세",
       "estimatedMinutes": 10,
       "summary": "불빛 축제를 준비하던 아기 용 토리와 함께 잠깐 멈추고, 화난 마음을 말로 전하고, 친구와 다시 손을 맞잡아 보세요.",
-      "featured": true,
+      "featured": false,
       "enabled": true,
       "ttsEnabled": false
     },

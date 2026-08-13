@@ -56,6 +56,15 @@ export interface ChoiceInteraction {
   options: ChoiceOption[];
 }
 
+export type ParticipationKind = "parent-read" | "child-repeat" | "child-question";
+
+export interface ActivityParticipation {
+  kind: ParticipationKind;
+  speaker?: string;
+  instruction: string;
+  line?: string;
+}
+
 export interface ActivityInteraction {
   kind: "tap";
   prompt: string;
@@ -63,6 +72,7 @@ export interface ActivityInteraction {
   targetEmoji: string;
   tapsRequired: number;
   feedback: string;
+  participation?: ActivityParticipation[];
 }
 
 export type SceneInteraction = ChoiceInteraction | ActivityInteraction;
