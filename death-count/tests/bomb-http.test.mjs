@@ -33,6 +33,27 @@ for (let n = 1; n <= 15; n++) {
   v = await api('sync', a);
   assert.equal(v.count, n);
   if (v.phase === 'result') {
+    if (v.result.reason === 'LIMIT') {
+      assert.equal(n, 15);
+      await sleep(1850);
+      v = await api('sync', a);
+      assert.equal(v.result.bombNumber, 0);
+      assert.deepEqual(v.result.bombIds, []);
+      assert.equal(
+        v.players.reduce((sum, p) => sum + p.points, 0),
+        1200,
+      );
+      console.log(
+        JSON.stringify({
+          anonymous: true,
+          players: 15,
+          bombFree: true,
+          endedAt: 15,
+          points: 1200,
+        }),
+      );
+      process.exit(0);
+    }
     assert.equal(v.result.reason, 'BOMB');
     assert.equal(v.result.revealed, true);
     assert.equal(v.result.bombNumber, n);

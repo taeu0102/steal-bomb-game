@@ -48,7 +48,7 @@ assert.ok(
   revealed.every(
     (s) =>
       s.result.revealed &&
-      s.result.bombNumber >= 1 &&
+      s.result.bombNumber >= 0 &&
       s.result.bombNumber <= 15,
   ),
 );

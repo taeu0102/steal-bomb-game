@@ -116,8 +116,9 @@ export default function Game() {
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches)
         navigator.vibrate?.(kind === 'crash' ? [80, 35, 100] : 100);
     } else if (old?.result && data.result?.revealed && !old.result.revealed) {
-      getAudio().bomb();
-      setImpact('bomb');
+      if (data.result.bombNumber === 0) getAudio().safe();
+      else getAudio().bomb();
+      setImpact(data.result.bombNumber === 0 ? '' : 'bomb');
       setTimeout(() => setImpact(''), 700);
     } else if (old && data.count > old.count && !data.result) getAudio().safe();
     ref.current = data;
@@ -481,6 +482,11 @@ export default function Game() {
               같은 사람은 2회 연속까지만 성공할 수 있으며, 다른 사람이 성공하면
               다시 누를 수 있습니다. 개인전에는 연속 제한이 없습니다.
             </p>
+            <p>
+              20% 확률로 폭탄이 없는 라운드가 나옵니다. 힌트를 받은 3명만 이
+              사실을 알 수 있습니다. 폭탄이 없어도 동시 클릭은 충돌 벌칙이며,
+              충돌 없이 15까지 가면 모두 점수를 유지합니다.
+            </p>
             <p>15인 · 무작위 3명에게 힌트 · 방은 2시간 유지됩니다.</p>
           </details>
           <footer className="entry-footer">
@@ -810,12 +816,16 @@ export default function Game() {
                   >
                     <span>
                       {v.result?.revealed
-                        ? '숨겨진 폭탄 숫자'
+                        ? v.result.bombNumber === 0
+                          ? '폭탄 없는 라운드'
+                          : '숨겨진 폭탄 숫자'
                         : '폭탄 숫자 공개 중'}
                     </span>
                     <strong>
                       {v.result?.revealed
-                        ? String(v.result.bombNumber).padStart(2, '0')
+                        ? v.result.bombNumber === 0
+                          ? '없음'
+                          : String(v.result.bombNumber).padStart(2, '0')
                         : '??'}
                     </strong>
                     {!v.result?.revealed ? (
@@ -828,7 +838,9 @@ export default function Game() {
                                 .filter((p) => v.result!.bombIds.includes(p.id))
                                 .map((p) => p.name)
                                 .join(', ')}`
-                            : '폭탄에 도달하지 않았다. 추가 벌칙 없음.'}
+                            : v.result.bombNumber === 0
+                              ? '폭탄은 없었다. 누적 점수 유지.'
+                              : '폭탄에 도달하지 않았다. 추가 벌칙 없음.'}
                         </b>
                         {!!v.result.bombIds.length && (
                           <p>

@@ -104,7 +104,8 @@ export function startRound(s: State, now: number): State {
   r.round++;
   r.gate++;
   r.count = 0;
-  r.bomb = integer(1, 15);
+  // 0 represents a bomb-free round; real counts remain 1 through 15.
+  r.bomb = integer(1, 5) === 1 ? 0 : integer(1, 15);
   r.inputs = [];
   r.calls = [];
   r.lastPlayer = null;
@@ -122,9 +123,12 @@ export function startRound(s: State, now: number): State {
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   for (const p of shuffled.slice(0, 3))
-    p.hint = integer(0, 1)
-      ? `폭탄 숫자는 ${r.bomb % 2 ? '홀수' : '짝수'}다.`
-      : `폭탄 숫자는 10 ${r.bomb >= 10 ? '이상' : '미만'}이다.`;
+    p.hint =
+      r.bomb === 0
+        ? '이번 라운드에는 폭탄이 없다.'
+        : integer(0, 1)
+          ? `폭탄 숫자는 ${r.bomb % 2 ? '홀수' : '짝수'}다.`
+          : `폭탄 숫자는 10 ${r.bomb >= 10 ? '이상' : '미만'}이다.`;
   scheduleBots(r, r.unlockAt);
   return r;
 }

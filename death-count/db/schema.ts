@@ -4,7 +4,7 @@ import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
 export const rooms = sqliteTable('death_rooms', {
   /** description: 공유하는 6자리 방 코드, 기본 키. */
   code: text('code').primaryKey(),
-  /** description: 참가자 자격 해시·함정·힌트·입력 창·누적 점수·모드·팀 수(2/3)·자유 팀 배정·연속 성공 기록을 담는 서버 전용 JSON. */
+  /** description: 참가자 자격 해시·함정(0은 폭탄 없음)·힌트·입력 창·누적 점수·모드·팀 수(2/3)·자유 팀 배정·연속 성공 기록을 담는 서버 전용 JSON. */
   state: text('state').notNull(),
   /** description: 경쟁 갱신 방지 및 클라이언트 역순 응답 차단 버전. */
   revision: integer('revision').notNull().default(0),

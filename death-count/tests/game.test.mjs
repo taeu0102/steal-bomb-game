@@ -1,4 +1,4 @@
-import { test } from 'node:test';
+import { test, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
@@ -110,15 +110,73 @@ test('single bomb ends immediately after the collision window and discloses rese
   assert.equal(r.result.reason, 'CRASH');
   assert.equal(r.players.filter((p) => p.out).length, 2);
 });
-test('every bomb from 1 through 15 stops at that count and prevents any following click',()=>{
- for(let bomb=1;bomb<=15;bomb++){
-  const s=setup();s.bomb=bomb;persist(s);
-  for(let n=1;n<=bomb;n++){
-   assert.equal(press(n%2,1,n),1);const r=confirm();
-   assert.equal(r.count,n);assert.equal(r.phase,n===bomb?'result':'cooldown');
-   if(n===bomb){assert.equal(r.result.reason,'BOMB');assert.equal(r.players[n%2].points,0);assert.equal(press(2,1,r.gate),0);}
+test('every bomb from 1 through 15 stops at that count and prevents any following click', () => {
+  for (let bomb = 1; bomb <= 15; bomb++) {
+    const s = setup();
+    s.bomb = bomb;
+    persist(s);
+    for (let n = 1; n <= bomb; n++) {
+      assert.equal(press(n % 2, 1, n), 1);
+      const r = confirm();
+      assert.equal(r.count, n);
+      assert.equal(r.phase, n === bomb ? 'result' : 'cooldown');
+      if (n === bomb) {
+        assert.equal(r.result.reason, 'BOMB');
+        assert.equal(r.players[n % 2].points, 0);
+        assert.equal(press(2, 1, r.gate), 0);
+      }
+    }
   }
- }
+});
+test('bomb-free branch gives exactly three truthful private hints and hides absence from others', () => {
+  const random = mock.method(crypto, 'getRandomValues', (a) => {
+    a.fill(0);
+    return a;
+  });
+  try {
+    const s = startRound(setup(), now);
+    assert.equal(s.bomb, 0);
+    assert.equal(
+      s.players.filter((p) => p.hint === '이번 라운드에는 폭탄이 없다.').length,
+      3,
+    );
+    const other = s.players.find((p) => p.hint === null);
+    const pub = publicState(s, other.id, 'ABC234', 0, now);
+    assert.equal(pub.hint, null);
+    assert.equal(pub.result, null);
+    assert.ok(!JSON.stringify(pub).includes('폭탄이 없다'));
+  } finally {
+    random.mock.restore();
+  }
+});
+test('bomb-free round reaches 15 with all 1200 points retained; crash still ends early without reset', () => {
+  const s = setup();
+  s.bomb = 0;
+  persist(s);
+  let r;
+  for (let n = 1; n <= 15; n++) {
+    assert.equal(press(n % 2, 1, n), 1);
+    r = confirm();
+    assert.equal(r.phase, n === 15 ? 'result' : 'cooldown');
+  }
+  assert.equal(r.result.reason, 'LIMIT');
+  assert.equal(r.result.bombNumber, 0);
+  assert.deepEqual(r.result.out, []);
+  assert.equal(
+    r.players.reduce((sum, p) => sum + p.points, 0),
+    1200,
+  );
+  assert.equal(press(0, 1, r.gate), 0);
+  const crash = setup();
+  crash.bomb = 0;
+  crash.players[0].points = 100;
+  crash.phase = 'collecting';
+  crash.inputs = ['p0', 'p1'];
+  crash.deadline = 0;
+  const end = resolve(crash, 1000);
+  assert.equal(end.result.reason, 'CRASH');
+  assert.deepEqual(end.result.bombIds, []);
+  assert.equal(end.players[0].points, 100);
 });
 test('safe count produces one 500–1500ms cooldown and exact unlock admits input', () => {
   setup();
