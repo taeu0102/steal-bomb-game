@@ -33,9 +33,9 @@ test('inclusive 200ms boundary; 201ms excluded even before finalizer runs',()=>{
 test('duplicate player, forged token and stale gate cannot change the count',()=>{
  setup();assert.equal(press(0),1);assert.equal(press(0),0);assert.equal(press(1,1,1,'wrong'),0);assert.equal(press(1,1,0),0);assert.equal(press(1,0,1),0);assert.equal(load().inputs.length,1);
 });
-test('single trap defers until deadline; crash overrides original trap',()=>{
+test('single bomb does not end the game; number ownership survives cooldown',()=>{
  let s=setup();s.bomb=1;s.phase='collecting';s.inputs=['p0'];s.deadline=100200;
- assert.equal(resolve(s,100200).phase,'collecting');assert.equal(resolve(s,100201).result.reason,'BOMB');
+ assert.equal(resolve(s,100200).phase,'collecting');assert.equal(resolve(s,100201).phase,'cooldown');assert.equal(resolve(s,100201).result,null);assert.deepEqual(resolve(s,100201).calls,[{number:1,players:['p0']}]);
  s.inputs.push('p1');const r=resolve(s,100201);assert.equal(r.result.reason,'CRASH');assert.equal(r.players.filter(p=>p.out).length,2);
 });
 test('safe count produces one 500–1500ms cooldown and exact unlock admits input',()=>{
@@ -49,9 +49,9 @@ test('only 3 truthful personal hints; snapshot contains no secret state',()=>{
  const pub=publicState(s,p.id,'ABC234',0,now);assert.equal(pub.hint,p.hint);assert.ok(!('bomb'in pub));assert.ok(!('deadline'in pub));assert.ok(pub.players.every(p=>!('key'in p)&&!('hint'in p)));}
 });
 test('best of three awards survival once, resets elimination, permits joint winners',()=>{
- let s=setup(3);s.phase='collecting';s.deadline=0;s.inputs=['p0'];s.bomb=1;
+ let s=setup(3);s.phase='collecting';s.deadline=0;s.count=14;s.calls=[{number:1,players:['p0']}];s.inputs=['p2'];s.bomb=1;
  s=resolve(s,1000);assert.deepEqual(s.players.map(p=>p.wins),[0,1,1]);assert.deepEqual(resolve(s,2000),s);
- s=startRound(s,3000);assert.ok(s.players.every(p=>!p.out));s.phase='collecting';s.deadline=0;s.inputs=['p0'];s.bomb=1;
+ s=startRound(s,3000);assert.ok(s.players.every(p=>!p.out));s.phase='collecting';s.deadline=0;s.count=14;s.calls=[{number:1,players:['p0']}];s.inputs=['p2'];s.bomb=1;
  s=resolve(s,4000);assert.equal(s.result.finished,true);assert.deepEqual(s.result.winners,['p1','p2']);
 });
 test('third round with no survivors and zero wins is a draw',()=>{
@@ -86,22 +86,47 @@ test('real route: 15 concurrent inputs, simultaneous finalizers, one score settl
  assert.ok(end.every(r=>r.data.result?.out.length===15));assert.ok(end.every(r=>r.data.count===1));assert.ok(end.every(r=>r.data.players.every(p=>p.wins===0)));
 });
 test('authentication, host authorization and reconnection preserve identity',async()=>{
- const list=await room(2),host=list[0],guest=list[1];
+ const list=await room(15),host=list[0],guest=list[1];
  assert.equal((await api({action:'sync',code:host.code,token:'fake'})).status,401);
  assert.equal((await api({action:'start',code:host.code,token:guest.token})).status,403);
  await api({action:'start',code:host.code,token:host.token});const a=(await api({action:'sync',code:host.code,token:guest.token})).data;
- const b=(await api({action:'sync',code:host.code,token:guest.token})).data;assert.equal(a.me,b.me);assert.equal(a.hint,b.hint);assert.equal(a.players.length,2);assert.ok(!JSON.stringify(a).includes('key'));
+ const b=(await api({action:'sync',code:host.code,token:guest.token})).data;assert.equal(a.me,b.me);assert.equal(a.hint,b.hint);assert.equal(a.players.length,15);assert.ok(!JSON.stringify(a).includes('key'));
 });
 test('simultaneous finalizers give 14 survivors exactly one win',async()=>{
  const list=await room(15),host=list[0];await api({action:'start',code:host.code,token:host.token});
- const s=JSON.parse(db.prepare('SELECT state FROM death_rooms').get().state);s.phase='collecting';s.bomb=1;s.inputs=[s.host];s.deadline=now-1;
+ const s=JSON.parse(db.prepare('SELECT state FROM death_rooms').get().state);s.phase='collecting';s.bomb=15;s.count=14;s.inputs=[s.host];s.deadline=now-1;
  db.prepare('UPDATE death_rooms SET state=?').run(JSON.stringify(s));
+ await Promise.all(list.map(p=>api({action:'sync',code:host.code,token:p.token})));now+=1800;
  const end=await Promise.all(list.map(p=>api({action:'sync',code:host.code,token:p.token})));
- assert.ok(end.every(r=>r.data.players.filter(p=>p.wins===1).length===14));assert.ok(end.every(r=>r.data.result.reason==='BOMB'));
+ assert.ok(end.every(r=>r.data.players.filter(p=>p.wins===1).length===14));assert.ok(end.every(r=>r.data.result.reason==='LIMIT'));
 });
 test('delayed CAS commit still starts full cooldown at actual write time',async()=>{
- const [host]=await room(2);await api({action:'start',code:host.code,token:host.token});
+ const [host]=await room(15);await api({action:'start',code:host.code,token:host.token});
  const s=JSON.parse(db.prepare('SELECT state FROM death_rooms').get().state);s.phase='collecting';s.bomb=15;s.inputs=[s.host];s.deadline=now-1;
  db.prepare('UPDATE death_rooms SET state=?').run(JSON.stringify(s));globalThis.__deathDelaySave=700;
  const r=await api({action:'sync',code:host.code,token:host.token});assert.equal(r.data.phase,'cooldown');assert.ok(r.data.unlockAt-now>=500&&r.data.unlockAt-now<=1500);
+});
+test('earlier bomb caller joins later crash penalties only after reveal',()=>{
+ const s=setup();s.bomb=3;s.count=6;s.calls=[{number:3,players:['p0']}];s.phase='collecting';s.deadline=0;s.inputs=['p1','p2'];
+ const r=resolve(s,1000);assert.deepEqual(r.result.out,['p1','p2','p0']);
+ const before=publicState(r,'p0','ABC234',5,2799);assert.equal(before.result.bombNumber,null);assert.deepEqual(before.result.bombIds,[]);assert.deepEqual(before.result.calls,[]);assert.ok(!before.players.find(p=>p.id==='p0').out);assert.ok(before.players.every(p=>p.wins===0));
+ const after=publicState(r,'p0','ABC234',5,2800);assert.equal(after.result.bombNumber,3);assert.deepEqual(after.result.bombIds,['p0']);assert.ok(after.players.find(p=>p.id==='p0').out);assert.equal(after.players.filter(p=>p.wins===1).length,12);
+});
+test('crash before bomb has no additional penalty; overlapping penalties deduplicate',()=>{
+ const s=setup();s.bomb=10;s.count=6;s.phase='collecting';s.deadline=0;s.inputs=['p1','p2'];let r=resolve(s,1000);assert.deepEqual(r.result.bombIds,[]);assert.deepEqual(r.result.out,['p1','p2']);
+ s.bomb=3;s.calls=[{number:3,players:['p1']}];r=resolve(s,1000);assert.deepEqual(r.result.out,['p1','p2']);assert.deepEqual(r.result.bombIds,['p1']);
+ s.bomb=7;r=resolve(s,1000);assert.deepEqual(r.result.bombIds,['p1','p2']);assert.equal(r.result.out.length,2);
+});
+test('15 ends without collision, reveals original bomb, and never admits 16',()=>{
+ const s=setup();s.count=14;s.bomb=4;s.calls=[{number:4,players:['p4']}];s.phase='collecting';s.deadline=0;s.inputs=['p14'];
+ const r=resolve(s,1000);assert.equal(r.result.reason,'LIMIT');assert.deepEqual(r.result.crashIds,[]);assert.deepEqual(r.result.out,['p4']);assert.equal(r.count,15);
+ db.prepare('UPDATE death_rooms SET state=?').run(JSON.stringify(r));assert.equal(press(0),0);
+});
+test('14 players cannot start; 15 can; reveal cannot be skipped by host',async()=>{
+ const list=await room(14),host=list[0];assert.equal((await api({action:'start',code:host.code,token:host.token})).status,400);
+ await api({action:'join',code:host.code,name:'15번째'});assert.equal((await api({action:'start',code:host.code,token:host.token})).status,200);
+ const s=JSON.parse(db.prepare('SELECT state FROM death_rooms').get().state);s.phase='collecting';s.inputs=[s.host,s.players[1].id];s.deadline=now-1;s.round=3;
+ db.prepare('UPDATE death_rooms SET state=?').run(JSON.stringify(s));await api({action:'sync',code:host.code,token:host.token});
+ assert.equal((await api({action:'restart',code:host.code,token:host.token})).status,400);assert.equal((await api({action:'leave',code:host.code,token:host.token})).status,400);
+ now+=1800;const r=await api({action:'sync',code:host.code,token:host.token});assert.equal(r.data.result.revealed,true);
 });

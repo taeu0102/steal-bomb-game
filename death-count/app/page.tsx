@@ -37,6 +37,11 @@ type View = {
   }[];
   result: null | {
     reason: string;
+    crashIds: string[];
+    revealed: boolean;
+    revealAt: number;
+    bombNumber: number | null;
+    bombIds: string[];
     out: string[];
     winners: string[];
     finished: boolean;
@@ -81,12 +86,16 @@ export default function Game() {
     )
       return;
     if (old && data.round === old.round && data.result && !old.result) {
-      const kind = data.result.reason === 'CRASH' ? 'crash' : 'bomb';
+      const kind = data.result.reason === 'CRASH' ? 'crash' : '';
       setImpact(kind);
-      getAudio()[kind]();
+      if (kind) getAudio().crash();
       setTimeout(() => setImpact(''), 700);
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches)
         navigator.vibrate?.(kind === 'crash' ? [80, 35, 100] : 100);
+    } else if (old?.result && data.result?.revealed && !old.result.revealed) {
+      getAudio().bomb();
+      setImpact('bomb');
+      setTimeout(() => setImpact(''), 700);
     } else if (old && data.count > old.count && !data.result) getAudio().safe();
     ref.current = data;
     setV(data);
@@ -376,15 +385,23 @@ export default function Game() {
               게임 방법 <span>+</span>
             </summary>
             <p>
-              1부터 숫자를 올리세요. 1~15 사이에 함정이 숨어 있습니다. 함정을
-              혼자 누르거나, 0.2초 안에 다른 사람과 함께 누르면 탈락합니다.
+              15명이 모여 1부터 숫자를 올립니다. 무작위 3명만 폭탄 힌트를
+              받습니다. 0.2초 안에 두 명 이상 누르면 게임이 끝나고 함께 누른
+              사람은 벌칙입니다. 이어 폭탄 숫자를 공개합니다. 앞서 그 숫자를
+              누른 사람도 벌칙에 추가됩니다. 폭탄에 도달하기 전에 끝났다면 추가
+              벌칙은 없습니다.
             </p>
             <p>
               생존하면 1승. 매 판 모두 다시 참가하며, 먼저 2승을 얻으면 공동
               우승도 가능합니다. 최대 3판 후에는 최고 승수가 우승하며 모두
               0승이면 무승부입니다.
             </p>
-            <p>2~15인 · 일부에게만 개인 힌트 · 방은 2시간 유지됩니다.</p>
+            <p>
+              폭탄 숫자를 단독으로 눌러도 게임은 계속됩니다. 충돌 없이 15까지
+              가면 숫자 올리기를 끝내고 폭탄 벌칙만 공개합니다. 같은 사람의
+              벌칙은 중복되지 않습니다.
+            </p>
+            <p>15인 · 무작위 3명에게 힌트 · 방은 2시간 유지됩니다.</p>
           </details>
           <footer className="entry-footer">
             <span>데스 카운트</span>
@@ -456,12 +473,14 @@ export default function Game() {
               <div className="lobby-actions">
                 <Button
                   className="primary"
-                  disabled={busy || !connected || !host || v.players.length < 2}
+                  disabled={
+                    busy || !connected || !host || v.players.length < 15
+                  }
                   onClick={() => command('start')}
                 >
                   {host
-                    ? v.players.length < 2
-                      ? '한 명 더 기다리는 중'
+                    ? v.players.length < 15
+                      ? `${15 - v.players.length}명 더 기다리는 중`
                       : '게임 시작'
                     : '방장이 시작할 때까지 대기'}
                   <ArrowUpRight size={22} />
@@ -540,7 +559,7 @@ export default function Game() {
                     v.result?.reason === 'CRASH' ? (
                       'CRASH'
                     ) : (
-                      'TRAP'
+                      'COUNT COMPLETE'
                     )
                   ) : v.phase === 'ready' ? (
                     '곧 시작합니다.'
@@ -557,24 +576,79 @@ export default function Game() {
                   <span
                     className={`outcome-tag ${me?.out ? 'lost' : 'survived'}`}
                   >
-                    {me?.out ? '이번 판 탈락' : '생존 +1승'}
+                    {!v.result?.revealed
+                      ? me?.out
+                        ? '충돌 벌칙 확정'
+                        : '폭탄 판정 대기'
+                      : me?.out
+                        ? '이번 판 벌칙'
+                        : '벌칙 면제 +1승'}
                   </span>
                   <h2>
-                    {v.result?.finished
-                      ? v.result.winners.length === 0
-                        ? '아무도 살아남지 못했다.'
-                        : v.result.winners.includes(v.me)
-                          ? '끝까지 살아남았다.'
-                          : '이번 승부는 여기까지.'
-                      : me?.out
-                        ? '한순간 늦었다.'
-                        : '아직, 살아 있다.'}
+                    {!v.result?.revealed
+                      ? '아직, 끝난 게 아니다.'
+                      : v.result?.finished
+                        ? v.result.winners.length === 0
+                          ? '아무도 살아남지 못했다.'
+                          : v.result.winners.includes(v.me)
+                            ? '끝까지 살아남았다.'
+                            : '이번 승부는 여기까지.'
+                        : me?.out
+                          ? '벌칙을 피하지 못했다.'
+                          : '이번엔 살아남았다.'}
                   </h2>
                   <p>
                     {v.result?.reason === 'CRASH'
-                      ? `${v.result.out.length}명이 동시에 눌렀습니다.`
-                      : '숨겨진 함정 숫자였습니다.'}
+                      ? `${v.count}에서 ${v.result.crashIds.length}명이 동시에 눌렀습니다.`
+                      : '충돌 없이 15까지 도달했습니다.'}
                   </p>
+                  {!!v.result?.crashIds.length && (
+                    <div className="clash-names">
+                      충돌 벌칙 ·{' '}
+                      {v.players
+                        .filter((p) => v.result!.crashIds.includes(p.id))
+                        .map((p) => p.name)
+                        .join(', ')}
+                    </div>
+                  )}
+                  <div
+                    className={`bomb-reveal ${v.result?.revealed ? 'is-revealed' : ''}`}
+                    aria-live="polite"
+                  >
+                    <span>
+                      {v.result?.revealed
+                        ? '숨겨진 폭탄 숫자'
+                        : '폭탄 숫자 공개 중'}
+                    </span>
+                    <strong>
+                      {v.result?.revealed
+                        ? String(v.result.bombNumber).padStart(2, '0')
+                        : '??'}
+                    </strong>
+                    {!v.result?.revealed ? (
+                      <p>당신이 누른 숫자를 기억하나요?</p>
+                    ) : (
+                      <>
+                        <b>
+                          {v.result.bombIds.length
+                            ? `폭탄 벌칙 · ${v.players
+                                .filter((p) => v.result!.bombIds.includes(p.id))
+                                .map((p) => p.name)
+                                .join(', ')}`
+                            : '폭탄에 도달하지 않았다. 추가 벌칙 없음.'}
+                        </b>
+                        {!!v.result.bombIds.length && (
+                          <p>
+                            {v.result.bombIds.filter(
+                              (id) => !v.result!.crashIds.includes(id),
+                            ).length
+                              ? `추가 벌칙 ${v.result.bombIds.filter((id) => !v.result!.crashIds.includes(id)).length}명`
+                              : '충돌 벌칙과 겹칩니다. 벌칙은 한 번만 적용합니다.'}
+                          </p>
+                        )}
+                      </>
+                    )}
+                  </div>
                   {v.result?.finished && (
                     <div className="winners">
                       {v.result.winners.length
@@ -593,14 +667,31 @@ export default function Game() {
                           {p.name}
                           {p.id === v.me ? ' · 나' : ''}
                         </span>
-                        <span>{p.out ? '탈락' : '생존'}</span>
+                        <span>
+                          {!v.result?.revealed
+                            ? p.out
+                              ? '충돌'
+                              : '판정 대기'
+                            : [
+                                v.result.crashIds.includes(p.id) ? '충돌' : '',
+                                v.result.bombIds.includes(p.id) ? '폭탄' : '',
+                              ]
+                                .filter(Boolean)
+                                .join(' + ') || '면제'}
+                        </span>
                         <b>{p.wins}승</b>
                       </div>
                     ))}
                   </div>
                   <Button
                     className="primary"
-                    disabled={busy || !host || !connected || clock < v.unlockAt}
+                    disabled={
+                      busy ||
+                      !host ||
+                      !connected ||
+                      !v.result?.revealed ||
+                      clock < v.unlockAt
+                    }
                     onClick={() =>
                       command(v.result?.finished ? 'restart' : 'next')
                     }

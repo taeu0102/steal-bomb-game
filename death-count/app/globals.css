@@ -878,3 +878,47 @@ h1 span {
     display: none;
   }
 }
+
+.clash-names {
+  color: #ffa08c;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+.bomb-reveal {
+  border: 1px solid #4c3731;
+  background: #221916;
+  padding: 20px 16px;
+  margin: 22px 0;
+}
+.bomb-reveal > span {
+  display: block;
+  color: #c5aca4;
+  font-size: 14px;
+}
+.bomb-reveal > strong {
+  display: block;
+  font:
+    700 74px/1.25 ui-monospace,
+    monospace;
+  color: #9d796e;
+  letter-spacing: -0.07em;
+}
+.bomb-reveal.is-revealed > strong {
+  color: #ff7358;
+}
+.bomb-reveal > b {
+  display: block;
+  color: #ffe1d9;
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.bomb-reveal > p {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+.score-list > div {
+  grid-template-columns: 1fr 88px 35px;
+}

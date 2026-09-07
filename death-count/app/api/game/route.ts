@@ -59,6 +59,21 @@ async function tick(code: string) {
   let row = await read(code);
   for (let retry = 0; retry < 4; retry++) {
     const s: State = JSON.parse(row.state);
+    if (s.rulesVersion !== 2) {
+      // Old rounds did not retain number ownership; never invent past callers.
+      const reset = newState(s.players[0], s.practice);
+      reset.players = s.players.map((p) => ({
+        ...p,
+        wins: 0,
+        out: false,
+        hint: null,
+      }));
+      reset.host = s.host;
+      reset.gate = s.gate + 1;
+      await save(row, reset);
+      row = await read(code);
+      continue;
+    }
     if (s.phase === 'collecting' && row.now > s.deadline) {
       await save(row, resolve(s, row.now), true);
       row = await read(code);
@@ -228,7 +243,11 @@ export async function POST(req: Request) {
         if (action === 'leave') {
           if (
             s.phase !== 'lobby' &&
-            !(s.phase === 'result' && s.result?.finished)
+            !(
+              s.phase === 'result' &&
+              s.result?.finished &&
+              row.now >= s.unlockAt
+            )
           )
             throw new Error(
               '진행 중에는 방을 나갈 수 없습니다. 창을 닫아도 판정은 유지됩니다.',
@@ -236,8 +255,8 @@ export async function POST(req: Request) {
           s.players = s.players.filter((p) => p.id !== id);
           if (s.host === id) s.host = s.players.find((p) => !p.bot)?.id ?? '';
         } else if (action === 'start') {
-          if (s.phase !== 'lobby' || s.players.length < 2)
-            throw new Error('두 명 이상 모이면 시작할 수 있습니다.');
+          if (s.phase !== 'lobby' || s.players.length !== 15)
+            throw new Error('15명이 모두 입장하면 시작할 수 있습니다.');
           s = startRound(s, row.now);
         } else if (action === 'next') {
           if (
@@ -249,7 +268,11 @@ export async function POST(req: Request) {
             throw new Error('아직 다음 라운드를 시작할 수 없습니다.');
           s = startRound(s, row.now);
         } else {
-          if (s.phase !== 'result' || !s.result?.finished)
+          if (
+            s.phase !== 'result' ||
+            !s.result?.finished ||
+            row.now < s.unlockAt
+          )
             throw new Error('게임이 끝난 뒤 다시 시작할 수 있습니다.');
           for (const pl of s.players) {
             pl.wins = 0;
@@ -260,6 +283,7 @@ export async function POST(req: Request) {
           s.round = 0;
           s.count = 0;
           s.result = null;
+          s.calls = [];
           s.inputs = [];
           s.gate++;
         }

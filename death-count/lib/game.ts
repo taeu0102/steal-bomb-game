@@ -8,6 +8,8 @@ export type Player = {
   out: boolean;
 };
 export type State = {
+  rulesVersion: 2;
+  calls: { number: number; players: string[] }[];
   phase: 'lobby' | 'ready' | 'open' | 'collecting' | 'cooldown' | 'result';
   round: number;
   gate: number;
@@ -20,7 +22,10 @@ export type State = {
   inputs: string[];
   practice: boolean;
   result: null | {
-    reason: 'CRASH' | 'BOMB';
+    reason: 'CRASH' | 'LIMIT';
+    crashIds: string[];
+    bombNumber: number;
+    bombIds: string[];
     out: string[];
     winners: string[];
     finished: boolean;
@@ -34,6 +39,8 @@ export const integer = (min: number, max: number) => {
 };
 export function newState(p: Player, practice: boolean): State {
   return {
+    rulesVersion: 2,
+    calls: [],
     phase: 'lobby',
     round: 0,
     gate: 0,
@@ -61,6 +68,7 @@ export function startRound(s: State, now: number): State {
   r.count = 0;
   r.bomb = integer(1, 15);
   r.inputs = [];
+  r.calls = [];
   r.phase = 'ready';
   r.unlockAt = now + 3200;
   r.result = null;
@@ -75,8 +83,8 @@ export function startRound(s: State, now: number): State {
   }
   for (const p of shuffled.slice(0, 3))
     p.hint = integer(0, 1)
-      ? `함정 숫자는 ${r.bomb % 2 ? '홀수' : '짝수'}다.`
-      : `함정 숫자는 10 ${r.bomb >= 10 ? '이상' : '미만'}이다.`;
+      ? `폭탄 숫자는 ${r.bomb % 2 ? '홀수' : '짝수'}다.`
+      : `폭탄 숫자는 10 ${r.bomb >= 10 ? '이상' : '미만'}이다.`;
   scheduleBots(r, r.unlockAt);
   return r;
 }
@@ -84,17 +92,25 @@ export function resolve(s: State, now: number): State {
   const r = structuredClone(s);
   if (r.phase !== 'collecting' || now <= r.deadline) return r;
   r.count++;
-  if (r.inputs.length >= 2 || r.count === r.bomb) {
-    const reason = r.inputs.length >= 2 ? 'CRASH' : 'BOMB';
+  r.calls.push({ number: r.count, players: [...r.inputs] });
+  if (r.inputs.length >= 2 || r.count >= 15) {
+    const reason = r.inputs.length >= 2 ? 'CRASH' : 'LIMIT';
+    const crashIds = reason === 'CRASH' ? [...r.inputs] : [];
+    const bombIds =
+      r.calls.find((call) => call.number === r.bomb)?.players ?? [];
+    const penalties = [...new Set([...crashIds, ...bombIds])];
     for (const p of r.players) {
-      p.out = r.inputs.includes(p.id);
+      p.out = penalties.includes(p.id);
       if (!p.out) p.wins++;
     }
     const best = Math.max(...r.players.map((p) => p.wins));
     const finished = best >= 2 || r.round >= 3;
     r.result = {
       reason,
-      out: [...r.inputs],
+      crashIds,
+      bombNumber: r.bomb,
+      bombIds,
+      out: penalties,
       finished,
       winners:
         finished && best > 0
@@ -102,7 +118,9 @@ export function resolve(s: State, now: number): State {
           : [],
     };
     r.phase = 'result';
-    r.unlockAt = now + 1800;
+    // First show the collision, then reveal the bomb after 1800ms.
+    // The API rebases unlockAt to the actual SQL commit time.
+    r.unlockAt = now + 4000;
     r.bots = {};
   } else {
     r.phase = 'cooldown';
@@ -123,6 +141,12 @@ export function publicState(
   const me = s.players.find((p) => p.id === id)!;
   // Collecting is deliberately not broadcast: it must not warn others out of a crash.
   const phase = s.phase === 'collecting' ? 'open' : s.phase;
+  const revealed = !!s.result && now >= s.unlockAt - 2200;
+  const visibleOut = s.result
+    ? revealed
+      ? s.result.out
+      : s.result.crashIds
+    : [];
   return {
     code,
     revision,
@@ -137,13 +161,26 @@ export function publicState(
     me: id,
     hint: me.hint,
     submitted: s.inputs.includes(id),
-    result: s.result,
+    result: s.result
+      ? {
+          reason: s.result.reason,
+          crashIds: s.result.crashIds,
+          revealed,
+          revealAt: s.unlockAt - 2200,
+          bombNumber: revealed ? s.result.bombNumber : null,
+          bombIds: revealed ? s.result.bombIds : [],
+          out: visibleOut,
+          finished: revealed && s.result.finished,
+          winners: revealed ? s.result.winners : [],
+          calls: revealed ? s.calls : [],
+        }
+      : null,
     players: s.players.map(({ id, name, wins, bot, out }) => ({
       id,
       name,
-      wins,
+      wins: s.result && !revealed && !out ? wins - 1 : wins,
       bot,
-      out,
+      out: visibleOut.includes(id),
     })),
   };
 }

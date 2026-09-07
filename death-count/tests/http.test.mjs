@@ -18,6 +18,11 @@ assert.ok(end.every(s=>s.phase==='result'&&s.result.reason==='CRASH'));
 const outcome=JSON.stringify(end[0].result);assert.ok(end.every(s=>JSON.stringify(s.result)===outcome));
 assert.equal(end[0].result.out.length,presses.filter(p=>p.accepted).length);
 assert.ok(end.every(s=>s.count===1));assert.ok(end.every(s=>s.players.every(p=>p.wins===(p.out?0:1))));
+assert.ok(end.every(s=>s.result.bombNumber===null&&!s.result.revealed));
+await sleep(1850);
+const revealed=await Promise.all(credentials.map(c=>api('sync',c)));
+assert.ok(revealed.every(s=>s.result.revealed&&s.result.bombNumber>=1&&s.result.bombNumber<=15));
+assert.ok(revealed.every(s=>JSON.stringify(s.result)===JSON.stringify(revealed[0].result)));
 const restored=await api('sync',credentials[4]);assert.equal(restored.me,start[4].me);assert.equal(restored.hint,start[4].hint);
 console.log(JSON.stringify({transport:'HTTP',players:15,accepted:presses.filter(p=>p.accepted).length,result:'CRASH',consistent:true,elapsedMs:Math.round(performance.now()-begin)}));
 
