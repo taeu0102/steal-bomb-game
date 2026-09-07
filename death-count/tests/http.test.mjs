@@ -28,6 +28,8 @@ console.log(JSON.stringify({transport:'HTTP',players:15,accepted:presses.filter(
 
 const practice=await api('create',{name:'연습 검증',practice:true}),pc={code:practice.code,token:practice.token};
 await api('start',pc);
-let ended=false;const cutoff=Date.now()+45000;
-while(Date.now()<cutoff){const s=await api('sync',pc);if(s.phase==='result'){assert.ok(s.count>=1&&s.count<=15);ended=true;console.log(JSON.stringify({practice:true,players:s.players.length,count:s.count,result:s.result.reason}));break;}await sleep(140);}
-assert.ok(ended,'Practice bots must progress without host input');
+let progressed=false;const cutoff=Date.now()+45000;
+// Bomb hits now continue play, so a random practice round need not end in 45s.
+// Verify autonomous progress here; deterministic unit tests cover all end paths.
+while(Date.now()<cutoff){const s=await api('sync',pc);if(s.phase==='result'||s.count>=3){assert.ok(s.count>=1&&s.count<=15);progressed=true;console.log(JSON.stringify({practice:true,players:s.players.length,count:s.count,result:s.result?.reason??'PROGRESSING'}));break;}await sleep(140);}
+assert.ok(progressed,'Practice bots must advance counts without host input');
