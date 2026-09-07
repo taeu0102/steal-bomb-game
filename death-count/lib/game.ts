@@ -27,7 +27,7 @@ export type State = {
   inputs: string[];
   practice: boolean;
   result: null | {
-    reason: 'CRASH' | 'LIMIT';
+    reason: 'CRASH' | 'BOMB' | 'LIMIT';
     crashIds: string[];
     bombNumber: number;
     bombIds: string[];
@@ -139,8 +139,9 @@ export function resolve(s: State, now: number): State {
     r.streak = r.lastPlayer === id ? r.streak + 1 : 1;
     r.lastPlayer = id;
   }
-  if (r.inputs.length >= 2 || r.count >= 15) {
-    const reason = r.inputs.length >= 2 ? 'CRASH' : 'LIMIT';
+  if (r.inputs.length >= 2 || r.count === r.bomb || r.count >= 15) {
+    const reason =
+      r.inputs.length >= 2 ? 'CRASH' : r.count === r.bomb ? 'BOMB' : 'LIMIT';
     const crashIds = reason === 'CRASH' ? [...r.inputs] : [];
     const bombIds =
       r.calls.find((call) => call.number === r.bomb)?.players ?? [];
@@ -204,7 +205,8 @@ export function publicState(
   const me = s.players.find((p) => p.id === id)!;
   // Collecting is deliberately not broadcast: it must not warn others out of a crash.
   const phase = s.phase === 'collecting' ? 'open' : s.phase;
-  const revealed = !!s.result && now >= s.unlockAt - 2200;
+  const revealed =
+    !!s.result && (s.result.reason === 'BOMB' || now >= s.unlockAt - 2200);
   const visibleOut = s.result
     ? revealed
       ? s.result.out
@@ -242,7 +244,7 @@ export function publicState(
           reason: s.result.reason,
           crashIds: s.result.crashIds,
           revealed,
-          revealAt: s.unlockAt - 2200,
+          revealAt: s.unlockAt - (s.result.reason === 'BOMB' ? 4000 : 2200),
           bombNumber: revealed ? s.result.bombNumber : null,
           bombIds: revealed ? s.result.bombIds : [],
           out: visibleOut,

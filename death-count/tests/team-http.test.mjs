@@ -11,19 +11,28 @@ async function api(action, extra = {}) {
   assert.equal(r.status, 200, JSON.stringify(d));
   return d;
 }
-const host = await api('create', { name: '팀 검증 A', mode: 'team', teamCount:2 }),
+const host = await api('create', {
+    name: '팀 검증 A',
+    mode: 'team',
+    teamCount: 2,
+  }),
   a = { code: host.code, token: host.token };
 let b;
 for (let i = 1; i < 15; i++) {
   const p = await api('join', { code: a.code, name: `팀 검증 ${i}` });
   if (i === 1) b = { code: a.code, token: p.token };
 }
-let v = await api('sync',a);
-assert.equal(v.teamCount,2);assert.equal(v.teams.length,2);
-v=await api('setTeamCount',{...a,teamCount:3});assert.equal(v.teams.length,3);
-v=await api('setTeam',{...b,team:2});assert.equal(v.players.find(p=>p.id===v.me).team,2);
-v=await api('setTeamCount',{...a,teamCount:2});assert.ok(v.players.every(p=>p.team<2));
-v=await api('setTeam',{...b,team:0});assert.equal(v.players.find(p=>p.id===v.me).team,0);
+let v = await api('sync', a);
+assert.equal(v.teamCount, 2);
+assert.equal(v.teams.length, 2);
+v = await api('setTeamCount', { ...a, teamCount: 3 });
+assert.equal(v.teams.length, 3);
+v = await api('setTeam', { ...b, team: 2 });
+assert.equal(v.players.find((p) => p.id === v.me).team, 2);
+v = await api('setTeamCount', { ...a, teamCount: 2 });
+assert.ok(v.players.every((p) => p.team < 2));
+v = await api('setTeam', { ...b, team: 0 });
+assert.equal(v.players.find((p) => p.id === v.me).team, 0);
 v = await api('start', a);
 assert.equal(v.mode, 'team');
 assert.deepEqual(
@@ -42,6 +51,24 @@ async function single(c, n) {
   await sleep(250);
   v = await api('sync', a);
   assert.equal(v.count, n);
+  if (v.result?.reason === 'BOMB') {
+    assert.equal(v.result.revealed, true);
+    assert.equal(v.result.bombNumber, n);
+    assert.ok(
+      v.players
+        .filter((p) => v.result.bombIds.includes(p.id))
+        .every((p) => p.points === 0),
+    );
+    console.log(
+      JSON.stringify({
+        mode: 'team',
+        freeTeamSelection: true,
+        teamSizes: [9, 6],
+        bombStoppedAt: n,
+      }),
+    );
+    process.exit(0);
+  }
   assert.equal(v.phase, 'cooldown');
 }
 await single(a, 1);
@@ -69,8 +96,8 @@ console.log(
     mode: 'team',
     players: 15,
     teamSizes: [9, 6],
-    freeTeamSelection:true,
-    switchBetweenTwoAndThree:true,
+    freeTeamSelection: true,
+    switchBetweenTwoAndThree: true,
     counts: 4,
     aPoints: 70,
     bPoints: 30,

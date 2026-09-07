@@ -86,20 +86,39 @@ test('duplicate player, forged token and stale gate cannot change the count', ()
   assert.equal(press(1, 0, 1), 0);
   assert.equal(load().inputs.length, 1);
 });
-test('single bomb does not end the game; number ownership survives cooldown', () => {
+test('single bomb ends immediately after the collision window and discloses reset score', () => {
   let s = setup();
   s.bomb = 1;
   s.phase = 'collecting';
   s.inputs = ['p0'];
   s.deadline = 100200;
   assert.equal(resolve(s, 100200).phase, 'collecting');
-  assert.equal(resolve(s, 100201).phase, 'cooldown');
-  assert.equal(resolve(s, 100201).result, null);
+  s.players[0].points = 120;
+  const ended = resolve(s, 100201);
+  assert.equal(ended.phase, 'result');
+  assert.equal(ended.result.reason, 'BOMB');
+  const pub = publicState(ended, 'p0', 'ABC234', 0, 100201);
+  assert.equal(pub.result.revealed, true);
+  assert.equal(pub.result.bombNumber, 1);
+  assert.equal(pub.players[0].points, 0);
+  persist(ended);
+  now = 200000;
+  assert.equal(press(1, 1, ended.gate), 0);
   assert.deepEqual(resolve(s, 100201).calls, [{ number: 1, players: ['p0'] }]);
   s.inputs.push('p1');
   const r = resolve(s, 100201);
   assert.equal(r.result.reason, 'CRASH');
   assert.equal(r.players.filter((p) => p.out).length, 2);
+});
+test('every bomb from 1 through 15 stops at that count and prevents any following click',()=>{
+ for(let bomb=1;bomb<=15;bomb++){
+  const s=setup();s.bomb=bomb;persist(s);
+  for(let n=1;n<=bomb;n++){
+   assert.equal(press(n%2,1,n),1);const r=confirm();
+   assert.equal(r.count,n);assert.equal(r.phase,n===bomb?'result':'cooldown');
+   if(n===bomb){assert.equal(r.result.reason,'BOMB');assert.equal(r.players[n%2].points,0);assert.equal(press(2,1,r.gate),0);}
+  }
+ }
 });
 test('safe count produces one 500–1500ms cooldown and exact unlock admits input', () => {
   setup();
@@ -345,7 +364,7 @@ test('simultaneous finalizers reset the bomb caller exactly once with no surviva
     list.map((p) => api({ action: 'sync', code: host.code, token: p.token })),
   );
   assert.ok(end.every((r) => r.data.players.every((p) => p.points === 0)));
-  assert.ok(end.every((r) => r.data.result.reason === 'LIMIT'));
+  assert.ok(end.every((r) => r.data.result.reason === 'BOMB'));
 });
 test('delayed CAS commit still starts full cooldown at actual write time', async () => {
   const [host] = await room(15);

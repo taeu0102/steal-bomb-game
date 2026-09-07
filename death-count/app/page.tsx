@@ -103,9 +103,15 @@ export default function Game() {
     )
       return;
     if (old && data.round === old.round && data.result && !old.result) {
-      const kind = data.result.reason === 'CRASH' ? 'crash' : '';
+      const kind =
+        data.result.reason === 'CRASH'
+          ? 'crash'
+          : data.result.reason === 'BOMB'
+            ? 'bomb'
+            : '';
       setImpact(kind);
-      if (kind) getAudio().crash();
+      if (kind === 'crash') getAudio().crash();
+      else if (kind === 'bomb') getAudio().bomb();
       setTimeout(() => setImpact(''), 700);
       if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches)
         navigator.vibrate?.(kind === 'crash' ? [80, 35, 100] : 100);
@@ -454,9 +460,8 @@ export default function Game() {
             <p>
               15명이 모여 1부터 숫자를 올립니다. 무작위 3명만 폭탄 힌트를
               받습니다. 0.2초 안에 두 명 이상 누르면 게임이 끝나고 함께 누른
-              사람은 벌칙입니다. 이어 폭탄 숫자를 공개합니다. 앞서 그 숫자를
-              누른 사람도 벌칙에 추가됩니다. 폭탄에 도달하기 전에 끝났다면 추가
-              벌칙은 없습니다.
+              사람은 벌칙입니다. 폭탄 숫자에 도달해도 즉시 라운드가 끝납니다.
+              폭탄에 도달하기 전에 충돌했다면 추가 폭탄 벌칙은 없습니다.
             </p>
             <p>
               여러 번 누를 수 있습니다. 공통 숫자 1 성공은 +10점, 2 성공은
@@ -466,9 +471,8 @@ export default function Game() {
               무승부입니다.
             </p>
             <p>
-              폭탄 숫자를 단독으로 눌러도 게임은 계속됩니다. 충돌 없이 15까지
-              가면 숫자 올리기를 끝내고 폭탄 벌칙만 공개합니다. 같은 사람의
-              벌칙은 중복되지 않습니다.
+              폭탄 숫자가 나오면 즉시 라운드가 종료되고 폭탄을 누른 사람의 누적
+              점수가 0점이 됩니다. 같은 사람의 벌칙은 중복되지 않습니다.
             </p>
             <p>
               팀전은 2팀 또는 3팀으로, 인원 제한 없이 자유롭게 편성하고 팀원의
@@ -740,6 +744,8 @@ export default function Game() {
                   {v.phase === 'result' ? (
                     v.result?.reason === 'CRASH' ? (
                       'CRASH'
+                    ) : v.result?.reason === 'BOMB' ? (
+                      'BOMB'
                     ) : (
                       'COUNT COMPLETE'
                     )
@@ -785,7 +791,9 @@ export default function Game() {
                   <p>
                     {v.result?.reason === 'CRASH'
                       ? `${v.count}에서 ${v.result.crashIds.length}명이 동시에 눌렀습니다.`
-                      : '충돌 없이 15까지 도달했습니다.'}
+                      : v.result?.reason === 'BOMB'
+                        ? `${v.count}에서 폭탄이 터졌습니다. 라운드 종료.`
+                        : '15까지 도달했습니다.'}
                   </p>
                   {!!v.result?.crashIds.length && (
                     <div className="clash-names">
