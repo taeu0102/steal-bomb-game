@@ -1,5 +1,15 @@
 const defaultWorks = [
   {
+    id: "death-count-fifteen",
+    title: "데스 카운트 · 15인 눈치 게임",
+    type: "게임",
+    status: "공개 · 로그인 없이 참여",
+    date: "2026-09-07",
+    description: "공존할것인가, 혼자만 남을것인가. 숫자가 커질수록 보상도 커지는 15인 실시간 눈치 게임입니다. 개인전·2팀·3팀 자유 편성, 폭탄과 동시 클릭의 긴장감, 봇 14명과 혼자 연습을 지원합니다.",
+    url: "https://death-count-fifteen.navibanalyst.chatgpt.site/",
+    color: "#f4ded6",
+  },
+  {
     id: "wordlink-party-fifteen",
     title: "워드링크 · 15인 단어 파티",
     type: "게임",
