@@ -68,19 +68,20 @@
         </section>
 
         <section class="section-block" aria-labelledby="keywordTitle">
-          <div class="section-head"><div><p class="eyebrow">Focused prompts</p><h2 id="keywordTitle">연상 범위를 좁혀 만날 확률을 높여요</h2></div></div>
-          <p>“여름”처럼 넓은 단어를 <strong>“여름에 먹는 간식”</strong>처럼 답변 범주가 분명한 제시어로 바꿨습니다. 사람은 자유롭게 입력하고, 봇은 주제마다 준비된 8개 연상어에서 선택합니다.</p>
+          <div class="section-head"><div><p class="eyebrow">24 topics</p><h2 id="keywordTitle">게임부터 우리 팀까지, 24개 주제</h2></div></div>
+          <p>방장이 추천 목록에서 첫 주제와 다음 주제를 고를 수 있습니다. 넥슨·디즈니·게임·우리 팀·일상 분야를 섞어 <strong>중복 없이 총 12라운드</strong>를 구성합니다. 다음 주제를 직접 예약하면 자동 순서보다 우선합니다.</p>
+          <ul class="prompt-list"><li>넥슨에서 서비스하는 게임</li><li>넥슨 게임 캐릭터</li><li>디즈니 대표 애니메이션</li><li>팀에서 가장 웃긴 사람</li><li>디즈니 주인공 캐릭터</li><li>디즈니 동물 캐릭터</li><li>게임 속 대표 직업</li><li>게임할 때 먹는 간식</li><li>팀에서 게임을 가장 잘할 사람</li><li>팀에서 여행 계획을 잘 짤 사람</li><li>팀에서 맛집을 가장 잘 아는 사람</li><li>팀에서 리액션이 가장 좋은 사람</li></ul>
           <ul class="prompt-list"><li>여름에 먹는 간식</li><li>놀이공원 탈것</li><li>분식집 인기 메뉴</li><li>아침에 마시는 음료</li><li>겨울 길거리 간식</li><li>동물원에서 보는 동물</li><li>영화관에서 먹는 간식</li><li>여행가방 필수품</li><li>학교 체육시간 종목</li><li>생일파티 먹거리</li><li>비 오는 날 필요한 물건</li><li>집에서 키우는 동물</li></ul>
-          <p class="detail-note">방장이 직접 키워드를 만들 때는 봇 연상어 5~10개를 쉼표로 구분해 함께 입력할 수 있습니다.</p>
+          <p class="detail-note">우리 팀 질문은 참가자 닉네임을 선택하거나 입력합니다. 봇 이름도 후보에 포함되며 봇은 이름을 무작위로 고릅니다. 일반 주제 19개는 봇 연상어 8개씩 제공하고, 직접 만든 주제에는 연상어 5~10개를 입력할 수 있습니다.</p>
         </section>
 
         <section id="simulation" class="section-block" aria-labelledby="simulationTitle">
           <div class="section-head"><div><p class="eyebrow">Bot simulation</p><h2 id="simulationTitle">혼자서도 15인 플레이를 시험해요</h2></div></div>
           <p>새 방에서 <strong>“봇으로 15명 채우기” → “게임 시작”</strong>을 누르면 사람 1명과 봇 14명이 함께 플레이합니다. 대기실에서 봇을 한 명씩 추가하거나 모두 제거할 수도 있습니다.</p>
           <p>대중형·균형형·개성형 봇이 2~12초 사이에 답변을 제출합니다. 외부 LLM 호출 없이 사전과 성향별 선택 확률로 동작하는 규칙형 봇이며, 사람과 동일한 점수 규칙을 적용합니다.</p>
-          <div class="simulation-stats"><article><span>2~3인 일치</span><strong>59.7%</strong><small>10,024개 답변</small></article><article><span>1인 고립</span><strong>14.5%</strong><small>2,430개 답변</small></article><article><span>4인 이상 과밀</span><strong>25.9%</strong><small>4,346개 답변</small></article></div>
-          <p class="detail-note">100게임 · 1,200라운드 · 봇 답변 16,800개를 가상 시간으로 실행한 결과입니다. 비율은 답변 수 기준이며 반올림으로 합계가 100%와 다를 수 있습니다. 실제 사람의 답변 분포나 재미를 검증한 수치는 아닙니다.</p>
-          <p class="detail-note">규칙 테스트 13개, 15개 독립 API 참가 세션의 동시 제출, 실제 서버에서 사람 1명 + 봇 14명 제출을 확인했습니다. 실제 휴대폰 15대의 동시 브라우저 테스트는 별도입니다.</p>
+          <div class="simulation-stats"><article><span>2~3인 일치</span><strong>59.6%</strong><small>10,015개 답변</small></article><article><span>1인 고립</span><strong>18.1%</strong><small>3,034개 답변</small></article><article><span>4인 이상 과밀</span><strong>22.3%</strong><small>3,751개 답변</small></article></div>
+          <p class="detail-note">24개 주제를 섞은 100게임 · 1,200라운드 · 봇 답변 16,800개를 고정 시드의 가상 시간으로 실행한 결과입니다. 비율은 답변 수 기준이며 반올림으로 합계가 100%와 다를 수 있습니다. 실제 사람의 답변 분포나 재미를 검증한 수치는 아닙니다.</p>
+          <p class="detail-note">규칙·봇 테스트 16개, 15개 독립 API 참가 세션의 동시 제출, 사람 1명 + 봇 14명 제출과 팀 주제 닉네임 검증을 확인했습니다. 실제 휴대폰 15대의 동시 브라우저 테스트는 별도입니다.</p>
         </section>
         <footer class="result-footer"><span>2026.09.07 등록 · AI 스터디 게임 제작 결과물</span><a href="/#works">다른 결과물 보기 →</a></footer>
       </main>
