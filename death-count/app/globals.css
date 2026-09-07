@@ -920,5 +920,90 @@ h1 span {
   font-size: 14px;
 }
 .score-list > div {
-  grid-template-columns: 1fr 88px 35px;
+  grid-template-columns: minmax(0, 1fr) 80px 70px;
+}
+.mode-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.mode-choice label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 12px;
+  border: 1px solid #3c3430;
+  cursor: pointer;
+  color: #f1f0eb;
+}
+.mode-choice label:has([data-checked]) {
+  border-color: #ff633f;
+  background: #241b17;
+}
+.mode-choice small {
+  display: block;
+  color: #b3a89f;
+  font-size: 11px;
+  margin-top: 4px;
+}
+.my-score {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.my-score > small {
+  color: #a89b92;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+.my-score b {
+  color: #ff7956;
+  font-size: 23px;
+}
+.my-score b small {
+  font-size: 11px;
+}
+.next-reward {
+  color: #ff7956;
+}
+.team-scores {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 18px;
+}
+.team-scores > div {
+  border: 1px solid #34302c;
+  padding: 10px 8px;
+  min-width: 0;
+}
+.team-scores .my-team {
+  border-color: currentColor;
+  background: #211b17;
+}
+.team-scores span {
+  display: block;
+  font-size: 10px;
+}
+.team-scores strong {
+  display: block;
+  margin: 5px 0;
+  font:
+    700 24px/1.1 ui-monospace,
+    monospace;
+  font-variant-numeric: tabular-nums;
+}
+.team-scores small {
+  font-size: 10px;
+}
+.team-0 {
+  color: #ff8e77;
+}
+.team-1 {
+  color: #83b9ff;
+}
+.team-2 {
+  color: #e8c36c;
 }

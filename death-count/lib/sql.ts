@@ -9,7 +9,9 @@ export const PRESS_SQL = `UPDATE death_rooms SET state=json_set(state,
  WHERE code=? AND expires>${NOW}
  AND json_extract(state,'$.round')=? AND json_extract(state,'$.gate')=?
  AND json_extract(state,'$.count')<15
- AND EXISTS(SELECT 1 FROM json_each(state,'$.players') WHERE json_extract(value,'$.id')=? AND json_extract(value,'$.key')=?)
+ AND json_extract(state,'$.rulesVersion')=3
+ AND EXISTS(SELECT 1 FROM json_each(state,'$.players') WHERE json_extract(value,'$.id')=? AND json_extract(value,'$.key')=?
+   AND NOT (json_extract(state,'$.mode')='team' AND json_extract(state,'$.streak')>=2 AND json_extract(state,'$.lastPlayer')=json_extract(value,'$.id')))
  AND NOT EXISTS(SELECT 1 FROM json_each(state,'$.inputs') WHERE value=?)
  AND (json_extract(state,'$.phase')='open'
  OR (json_extract(state,'$.phase') IN ('ready','cooldown') AND ${NOW}>=json_extract(state,'$.unlockAt'))

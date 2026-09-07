@@ -2,13 +2,17 @@ export type Player = {
   id: string;
   name: string;
   key: string;
-  wins: number;
+  points: number;
+  team: number;
   bot: boolean;
   hint: string | null;
   out: boolean;
 };
 export type State = {
-  rulesVersion: 2;
+  rulesVersion: 3;
+  mode: 'individual' | 'team';
+  lastPlayer: string | null;
+  streak: number;
   calls: { number: number; players: string[] }[];
   phase: 'lobby' | 'ready' | 'open' | 'collecting' | 'cooldown' | 'result';
   round: number;
@@ -29,6 +33,8 @@ export type State = {
     out: string[];
     winners: string[];
     finished: boolean;
+    winnerTeams: number[];
+    beforeBombPoints: Record<string, number>;
   };
   bots: Record<string, number>;
 };
@@ -37,9 +43,16 @@ export const integer = (min: number, max: number) => {
   crypto.getRandomValues(n);
   return min + Math.floor((n[0] / 4294967296) * (max - min + 1));
 };
-export function newState(p: Player, practice: boolean): State {
+export function newState(
+  p: Player,
+  practice: boolean,
+  mode: State['mode'] = 'individual',
+): State {
   return {
-    rulesVersion: 2,
+    rulesVersion: 3,
+    mode,
+    lastPlayer: null,
+    streak: 0,
     calls: [],
     phase: 'lobby',
     round: 0,
@@ -58,8 +71,27 @@ export function newState(p: Player, practice: boolean): State {
 }
 export function scheduleBots(s: State, now: number) {
   s.bots = {};
-  for (const p of s.players.filter((p) => p.bot))
+  for (const p of s.players.filter((p) => p.bot && !streakBlocked(s, p.id)))
     s.bots[p.id] = now + integer(750, 22000);
+}
+export function streakBlocked(s: State, id: string) {
+  return s.mode === 'team' && s.lastPlayer === id && s.streak >= 2;
+}
+export function teamScores(players: Pick<Player, 'team' | 'points'>[]) {
+  return [0, 1, 2].map((id) => ({
+    id,
+    name: ['레드', '블루', '골드'][id],
+    points: players
+      .filter((p) => p.team === id)
+      .reduce((total, p) => total + p.points, 0),
+  }));
+}
+export function nextTeam(players: Player[]) {
+  return [0, 1, 2].sort(
+    (a, b) =>
+      players.filter((p) => p.team === a).length -
+      players.filter((p) => p.team === b).length,
+  )[0];
 }
 export function startRound(s: State, now: number): State {
   const r = structuredClone(s);
@@ -69,6 +101,8 @@ export function startRound(s: State, now: number): State {
   r.bomb = integer(1, 15);
   r.inputs = [];
   r.calls = [];
+  r.lastPlayer = null;
+  r.streak = 0;
   r.phase = 'ready';
   r.unlockAt = now + 3200;
   r.result = null;
@@ -93,18 +127,33 @@ export function resolve(s: State, now: number): State {
   if (r.phase !== 'collecting' || now <= r.deadline) return r;
   r.count++;
   r.calls.push({ number: r.count, players: [...r.inputs] });
+  if (r.inputs.length === 1) {
+    const id = r.inputs[0];
+    r.players.find((p) => p.id === id)!.points += r.count * 10;
+    r.streak = r.lastPlayer === id ? r.streak + 1 : 1;
+    r.lastPlayer = id;
+  }
   if (r.inputs.length >= 2 || r.count >= 15) {
     const reason = r.inputs.length >= 2 ? 'CRASH' : 'LIMIT';
     const crashIds = reason === 'CRASH' ? [...r.inputs] : [];
     const bombIds =
       r.calls.find((call) => call.number === r.bomb)?.players ?? [];
     const penalties = [...new Set([...crashIds, ...bombIds])];
+    const beforeBombPoints = Object.fromEntries(
+      r.players.map((p) => [p.id, p.points]),
+    );
     for (const p of r.players) {
       p.out = penalties.includes(p.id);
-      if (!p.out) p.wins++;
+      if (bombIds.includes(p.id)) p.points = 0;
     }
-    const best = Math.max(...r.players.map((p) => p.wins));
-    const finished = best >= 2 || r.round >= 3;
+    const best = Math.max(...r.players.map((p) => p.points));
+    const teams = teamScores(r.players);
+    const teamBest = Math.max(...teams.map((t) => t.points));
+    const finished = r.round >= 3;
+    const winnerTeams =
+      finished && r.mode === 'team' && teamBest > 0
+        ? teams.filter((t) => t.points === teamBest).map((t) => t.id)
+        : [];
     r.result = {
       reason,
       crashIds,
@@ -112,9 +161,17 @@ export function resolve(s: State, now: number): State {
       bombIds,
       out: penalties,
       finished,
+      beforeBombPoints,
+      winnerTeams,
       winners:
-        finished && best > 0
-          ? r.players.filter((p) => p.wins === best).map((p) => p.id)
+        finished && (r.mode === 'team' ? teamBest > 0 : best > 0)
+          ? r.players
+              .filter((p) =>
+                r.mode === 'team'
+                  ? winnerTeams.includes(p.team)
+                  : p.points === best,
+              )
+              .map((p) => p.id)
           : [],
     };
     r.phase = 'result';
@@ -147,7 +204,19 @@ export function publicState(
       ? s.result.out
       : s.result.crashIds
     : [];
+  const players = s.players.map(({ id, name, points, team, bot }) => ({
+    id,
+    name,
+    team,
+    bot,
+    points: s.result && !revealed ? s.result.beforeBombPoints[id] : points,
+    out: visibleOut.includes(id),
+  }));
   return {
+    mode: s.mode,
+    teams: s.mode === 'team' ? teamScores(players) : [],
+    blockedByStreak: streakBlocked(s, id),
+    myStreak: s.lastPlayer === id ? s.streak : 0,
     code,
     revision,
     serverNow: now,
@@ -172,15 +241,10 @@ export function publicState(
           out: visibleOut,
           finished: revealed && s.result.finished,
           winners: revealed ? s.result.winners : [],
+          winnerTeams: revealed ? s.result.winnerTeams : [],
           calls: revealed ? s.calls : [],
         }
       : null,
-    players: s.players.map(({ id, name, wins, bot, out }) => ({
-      id,
-      name,
-      wins: s.result && !revealed && !out ? wins - 1 : wins,
-      bot,
-      out: visibleOut.includes(id),
-    })),
+    players,
   };
 }

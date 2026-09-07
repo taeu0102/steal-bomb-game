@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { DeathAudio } from '@/lib/audio';
 
 type View = {
@@ -25,13 +26,18 @@ type View = {
   unlockAt: number;
   host: string;
   practice: boolean;
+  mode: 'individual' | 'team';
+  teams: { id: number; name: string; points: number }[];
+  blockedByStreak: boolean;
+  myStreak: number;
   me: string;
   hint: string | null;
   submitted: boolean;
   players: {
     id: string;
     name: string;
-    wins: number;
+    points: number;
+    team: number;
     bot: boolean;
     out: boolean;
   }[];
@@ -44,6 +50,7 @@ type View = {
     bombIds: string[];
     out: string[];
     winners: string[];
+    winnerTeams: number[];
     finished: boolean;
   };
 };
@@ -51,6 +58,7 @@ type Session = { code: string; token: string };
 const SESSION_KEY = 'death-count-session-v1';
 
 export default function Game() {
+  const [mode, setMode] = useState<'individual' | 'team'>('individual');
   const [v, setV] = useState<View | null>(null),
     [session, setSession] = useState<Session | null>(null);
   const [name, setName] = useState(''),
@@ -199,7 +207,7 @@ export default function Game() {
     try {
       const data = await request(
         action,
-        { name: name.trim() || (practice ? '나' : ''), code, practice },
+        { name: name.trim() || (practice ? '나' : ''), code, practice, mode },
         null,
       );
       const s = { code: data.code, token: data.token };
@@ -240,6 +248,7 @@ export default function Game() {
     connected &&
     !pressPending &&
     !v.submitted &&
+    !v.blockedByStreak &&
     (v.phase === 'open' || (v.phase === 'cooldown' && clock >= v.unlockAt));
   const pressLock = useRef(false);
   async function press() {
@@ -329,6 +338,29 @@ export default function Game() {
             <div className="number-baseline" />
           </div>
           <div className="entry-form">
+            {!joining && (
+              <RadioGroup
+                className="mode-choice"
+                value={mode}
+                onValueChange={(value) =>
+                  setMode(value as 'individual' | 'team')
+                }
+                aria-label="게임 모드"
+              >
+                <label>
+                  <RadioGroupItem value="individual" />
+                  <span>
+                    개인전<small>내 점수로 승부</small>
+                  </span>
+                </label>
+                <label>
+                  <RadioGroupItem value="team" />
+                  <span>
+                    팀전<small>3팀 · 팀당 5명</small>
+                  </span>
+                </label>
+              </RadioGroup>
+            )}
             <label htmlFor="nickname">당신의 이름</label>
             <Input
               id="nickname"
@@ -392,14 +424,21 @@ export default function Game() {
               벌칙은 없습니다.
             </p>
             <p>
-              생존하면 1승. 매 판 모두 다시 참가하며, 먼저 2승을 얻으면 공동
-              우승도 가능합니다. 최대 3판 후에는 최고 승수가 우승하며 모두
-              0승이면 무승부입니다.
+              여러 번 누를 수 있습니다. 공통 숫자 1 성공은 +10점, 2 성공은
+              +20점, 3 성공은 +30점으로 보상이 커집니다. 충돌 입력은 0점입니다.
+              폭탄을 누른 사람은 이전 라운드를 포함한 누적 점수가 0점이 됩니다.
+              3라운드 합산 최고 점수가 우승하며 동점은 공동 우승, 전원 0점은
+              무승부입니다.
             </p>
             <p>
               폭탄 숫자를 단독으로 눌러도 게임은 계속됩니다. 충돌 없이 15까지
               가면 숫자 올리기를 끝내고 폭탄 벌칙만 공개합니다. 같은 사람의
               벌칙은 중복되지 않습니다.
+            </p>
+            <p>
+              팀전은 자동 배정된 3팀, 팀당 5명의 점수를 합산합니다. 같은 사람은
+              2회 연속까지만 성공할 수 있으며, 다른 사람이 성공하면 다시 누를 수
+              있습니다. 개인전에는 연속 제한이 없습니다.
             </p>
             <p>15인 · 무작위 3명에게 힌트 · 방은 2시간 유지됩니다.</p>
           </details>
@@ -433,6 +472,28 @@ export default function Game() {
               {connected ? '연결됨' : '재연결 중'}
             </span>
           </div>
+          {v.mode === 'team' && (
+            <div className="team-scores" aria-label="팀 점수">
+              {v.teams.map((t) => (
+                <div
+                  key={t.id}
+                  className={`team-${t.id} ${me?.team === t.id ? 'my-team' : ''}`}
+                >
+                  <span>
+                    {t.name}
+                    {me?.team === t.id ? ' · 우리 팀' : ''}
+                  </span>
+                  <strong>
+                    {t.points}
+                    <small> P</small>
+                  </strong>
+                  <small>
+                    {v.players.filter((p) => p.team === t.id).length} / 5명
+                  </small>
+                </div>
+              ))}
+            </div>
+          )}
           {v.phase === 'lobby' ? (
             <section className="lobby">
               <span className="eyebrow">STAND BY</span>
@@ -465,6 +526,11 @@ export default function Game() {
                     <span>
                       {p.name}
                       {p.id === v.me && <em>나</em>}
+                      {v.mode === 'team' && (
+                        <em className={`team-${p.team}`}>
+                          {v.teams[p.team]?.name}
+                        </em>
+                      )}
                     </span>
                     {p.id === v.host && <small>방장</small>}
                   </div>
@@ -502,11 +568,14 @@ export default function Game() {
                   <small> / 03</small>
                 </span>
                 <div
-                  className="win-marks"
-                  aria-label={`내 승수 ${me?.wins ?? 0}`}
+                  className="my-score"
+                  aria-label={`내 점수 ${me?.points ?? 0}점`}
                 >
-                  <i className={(me?.wins ?? 0) > 0 ? 'won' : ''} />
-                  <i className={(me?.wins ?? 0) > 1 ? 'won' : ''} />
+                  <small>MY SCORE</small>
+                  <b>
+                    {me?.points ?? 0}
+                    <small> P</small>
+                  </b>
                 </div>
               </div>
               <div
@@ -567,6 +636,7 @@ export default function Game() {
                     <>
                       다음 숫자 <b>{String(v.count + 1).padStart(2, '0')}</b>
                       <span className="caption-rule" />
+                      <b className="next-reward">+{(v.count + 1) * 10} P</b>
                     </>
                   )}
                 </div>
@@ -580,18 +650,20 @@ export default function Game() {
                       ? me?.out
                         ? '충돌 벌칙 확정'
                         : '폭탄 판정 대기'
-                      : me?.out
-                        ? '이번 판 벌칙'
-                        : '벌칙 면제 +1승'}
+                      : v.result?.bombIds.includes(v.me)
+                        ? '폭탄 · 누적 0점'
+                        : me?.out
+                          ? '충돌 · 이번 입력 0점'
+                          : '점수 유지'}
                   </span>
                   <h2>
                     {!v.result?.revealed
                       ? '아직, 끝난 게 아니다.'
                       : v.result?.finished
                         ? v.result.winners.length === 0
-                          ? '아무도 살아남지 못했다.'
+                          ? '전원 0점. 무승부.'
                           : v.result.winners.includes(v.me)
-                            ? '끝까지 살아남았다.'
+                            ? '최고 점수. 승리를 거머쥐다.'
                             : '이번 승부는 여기까지.'
                         : me?.out
                           ? '벌칙을 피하지 못했다.'
@@ -631,7 +703,7 @@ export default function Game() {
                       <>
                         <b>
                           {v.result.bombIds.length
-                            ? `폭탄 벌칙 · ${v.players
+                            ? `누적 0점 · ${v.players
                                 .filter((p) => v.result!.bombIds.includes(p.id))
                                 .map((p) => p.name)
                                 .join(', ')}`
@@ -651,37 +723,50 @@ export default function Game() {
                   </div>
                   {v.result?.finished && (
                     <div className="winners">
-                      {v.result.winners.length
+                      {v.mode === 'team' && v.result.winnerTeams.length
                         ? '우승 · ' +
-                          v.players
-                            .filter((p) => v.result!.winners.includes(p.id))
-                            .map((p) => p.name)
+                          v.teams
+                            .filter((t) => v.result!.winnerTeams.includes(t.id))
+                            .map((t) => t.name + ' 팀')
                             .join(', ')
-                        : '전원 0승 · 무승부'}
+                        : v.result.winners.length
+                          ? '우승 · ' +
+                            v.players
+                              .filter((p) => v.result!.winners.includes(p.id))
+                              .map((p) => p.name)
+                              .join(', ')
+                          : '전원 0점 · 무승부'}
                     </div>
                   )}
                   <div className="score-list">
-                    {v.players.map((p) => (
-                      <div key={p.id} className={p.id === v.me ? 'is-me' : ''}>
-                        <span>
-                          {p.name}
-                          {p.id === v.me ? ' · 나' : ''}
-                        </span>
-                        <span>
-                          {!v.result?.revealed
-                            ? p.out
-                              ? '충돌'
-                              : '판정 대기'
-                            : [
-                                v.result.crashIds.includes(p.id) ? '충돌' : '',
-                                v.result.bombIds.includes(p.id) ? '폭탄' : '',
-                              ]
-                                .filter(Boolean)
-                                .join(' + ') || '면제'}
-                        </span>
-                        <b>{p.wins}승</b>
-                      </div>
-                    ))}
+                    {[...v.players]
+                      .sort((a, b) => b.points - a.points)
+                      .map((p) => (
+                        <div
+                          key={p.id}
+                          className={p.id === v.me ? 'is-me' : ''}
+                        >
+                          <span>
+                            {p.name}
+                            {p.id === v.me ? ' · 나' : ''}
+                          </span>
+                          <span>
+                            {!v.result?.revealed
+                              ? p.out
+                                ? '충돌'
+                                : '판정 대기'
+                              : [
+                                  v.result.crashIds.includes(p.id)
+                                    ? '충돌'
+                                    : '',
+                                  v.result.bombIds.includes(p.id) ? '폭탄' : '',
+                                ]
+                                  .filter(Boolean)
+                                  .join(' + ') || '면제'}
+                          </span>
+                          <b>{p.points} P</b>
+                        </div>
+                      ))}
                   </div>
                   <Button
                     className="primary"
@@ -723,9 +808,11 @@ export default function Game() {
                       <span>
                         {v.submitted || pressPending
                           ? '당신의 선택을 판정 중'
-                          : playable
-                            ? '누를까. 기다릴까.'
-                            : '잠깐의 정적.'}
+                          : v.blockedByStreak
+                            ? '2연속 성공 · 다른 사람이 성공하면 다시 가능'
+                            : playable
+                              ? '누를까. 기다릴까.'
+                              : '잠깐의 정적.'}
                       </span>
                       <span>{alive} ALIVE</span>
                     </div>
@@ -742,9 +829,11 @@ export default function Game() {
                             ? '준비'
                             : v.submitted || pressPending
                               ? '…'
-                              : playable
-                                ? '누르기'
-                                : '잠깐'}
+                              : v.blockedByStreak
+                                ? '다른 차례'
+                                : playable
+                                  ? '누르기'
+                                  : '잠깐'}
                       </span>
                       <span className="button-cross">+</span>
                     </button>

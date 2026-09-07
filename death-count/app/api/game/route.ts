@@ -5,6 +5,7 @@ import {
   startRound,
   resolve,
   publicState,
+  nextTeam,
   type State,
   type Player,
 } from '@/lib/game';
@@ -59,12 +60,16 @@ async function tick(code: string) {
   let row = await read(code);
   for (let retry = 0; retry < 4; retry++) {
     const s: State = JSON.parse(row.state);
-    if (s.rulesVersion !== 2) {
-      // Old rounds did not retain number ownership; never invent past callers.
+    if (s.rulesVersion !== 3) {
+      // Previous versions used survival wins, which must not become points.
       const reset = newState(s.players[0], s.practice);
-      reset.players = s.players.map((p) => ({
-        ...p,
-        wins: 0,
+      reset.players = s.players.map((p, i) => ({
+        id: p.id,
+        name: p.name,
+        key: p.key,
+        bot: p.bot,
+        team: i % 3,
+        points: 0,
         out: false,
         hint: null,
       }));
@@ -138,20 +143,28 @@ export async function POST(req: Request) {
         id: crypto.randomUUID(),
         name,
         key: await hash(token),
-        wins: 0,
+        points: 0,
+        team: 0,
         bot: false,
         hint: null,
         out: false,
       };
       if (action === 'create') {
-        const s = newState(p, b.practice === true);
+        if (b.mode !== undefined && !['individual', 'team'].includes(b.mode))
+          return json({ error: '게임 모드를 선택해 주세요.' }, 400);
+        const s = newState(
+          p,
+          b.practice === true,
+          b.mode === 'team' ? 'team' : 'individual',
+        );
         if (s.practice)
           for (let i = 1; i <= 14; i++)
             s.players.push({
               id: crypto.randomUUID(),
               name: `BOT ${String(i).padStart(2, '0')}`,
               key: crypto.randomUUID(),
-              wins: 0,
+              points: 0,
+              team: i % 3,
               bot: true,
               hint: null,
               out: false,
@@ -177,12 +190,13 @@ export async function POST(req: Request) {
           return json({ error: '6자리 방 코드를 입력해 주세요.' }, 400);
         let joined = false;
         for (let retry = 0; retry < 20; retry++) {
-          const row = await read(code);
+          const row = await tick(code);
           const s: State = JSON.parse(row.state);
           if (s.practice) throw new Error('연습 방에는 입장할 수 없습니다.');
           if (s.phase !== 'lobby')
             throw new Error('이미 시작한 방입니다. 다음 게임에 입장해 주세요.');
           if (s.players.length >= 15) throw new Error('방이 가득 찼습니다.');
+          p.team = nextTeam(s.players);
           s.players.push(p);
           if (await save(row, s)) {
             joined = true;
@@ -275,7 +289,7 @@ export async function POST(req: Request) {
           )
             throw new Error('게임이 끝난 뒤 다시 시작할 수 있습니다.');
           for (const pl of s.players) {
-            pl.wins = 0;
+            pl.points = 0;
             pl.out = false;
             pl.hint = null;
           }
@@ -284,6 +298,8 @@ export async function POST(req: Request) {
           s.count = 0;
           s.result = null;
           s.calls = [];
+          s.lastPlayer = null;
+          s.streak = 0;
           s.inputs = [];
           s.gate++;
         }
