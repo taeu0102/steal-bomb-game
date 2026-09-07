@@ -347,7 +347,7 @@ export default function Game() {
               <br />
               <span>끝날 수 있다.</span>
             </h1>
-            <p>같이 누르면, 같이 끝난다.</p>
+            <p>공존할것인가, 혼자만 남을것인가</p>
           </div>
           <div className="entry-number" aria-hidden="true">
             <span>0</span>
