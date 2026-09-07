@@ -16,7 +16,7 @@ for (const name of ["index.html", "portal.css", "portal.js"]) {
   await cp(required(name), path.join(dist, name));
 }
 
-for (const name of ["assets", "steal-bomb-game", "ghost-forge", "portfolio-city"]) {
+for (const name of ["assets", "steal-bomb-game", "ghost-forge", "portfolio-city", "wordlink"]) {
   await cp(required(name), path.join(dist, name), { recursive: true });
 }
 

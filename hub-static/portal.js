@@ -1,5 +1,15 @@
 const defaultWorks = [
   {
+    id: "wordlink-party-fifteen",
+    title: "워드링크 · 15인 단어 파티",
+    type: "게임",
+    status: "게임 접근 제한",
+    date: "2026-09-07",
+    description: "너랑 나랑, 같은 단어. 15명이 동시에 즐기는 단어 연상 게임입니다. 1인 10점·2인 100점·3인 150점, 범주형 제시어와 봇 14명 시뮬레이션을 담았습니다.",
+    url: "/wordlink/",
+    color: "#dcefe9",
+  },
+  {
     id: "ghost-forge",
     title: "귀화로: 악마의 계약",
     type: "게임",
@@ -102,7 +112,9 @@ function render() {
   document.querySelector("#interactiveCount").textContent = works.filter((work) =>
     ["게임", "데모"].includes(work.type),
   ).length;
-  document.querySelector("#monthCount").textContent = works.filter((work) => work.date.startsWith("2026-08")).length;
+  const now = new Date();
+  const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  document.querySelector("#monthCount").textContent = works.filter((work) => work.date.startsWith(currentMonth)).length;
 
   if (!list.length) {
     workGrid.innerHTML = `<div class="empty-state">검색 결과가 없습니다.</div>`;
