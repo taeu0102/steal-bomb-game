@@ -555,7 +555,7 @@ test('team winners use final sum after bomb reset and support ties', () => {
   s.players[2].points = 50;
   assert.deepEqual(resolve(s, 1000).result.winners, ['p1', 'p2']);
 });
-test('team API assigns exactly five per team, balances replacements, and resets scores on restart', async () => {
+test('team API supplies initial balanced assignments and resets scores on restart', async () => {
   const list = await room(15, 'team'),
     h = list[0],
     c = { code: h.code, token: h.token };
@@ -594,4 +594,101 @@ test('team API assigns exactly five per team, balances replacements, and resets 
     [0, 1, 2].map((t) => p.players.filter((p) => p.team === t).length),
     [5, 5, 5],
   );
+});
+
+test('free team selection supports 2 or 3 teams, uneven rosters, host control and lobby-only changes', async () => {
+  const list = await room(15, 'team'),
+    h = list[0],
+    g = list[1],
+    c = { code: h.code, token: h.token },
+    gc = { code: h.code, token: g.token };
+  assert.equal(
+    (await api({ action: 'setTeamCount', ...gc, teamCount: 2 })).status,
+    403,
+  );
+  assert.equal(
+    (await api({ action: 'setTeam', ...gc, playerId: h.me, team: 1 })).status,
+    403,
+  );
+  assert.equal(
+    (await api({ action: 'setTeamCount', ...c, teamCount: 4 })).status,
+    400,
+  );
+  let r = (await api({ action: 'setTeamCount', ...c, teamCount: 2 })).data;
+  assert.equal(r.teams.length, 2);
+  assert.ok(r.players.every((p) => p.team < 2));
+  assert.equal((await api({ action: 'setTeam', ...gc, team: 2 })).status, 400);
+  for (const p of r.players)
+    assert.equal(
+      (await api({ action: 'setTeam', ...c, playerId: p.id, team: 0 })).status,
+      200,
+    );
+  assert.equal((await api({ action: 'start', ...c })).status, 400);
+  r = (await api({ action: 'setTeam', ...gc, team: 1 })).data;
+  assert.deepEqual(
+    [0, 1].map((t) => r.players.filter((p) => p.team === t).length),
+    [14, 1],
+  );
+  r = (await api({ action: 'setTeamCount', ...c, teamCount: 3 })).data;
+  assert.equal(r.teams.length, 3);
+  assert.equal((await api({ action: 'start', ...c })).status, 400);
+  await api({ action: 'setTeam', ...c, playerId: list[2].me, team: 2 });
+  r = (await api({ action: 'start', ...c })).data;
+  assert.equal(r.phase, 'ready');
+  assert.deepEqual(
+    [0, 1, 2].map((t) => r.players.filter((p) => p.team === t).length),
+    [13, 1, 1],
+  );
+  assert.equal((await api({ action: 'setTeam', ...gc, team: 0 })).status, 400);
+  assert.equal(
+    (await api({ action: 'setTeamCount', ...c, teamCount: 2 })).status,
+    400,
+  );
+});
+test('two-team creation, legacy default and two-team final scoring', async () => {
+  setup();
+  db.exec('DELETE FROM death_rooms');
+  const p = (
+    await api({
+      action: 'create',
+      name: '2팀',
+      mode: 'team',
+      teamCount: 2,
+      practice: true,
+    })
+  ).data;
+  assert.equal(p.teamCount, 2);
+  assert.equal(p.teams.length, 2);
+  assert.deepEqual(
+    [0, 1].map((t) => p.players.filter((p) => p.team === t).length),
+    [8, 7],
+  );
+  assert.equal(
+    (
+      await api({
+        action: 'create',
+        name: '오류',
+        mode: 'team',
+        teamCount: '2',
+      })
+    ).status,
+    400,
+  );
+  const s = setup();
+  s.mode = 'team';
+  s.teamCount = 2;
+  s.players.forEach((p, i) => {
+    p.team = i % 2;
+    p.points = i % 2 ? 10 : 0;
+  });
+  s.round = 3;
+  s.phase = 'collecting';
+  s.deadline = 0;
+  s.inputs = ['p0', 'p2'];
+  s.bomb = 15;
+  const r = resolve(s, 1000);
+  assert.deepEqual(r.result.winnerTeams, [1]);
+  assert.equal(publicState(r, 'p0', 'ABC234', 0, 2800).teams.length, 2);
+  delete s.teamCount;
+  assert.equal(publicState(s, 'p0', 'ABC234', 0, 0).teamCount, 3);
 });

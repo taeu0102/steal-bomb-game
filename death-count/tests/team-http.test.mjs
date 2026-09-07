@@ -11,18 +11,24 @@ async function api(action, extra = {}) {
   assert.equal(r.status, 200, JSON.stringify(d));
   return d;
 }
-const host = await api('create', { name: '팀 검증 A', mode: 'team' }),
+const host = await api('create', { name: '팀 검증 A', mode: 'team', teamCount:2 }),
   a = { code: host.code, token: host.token };
 let b;
 for (let i = 1; i < 15; i++) {
   const p = await api('join', { code: a.code, name: `팀 검증 ${i}` });
   if (i === 1) b = { code: a.code, token: p.token };
 }
-let v = await api('start', a);
+let v = await api('sync',a);
+assert.equal(v.teamCount,2);assert.equal(v.teams.length,2);
+v=await api('setTeamCount',{...a,teamCount:3});assert.equal(v.teams.length,3);
+v=await api('setTeam',{...b,team:2});assert.equal(v.players.find(p=>p.id===v.me).team,2);
+v=await api('setTeamCount',{...a,teamCount:2});assert.ok(v.players.every(p=>p.team<2));
+v=await api('setTeam',{...b,team:0});assert.equal(v.players.find(p=>p.id===v.me).team,0);
+v = await api('start', a);
 assert.equal(v.mode, 'team');
 assert.deepEqual(
-  [0, 1, 2].map((t) => v.players.filter((p) => p.team === t).length),
-  [5, 5, 5],
+  [0, 1].map((t) => v.players.filter((p) => p.team === t).length),
+  [9, 6],
 );
 async function ready() {
   v = await api('sync', a);
@@ -62,7 +68,9 @@ console.log(
     transport: 'anonymous HTTP',
     mode: 'team',
     players: 15,
-    teamSizes: [5, 5, 5],
+    teamSizes: [9, 6],
+    freeTeamSelection:true,
+    switchBetweenTwoAndThree:true,
     counts: 4,
     aPoints: 70,
     bPoints: 30,

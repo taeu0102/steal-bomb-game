@@ -1001,6 +1001,24 @@ h1 span {
 .team-0 {
   color: #ff8e77;
 }
+.team-roster {
+  grid-template-columns: 1fr;
+}
+.team-select {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.team-settings {
+  margin-top: 24px;
+}
+.team-settings p {
+  color: #b3a89f;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.team-settings .team-warning {
+  color: #ff8e77;
+}
 .team-1 {
   color: #83b9ff;
 }

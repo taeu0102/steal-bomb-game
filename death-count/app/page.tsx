@@ -13,6 +13,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 import { DeathAudio } from '@/lib/audio';
 
 type View = {
@@ -27,6 +34,7 @@ type View = {
   host: string;
   practice: boolean;
   mode: 'individual' | 'team';
+  teamCount: 2 | 3;
   teams: { id: number; name: string; points: number }[];
   blockedByStreak: boolean;
   myStreak: number;
@@ -59,6 +67,7 @@ const SESSION_KEY = 'death-count-session-v1';
 
 export default function Game() {
   const [mode, setMode] = useState<'individual' | 'team'>('individual');
+  const [teamCount, setTeamCount] = useState<2 | 3>(3);
   const [v, setV] = useState<View | null>(null),
     [session, setSession] = useState<Session | null>(null);
   const [name, setName] = useState(''),
@@ -207,7 +216,13 @@ export default function Game() {
     try {
       const data = await request(
         action,
-        { name: name.trim() || (practice ? '나' : ''), code, practice, mode },
+        {
+          name: name.trim() || (practice ? '나' : ''),
+          code,
+          practice,
+          mode,
+          teamCount,
+        },
         null,
       );
       const s = { code: data.code, token: data.token };
@@ -222,14 +237,17 @@ export default function Game() {
       setBusy(false);
     }
   }
-  async function command(action: string) {
+  async function command(action: string, extra: Record<string, unknown> = {}) {
     if (working.current) return;
     working.current = true;
     setBusy(true);
     setError('');
     getAudio().unlock();
     try {
-      const data = await request(action, { round: ref.current?.round });
+      const data = await request(action, {
+        round: ref.current?.round,
+        ...extra,
+      });
       if (data.left) {
         installSession(null);
         ref.current = null;
@@ -356,8 +374,25 @@ export default function Game() {
                 <label>
                   <RadioGroupItem value="team" />
                   <span>
-                    팀전<small>3팀 · 팀당 5명</small>
+                    팀전<small>2팀 / 3팀 · 자유 편성</small>
                   </span>
+                </label>
+              </RadioGroup>
+            )}
+            {!joining && mode === 'team' && (
+              <RadioGroup
+                className="mode-choice"
+                aria-label="팀 수"
+                value={String(teamCount)}
+                onValueChange={(value) => setTeamCount(Number(value) as 2 | 3)}
+              >
+                <label>
+                  <RadioGroupItem value="2" />
+                  <span>2팀</span>
+                </label>
+                <label>
+                  <RadioGroupItem value="3" />
+                  <span>3팀</span>
                 </label>
               </RadioGroup>
             )}
@@ -436,9 +471,11 @@ export default function Game() {
               벌칙은 중복되지 않습니다.
             </p>
             <p>
-              팀전은 자동 배정된 3팀, 팀당 5명의 점수를 합산합니다. 같은 사람은
-              2회 연속까지만 성공할 수 있으며, 다른 사람이 성공하면 다시 누를 수
-              있습니다. 개인전에는 연속 제한이 없습니다.
+              팀전은 2팀 또는 3팀으로, 인원 제한 없이 자유롭게 편성하고 팀원의
+              점수를 합산합니다. 대기실에서 내 팀을 선택하며 방장은 모든
+              참가자의 팀을 조정할 수 있습니다. 각 팀에 최소 1명이 필요합니다.
+              같은 사람은 2회 연속까지만 성공할 수 있으며, 다른 사람이 성공하면
+              다시 누를 수 있습니다. 개인전에는 연속 제한이 없습니다.
             </p>
             <p>15인 · 무작위 3명에게 힌트 · 방은 2시간 유지됩니다.</p>
           </details>
@@ -473,7 +510,13 @@ export default function Game() {
             </span>
           </div>
           {v.mode === 'team' && (
-            <div className="team-scores" aria-label="팀 점수">
+            <div
+              className="team-scores"
+              style={{
+                gridTemplateColumns: `repeat(${v.teamCount},minmax(0,1fr))`,
+              }}
+              aria-label="팀 점수"
+            >
               {v.teams.map((t) => (
                 <div
                   key={t.id}
@@ -488,7 +531,7 @@ export default function Game() {
                     <small> P</small>
                   </strong>
                   <small>
-                    {v.players.filter((p) => p.team === t.id).length} / 5명
+                    {v.players.filter((p) => p.team === t.id).length}명
                   </small>
                 </div>
               ))}
@@ -510,6 +553,43 @@ export default function Game() {
                   {copied ? '초대 링크 복사됨' : '초대 링크 복사'}
                 </span>
               </button>
+              {v.mode === 'team' && (
+                <div className="team-settings">
+                  {host && (
+                    <RadioGroup
+                      className="mode-choice"
+                      aria-label="대기실 팀 수"
+                      value={String(v.teamCount)}
+                      disabled={busy || !connected}
+                      onValueChange={(value) =>
+                        command('setTeamCount', { teamCount: Number(value) })
+                      }
+                    >
+                      <label>
+                        <RadioGroupItem value="2" />
+                        <span>2팀</span>
+                      </label>
+                      <label>
+                        <RadioGroupItem value="3" />
+                        <span>3팀</span>
+                      </label>
+                    </RadioGroup>
+                  )}
+                  <p>
+                    {host
+                      ? '팀 수와 참가자별 팀을 자유롭게 설정하세요.'
+                      : '내 이름 옆에서 원하는 팀을 선택하세요.'}{' '}
+                    인원 균등 제한은 없습니다.
+                  </p>
+                  {v.teams.some(
+                    (t) => !v.players.some((p) => p.team === t.id),
+                  ) && (
+                    <p className="team-warning">
+                      시작하려면 각 팀에 최소 1명이 필요합니다.
+                    </p>
+                  )}
+                </div>
+              )}
               <div className="roster-head">
                 <span>대기 중인 플레이어</span>
                 <strong>
@@ -517,7 +597,9 @@ export default function Game() {
                   <small> / 15</small>
                 </strong>
               </div>
-              <div className="roster">
+              <div
+                className={`roster ${v.mode === 'team' ? 'team-roster' : ''}`}
+              >
                 {v.players.map((p, i) => (
                   <div className="player" key={p.id}>
                     <span className="player-no">
@@ -533,6 +615,30 @@ export default function Game() {
                       )}
                     </span>
                     {p.id === v.host && <small>방장</small>}
+                    {v.mode === 'team' && (host || p.id === v.me) && (
+                      <Select
+                        value={p.team}
+                        disabled={busy || !connected}
+                        onValueChange={(team) => {
+                          if (team !== null)
+                            command('setTeam', { playerId: p.id, team });
+                        }}
+                      >
+                        <SelectTrigger
+                          className="team-select"
+                          aria-label={`${p.name} 팀 선택`}
+                        >
+                          <SelectValue>{v.teams[p.team]?.name}</SelectValue>
+                        </SelectTrigger>
+                        <SelectContent>
+                          {v.teams.map((t) => (
+                            <SelectItem key={t.id} value={t.id}>
+                              {t.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
                 ))}
               </div>
@@ -540,7 +646,14 @@ export default function Game() {
                 <Button
                   className="primary"
                   disabled={
-                    busy || !connected || !host || v.players.length < 15
+                    busy ||
+                    !connected ||
+                    !host ||
+                    v.players.length < 15 ||
+                    (v.mode === 'team' &&
+                      v.teams.some(
+                        (t) => !v.players.some((p) => p.team === t.id),
+                      ))
                   }
                   onClick={() => command('start')}
                 >

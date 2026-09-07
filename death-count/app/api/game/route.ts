@@ -129,6 +129,8 @@ export async function POST(req: Request) {
         'next',
         'restart',
         'leave',
+        'setTeam',
+        'setTeamCount',
       ].includes(action)
     )
       return json({ error: '잘못된 요청입니다.' }, 400);
@@ -152,10 +154,13 @@ export async function POST(req: Request) {
       if (action === 'create') {
         if (b.mode !== undefined && !['individual', 'team'].includes(b.mode))
           return json({ error: '게임 모드를 선택해 주세요.' }, 400);
+        if (b.teamCount !== undefined && b.teamCount !== 2 && b.teamCount !== 3)
+          return json({ error: '팀 수는 2팀 또는 3팀입니다.' }, 400);
         const s = newState(
           p,
           b.practice === true,
           b.mode === 'team' ? 'team' : 'individual',
+          b.teamCount === 2 ? 2 : 3,
         );
         if (s.practice)
           for (let i = 1; i <= 14; i++)
@@ -164,7 +169,7 @@ export async function POST(req: Request) {
               name: `BOT ${String(i).padStart(2, '0')}`,
               key: crypto.randomUUID(),
               points: 0,
-              team: i % 3,
+              team: i % s.teamCount,
               bot: true,
               hint: null,
               out: false,
@@ -196,7 +201,7 @@ export async function POST(req: Request) {
           if (s.phase !== 'lobby')
             throw new Error('이미 시작한 방입니다. 다음 게임에 입장해 주세요.');
           if (s.players.length >= 15) throw new Error('방이 가득 찼습니다.');
-          p.team = nextTeam(s.players);
+          p.team = nextTeam(s.players, s.teamCount ?? 3);
           s.players.push(p);
           if (await save(row, s)) {
             joined = true;
@@ -249,12 +254,48 @@ export async function POST(req: Request) {
     }
     row = await tick(code);
     s = JSON.parse(row.state);
-    if (['start', 'next', 'restart', 'leave'].includes(action)) {
+    if (
+      ['start', 'next', 'restart', 'leave', 'setTeam', 'setTeamCount'].includes(
+        action,
+      )
+    ) {
       for (let retry = 0; retry < 8; retry++) {
         s = JSON.parse(row.state);
-        if (action !== 'leave' && s.host !== id)
+        if (!['leave', 'setTeam'].includes(action) && s.host !== id)
           return json({ error: '방장만 시작할 수 있습니다.' }, 403);
-        if (action === 'leave') {
+        if (action === 'setTeam' || action === 'setTeamCount') {
+          if (s.phase !== 'lobby' || s.mode !== 'team')
+            return json(
+              { error: '팀 설정은 팀전 대기실에서만 가능합니다.' },
+              400,
+            );
+          if (action === 'setTeamCount') {
+            if (b.teamCount !== 2 && b.teamCount !== 3)
+              return json({ error: '팀 수는 2팀 또는 3팀입니다.' }, 400);
+            s.teamCount = b.teamCount;
+            // Keep existing selections; only reassign a removed team's members.
+            for (const member of s.players)
+              if (member.team >= s.teamCount)
+                member.team = nextTeam(s.players, s.teamCount);
+          } else {
+            const target = b.playerId ?? id;
+            if (target !== id && s.host !== id)
+              return json(
+                { error: '다른 참가자의 팀은 방장만 변경할 수 있습니다.' },
+                403,
+              );
+            if (
+              !Number.isInteger(b.team) ||
+              b.team < 0 ||
+              b.team >= (s.teamCount ?? 3)
+            )
+              return json({ error: '선택할 수 없는 팀입니다.' }, 400);
+            const member = s.players.find((p) => p.id === target);
+            if (!member)
+              return json({ error: '참가자를 찾을 수 없습니다.' }, 400);
+            member.team = b.team;
+          }
+        } else if (action === 'leave') {
           if (
             s.phase !== 'lobby' &&
             !(
@@ -271,6 +312,13 @@ export async function POST(req: Request) {
         } else if (action === 'start') {
           if (s.phase !== 'lobby' || s.players.length !== 15)
             throw new Error('15명이 모두 입장하면 시작할 수 있습니다.');
+          if (
+            s.mode === 'team' &&
+            Array.from({ length: s.teamCount ?? 3 }, (_, t) => t).some(
+              (t) => !s.players.some((p) => p.team === t),
+            )
+          )
+            throw new Error('각 팀에 최소 1명을 배정해 주세요.');
           s = startRound(s, row.now);
         } else if (action === 'next') {
           if (

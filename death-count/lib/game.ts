@@ -11,6 +11,7 @@ export type Player = {
 export type State = {
   rulesVersion: 3;
   mode: 'individual' | 'team';
+  teamCount: 2 | 3;
   lastPlayer: string | null;
   streak: number;
   calls: { number: number; players: string[] }[];
@@ -47,10 +48,12 @@ export function newState(
   p: Player,
   practice: boolean,
   mode: State['mode'] = 'individual',
+  teamCount: 2 | 3 = 3,
 ): State {
   return {
     rulesVersion: 3,
     mode,
+    teamCount,
     lastPlayer: null,
     streak: 0,
     calls: [],
@@ -77,8 +80,11 @@ export function scheduleBots(s: State, now: number) {
 export function streakBlocked(s: State, id: string) {
   return s.mode === 'team' && s.lastPlayer === id && s.streak >= 2;
 }
-export function teamScores(players: Pick<Player, 'team' | 'points'>[]) {
-  return [0, 1, 2].map((id) => ({
+export function teamScores(
+  players: Pick<Player, 'team' | 'points'>[],
+  teamCount = 3,
+) {
+  return Array.from({ length: teamCount }, (_, id) => id).map((id) => ({
     id,
     name: ['레드', '블루', '골드'][id],
     points: players
@@ -86,8 +92,8 @@ export function teamScores(players: Pick<Player, 'team' | 'points'>[]) {
       .reduce((total, p) => total + p.points, 0),
   }));
 }
-export function nextTeam(players: Player[]) {
-  return [0, 1, 2].sort(
+export function nextTeam(players: Player[], teamCount = 3) {
+  return Array.from({ length: teamCount }, (_, id) => id).sort(
     (a, b) =>
       players.filter((p) => p.team === a).length -
       players.filter((p) => p.team === b).length,
@@ -147,7 +153,7 @@ export function resolve(s: State, now: number): State {
       if (bombIds.includes(p.id)) p.points = 0;
     }
     const best = Math.max(...r.players.map((p) => p.points));
-    const teams = teamScores(r.players);
+    const teams = teamScores(r.players, r.teamCount ?? 3);
     const teamBest = Math.max(...teams.map((t) => t.points));
     const finished = r.round >= 3;
     const winnerTeams =
@@ -214,7 +220,8 @@ export function publicState(
   }));
   return {
     mode: s.mode,
-    teams: s.mode === 'team' ? teamScores(players) : [],
+    teamCount: s.teamCount ?? 3,
+    teams: s.mode === 'team' ? teamScores(players, s.teamCount ?? 3) : [],
     blockedByStreak: streakBlocked(s, id),
     myStreak: s.lastPlayer === id ? s.streak : 0,
     code,
