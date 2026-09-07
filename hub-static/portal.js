@@ -3,7 +3,7 @@ const defaultWorks = [
     id: "wordlink-party-fifteen",
     title: "워드링크 · 15인 단어 파티",
     type: "게임",
-    status: "게임 접근 제한",
+    status: "공개 · 닉네임 참여",
     date: "2026-09-07",
     description: "너랑 나랑, 같은 단어. 15명이 동시에 즐기는 단어 연상 게임입니다. 1인 10점·2인 100점·3인 150점, 범주형 제시어와 봇 14명 시뮬레이션을 담았습니다.",
     url: "/wordlink/",
