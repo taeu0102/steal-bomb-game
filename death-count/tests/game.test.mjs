@@ -496,14 +496,14 @@ test('15 ends without collision, reveals original bomb, and never admits 16', ()
   db.prepare('UPDATE death_rooms SET state=?').run(JSON.stringify(r));
   assert.equal(press(0), 0);
 });
-test('14 players cannot start; 15 can; reveal cannot be skipped by host', async () => {
-  const list = await room(14),
+test('one player cannot start; two can; reveal cannot be skipped by host', async () => {
+  const list = await room(1),
     host = list[0];
   assert.equal(
     (await api({ action: 'start', code: host.code, token: host.token })).status,
     400,
   );
-  await api({ action: 'join', code: host.code, name: '15번째' });
+  await api({ action: 'join', code: host.code, name: '두 번째' });
   assert.equal(
     (await api({ action: 'start', code: host.code, token: host.token })).status,
     200,
@@ -532,6 +532,47 @@ test('14 players cannot start; 15 can; reveal cannot be skipped by host', async 
 function persist(s) {
   db.prepare('UPDATE death_rooms SET state=?').run(JSON.stringify(s));
 }
+
+test('normal rooms support every size 2 to 15 and cap joins at 15', async () => {
+  for (const n of [2, 3, 7, 14, 15]) {
+    const list = await room(n),
+      h = list[0],
+      c = { code: h.code, token: h.token };
+    const r = await api({ action: 'start', ...c });
+    assert.equal(r.status, 200);
+    assert.equal(r.data.players.length, n);
+    assert.ok(r.data.players.every((p) => !p.bot));
+    assert.equal(
+      load().players.filter((p) => p.hint !== null).length,
+      Math.min(3, n),
+    );
+  }
+  const list = await room(15);
+  assert.equal(
+    (await api({ action: 'join', code: list[0].code, name: '16번째' })).status,
+    400,
+  );
+});
+test('two people start two-team mode; three teams still need one member each', async () => {
+  const list = await room(2, 'team'),
+    h = list[0],
+    c = { code: h.code, token: h.token };
+  assert.equal((await api({ action: 'start', ...c })).status, 400);
+  await api({ action: 'setTeamCount', ...c, teamCount: 2 });
+  assert.equal((await api({ action: 'start', ...c })).status, 200);
+  const s = load();
+  s.phase = 'collecting';
+  s.inputs = [s.players[0].id, s.players[1].id];
+  s.deadline = now - 1;
+  s.bomb = 15;
+  persist(s);
+  await api({ action: 'sync', ...c });
+  now += 4001;
+  const next = await api({ action: 'next', ...c, round: 1 });
+  assert.equal(next.status, 200);
+  assert.equal(next.data.players.length, 2);
+  assert.equal(next.data.round, 2);
+});
 function confirm() {
   now = load().deadline + 1;
   const s = resolve(load(), now);

@@ -310,8 +310,12 @@ export async function POST(req: Request) {
           s.players = s.players.filter((p) => p.id !== id);
           if (s.host === id) s.host = s.players.find((p) => !p.bot)?.id ?? '';
         } else if (action === 'start') {
-          if (s.phase !== 'lobby' || s.players.length !== 15)
-            throw new Error('15명이 모두 입장하면 시작할 수 있습니다.');
+          if (
+            s.phase !== 'lobby' ||
+            s.players.length < 2 ||
+            s.players.length > 15
+          )
+            throw new Error('2~15명이 입장하면 시작할 수 있습니다.');
           if (
             s.mode === 'team' &&
             Array.from({ length: s.teamCount ?? 3 }, (_, t) => t).some(

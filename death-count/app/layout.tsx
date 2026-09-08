@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: '데스 카운트 · 공존할것인가, 혼자만 남을것인가',
-  description: '15인 실시간 눈치 게임. 방 코드로 모여 숨겨진 함정을 피하세요.',
+  description: '2~15인 실시간 눈치 게임. 방 코드로 모여 숨겨진 함정을 피하세요.',
 };
 
 export default function RootLayout({

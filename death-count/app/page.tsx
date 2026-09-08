@@ -67,7 +67,7 @@ const SESSION_KEY = 'death-count-session-v1';
 
 export default function Game() {
   const [mode, setMode] = useState<'individual' | 'team'>('individual');
-  const [teamCount, setTeamCount] = useState<2 | 3>(3);
+  const [teamCount, setTeamCount] = useState<2 | 3>(2);
   const [v, setV] = useState<View | null>(null),
     [session, setSession] = useState<Session | null>(null);
   const [name, setName] = useState(''),
@@ -202,6 +202,22 @@ export default function Game() {
       clearTimeout(timer);
     };
   }, [session]);
+  useEffect(() => {
+    const update = () =>
+      getAudio().setScene(
+        muted || document.hidden
+          ? 'silent'
+          : !session
+            ? 'lobby'
+            : !connected
+              ? 'silent'
+              : (v?.phase ?? 'silent'),
+        v?.count ?? 0,
+      );
+    update();
+    document.addEventListener('visibilitychange', update);
+    return () => document.removeEventListener('visibilitychange', update);
+  }, [v?.phase, v?.count, muted, connected, session]);
   useEffect(() => {
     if (!v || !['open', 'cooldown'].includes(v.phase) || muted || !connected)
       return;
@@ -459,7 +475,7 @@ export default function Game() {
               게임 방법 <span>+</span>
             </summary>
             <p>
-              15명이 모여 1부터 숫자를 올립니다. 무작위 3명만 폭탄 힌트를
+              2~15명이 모여 1부터 숫자를 올립니다. 무작위 최대 3명이 폭탄 힌트를
               받습니다. 0.2초 안에 두 명 이상 누르면 게임이 끝나고 함께 누른
               사람은 벌칙입니다. 폭탄 숫자에 도달해도 즉시 라운드가 끝납니다.
               폭탄에 도달하기 전에 충돌했다면 추가 폭탄 벌칙은 없습니다.
@@ -483,11 +499,14 @@ export default function Game() {
               다시 누를 수 있습니다. 개인전에는 연속 제한이 없습니다.
             </p>
             <p>
-              20% 확률로 폭탄이 없는 라운드가 나옵니다. 힌트를 받은 3명만 이
+              20% 확률로 폭탄이 없는 라운드가 나옵니다. 힌트를 받은 사람만 이
               사실을 알 수 있습니다. 폭탄이 없어도 동시 클릭은 충돌 벌칙이며,
               충돌 없이 15까지 가면 모두 점수를 유지합니다.
             </p>
-            <p>15인 · 무작위 3명에게 힌트 · 방은 2시간 유지됩니다.</p>
+            <p>
+              2~15인 · 최대 3명에게 힌트(2인 플레이 시 2명) · 방은 2시간
+              유지됩니다.
+            </p>
           </details>
           <footer className="entry-footer">
             <span>데스 카운트</span>
@@ -659,7 +678,7 @@ export default function Game() {
                     busy ||
                     !connected ||
                     !host ||
-                    v.players.length < 15 ||
+                    v.players.length < 2 ||
                     (v.mode === 'team' &&
                       v.teams.some(
                         (t) => !v.players.some((p) => p.team === t.id),
@@ -668,9 +687,9 @@ export default function Game() {
                   onClick={() => command('start')}
                 >
                   {host
-                    ? v.players.length < 15
-                      ? `${15 - v.players.length}명 더 기다리는 중`
-                      : '게임 시작'
+                    ? v.players.length < 2
+                      ? '1명 더 입장하면 시작 가능'
+                      : `${v.players.length}명으로 게임 시작`
                     : '방장이 시작할 때까지 대기'}
                   <ArrowUpRight size={22} />
                 </Button>
